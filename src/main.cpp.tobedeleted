@@ -1,0 +1,278 @@
+#include "main.h"
+#include "myTimer.h"
+
+SettingManager 			*smManager;//(PIN_LED);
+WifiManager 			*wfManager;//(PIN_LED, &smManager);
+MatrixPages             *mpPages;//(PIN_LED);
+portMUX_TYPE wtimerMux = portMUX_INITIALIZER_UNLOCKED;
+//PresenceHelper			phPresence;
+
+BMPManagerV2			*bmpMesure;//(PIN_LED);
+
+//PxMATRIX display(64,32,P_LAT, P_OE,P_A,P_B,P_C,P_D);
+
+#ifdef MCPOC_TELNET
+RemoteDebug Debug;
+#endif
+
+#ifdef MCPOC_TELNET // Not in PRODUCTION
+void processCmdRemoteDebug() {
+	String lastCmd = Debug.getLastCommand();
+	/*  if (lastCmd == "o") {
+	 dManager.activateModule(true);
+	 } else if (lastCmd == "r") {
+	 fpManager.recordFingerPrint(0,"yvan");
+	 } else if (lastCmd == "a") {
+	 fpManager.activateModule(true);
+	 } else if (lastCmd == "restart") {
+	 ESP.restart();
+	 } else if (lastCmd == "reset") {
+	 WiFi.disconnect();
+	 }*/
+}
+#endif
+/*
+#ifdef ESP32
+
+//portMUX_TYPE wtimerMux = portMUX_INITIALIZER_UNLOCKED;
+void IRAM_ATTR display_updater(){
+  // Increment the counter and set the time of ISR
+	portENTER_CRITICAL_ISR(&wtimerMux);
+	display.display(30);
+	//DEBUGLOG("i");
+	portEXIT_CRITICAL_ISR(&wtimerMux);
+}
+#endif
+*/
+
+void startWiFiserver() {
+	if (wfManager->begin(IPAddress(MODULE_IP), MODULE_NAME, MODULE_MDNS,
+			MODULE_MDNS_AP) == WL_CONNECTED) {
+		wfManager->getServer()->on("/", dataPage);
+		wfManager->getServer()->onNotFound(dataPage);
+	}
+	wfManager->getServer()->on("/status", dataJson);
+	wfManager->getServer()->on("/setting", dataPage);
+	wfManager->getServer()->on("/setData", setData);
+	wfManager->getServer()->on("/save", saveConfiguration);
+
+	Serial.println(wfManager->toString(STD_TEXT));
+}
+
+void  setup(void) {
+	//gdbstub_init();
+	//node.setcpufreq(node.CPU160MHZ)
+	Serial.begin(115200);	//delay(500);
+	Serial.println("start debuging");
+	DEBUGLOGF("Frq : %d \n", ESP.getCpuFreqMHz());
+	//system_update_cpu_freq(SYS_CPU_160MHZ);
+	DEBUGLOGF("Frq : %d \n", ESP.getCpuFreqMHz());
+
+	smManager = new SettingManager(PIN_LED);
+	wfManager = new WifiManager(PIN_LED, smManager);
+	mpPages = new MatrixPages(PIN_LED);
+	//PresenceHelper			phPresence;
+
+/*	bmpMesure = new BMPManagerV2(PIN_LED);
+	bmpMesure->mesure();
+	DEBUGLOG("BMPManagerV2");DEBUGLOG(bmpMesure->toString(STD_TEXT));
+*/
+
+	//mtTimer.onTimerAction(std::bind(&FlashLed::flashCallback,&flLed));
+	/*mpPages->begin();*/
+	/*mtTimer.begin(timerFrequence);
+	mtTimer.setCustomMS(1000);*/
+	/*mpPages->setPage(OPENBAR_PAGE);
+	mpPages->displayPage();*/
+	//smManager.begin();
+	//delay(5000);
+	smManager->readData();
+	DEBUGLOG("");DEBUGLOG(smManager->toString(STD_TEXT));
+	startWiFiserver();
+
+#ifdef MCPOC_TELNET
+	Debug.begin(MODULE_NAME);
+	String helpCmd = "l1\n\rl2\n\rl3\n\rrestart\n\rreset\n\r";
+	Debug.setHelpProjectsCmds(helpCmd);
+	Debug.setCallBackProjectCmds(&processCmdRemoteDebug);
+#endif
+
+#ifdef MCPOC_MOCK
+	randomSeed(analogRead(0));
+#endif
+
+
+
+	//mpPages->begin();
+
+	//mtTimer.begin(timerFrequence);
+	mtTimer.setCustomMS(10000); //10s
+
+
+
+
+#ifdef MCPOC_TEST
+	Serial.println("Testing device connections...");
+#endif
+
+	 //mqtt.subscribe(&OnOffbutton);
+
+
+}
+
+
+void /*RAMFUNC*/ loop(void) {
+	wfManager->handleClient();
+	//phPresence.handle();
+
+	//MatrixPages::display_updater();
+	 //display.display(30);
+
+	 // Ensure the connection to the MQTT server is alive (this will make the first
+	  // connection and automatically reconnect when disconnected).  See the MQTT_connect
+	  // function definition further below.
+	if (mtTimer.is1SPeriod()){
+		mpPages->displayPage();
+
+
+		//DEBUGLOGF("1S : %s\n",String(millis()/1000).c_str());
+	 /* MQTT_connect();
+
+	  // this is our 'wait for incoming subscription packets' busy subloop
+	  // try to spend your time here
+
+	  Adafruit_MQTT_Subscribe *subscription;
+	  while ((subscription = mqtt.readSubscription(250))) {
+		 // DEBUGLOGF("loop : %d\n",millis()/1000);
+	    // Check if its the OnOff button feed
+	    if (subscription == &OnOffbutton) {
+
+	      int iCode = atoi((char *)OnOffbutton.lastread);
+	      DEBUGLOGF("On-Off button: %d\n",iCode);
+	      Serial.println(iCode);
+	      if (iCode==OPENBAR_PAGE) {
+	    	  DEBUGLOG("OPENBAR_PAGE");
+	    	  mpPages->setPage(OPENBAR_PAGE);
+	      } else if  (iCode==NEWYEAR_PAGE) {
+	    	  DEBUGLOG("NEWYEAR_PAGE");
+	    	  mpPages->setPage(NEWYEAR_PAGE);
+	      } else if  (iCode==NOEL_PAGE) {
+	    	  DEBUGLOG("NOEL_PAGE");
+	    	  mpPages->setPage(NOEL_PAGE);
+	      } else if  (iCode==CUSTOM_PAGE) {
+	    	  DEBUGLOG("CUSTOM_PAGE");
+	    	  mpPages->setPage(CUSTOM_PAGE);
+	      }else if  (iCode==ETEINDRE_PAGE) {
+	    	  DEBUGLOG("ETEINDRE_PAGE");
+	    	  mpPages->setPage(ETEINDRE_PAGE);
+	      }else if  (iCode==HOUR_PAGE) {
+	    	  DEBUGLOG("HOUR_PAGE");
+	    	  mpPages->setPage(HOUR_PAGE);
+	      }
+	      mpPages->displayPage();
+
+	    }
+	  }*/
+	}
+	if (mtTimer.is1MNPeriod()){
+		bmpMesure->mesure();
+		bmpMesure->set();
+		// ping the server to keep the mqtt connection alive
+			/*  if(! mqtt.ping()) {
+			    mqtt.disconnect();
+			  }*/
+	}
+
+	//if (phPresence.isPresence()) {
+		/*mpPages->setPage(MESSAGE_PAGE);
+		mpPages->displayPage();*/
+		// DEBUGLOG("Preesnce");
+
+
+	//}
+	//yield();
+	if (mtTimer.isCustomPeriod()) {
+		//m_display->clearDisplay();
+		//DEBUGLOG("1s");
+		//bmpMesure->mesure();
+
+		//DEBUGLOG("BMPManagerV2");DEBUGLOG(bmpMesure->toString(STD_TEXT));
+
+
+
+	}
+	if (mtTimer.is5MNPeriod()) {
+
+
+		DEBUGLOG("10s");
+
+/*		bmpMesure.mesure();
+		DEBUGLOGF("pression %fd\n", bmpMesure.getPressionSensor()->getValue());
+		DEBUGLOGF("Temp %f\n", bmpMesure.getTemperatureSensor()->getValue());
+		DEBUGLOG(bmpMesure.toString(JSON_TEXT));
+		DEBUGLOG(bmpMesure.log(JSON_TEXT));
+		mpPages->nextPage();
+		mpPages->displayPage();*/
+
+	}
+
+	/*
+	if (mtTimer.is25MSPeriod()) {
+	    DEBUGLOG("25ms");
+	    siInterface.checkPersonDetected();
+	    siInterface.checkPageChangeDetected();
+	    if (siInterface.isCfgDetected()) {
+	      mpPages->setPage(CFG_PAGE);
+	      //DEBUGLOG("cfg");
+	    }else if (siInterface.isPagechangeDetected() ){
+	      DEBUGLOG("next pp");
+	      mpPages->nextPage();
+	      DEBUGLOGF("next pp : %d\n",mpPages->page );
+	    } else if (siInterface.isPersonDetected() ){
+	        matrix.switchScreenStatus(SWITCH_ON_SCREEN);
+	        if (wfManager->getHourManager()->isNextHour()) {
+	          String text;
+	          text = "il est " + String(hour()) + " heure";// et " + String(minute()) + " minute." + FPSTR (weatherString[pPeriferic.getTrendMeteo()]);
+	          //sprintf(text,)
+	          pPeriferic.sendToVoiceBox(text);
+	        }
+
+	    } else {
+	      //DEBUGLOG("nobody detected");
+	      matrix.switchScreenStatus(SWITCH_OFF_SCREEN);
+	      mpPages->setPage(MESSAGE_PAGE);
+	    }
+	  }
+	  if (matrix.isScreenActivated()) {
+	    mpPages->displayPage();
+	    matrix.displayScreen();
+
+	  } else {
+	    if (mtTimer.is1MNPeriod()){
+	      pPeriferic.retrievePeriphericInfo();
+	    }
+	  }
+
+	if (mtTimer.is1MNPeriod()){
+	  boolean nowDetection = siInterface.isPersonDetected();
+
+	  if (((!previousPresence && nowDetection) || (previousPresence && !nowDetection)) || mtTimer.is30MNPeriod()  ) {
+	    sfManager.addVariable(PRESENCE_LABEL, String (nowDetection));
+	    DEBUGLOG(sfManager.toString(STD_TEXT));
+	    int res = sfManager.sendIoT( smManager.m_privateKey, smManager.m_publicKey);
+	    DEBUGLOGF("sendIoT : %d\n",res );
+	    previousPresence = nowDetection;
+	  }
+	}
+*/
+	if (mtTimer.is5MNPeriod()) {
+	  if (!WiFi.isConnected()) {
+	    ESP.restart();
+	  }
+	  //mpPages->setPage(MESSAGE_PAGE);
+	}
+
+
+	  mtTimer.clearPeriod();
+
+}
