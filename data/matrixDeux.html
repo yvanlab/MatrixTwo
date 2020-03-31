@@ -1,0 +1,375 @@
+
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body {
+	font-family: Arial;
+}
+
+/* Style the tab */
+.tab {
+	overflow: hidden;
+	border: 1px solid #ccc;
+	background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+	background-color: inherit;
+	float: left;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	padding: 14px 16px;
+	transition: 0.3s;
+	font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+	background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+	background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+	display: none;
+	padding: 6px 12px;
+	border: 1px solid #ccc;
+	border-top: none;
+}
+</style>
+</head>
+<body>
+	<p>&nbsp;</p>
+	<h1 style="text-align: center;">
+		<span id="modulename">Module</span> configuration
+	</h1>
+	<div style="text-align: center;">
+		<p>
+			Version : <span id="version">3.0</span>
+		</p>
+	</div>
+	<div style="text-align: center;">
+		<p>
+			Date build : <span id="builddate">10/08/1900</span>
+		</p>
+	</div>
+	<div style="text-align: center;">
+		<p>
+			Up time : <span id="uptime">un moment</span>
+		</p>
+	</div>
+	<div style="text-align: center;">
+		<p>
+			<a href="/credential">Credentials</a>/<a href="/reset">Wifi Reset</a>/<a
+				href="/restart">Restart</a>
+		</p>
+	</div>
+	<hr
+		style="margin-top: 51px; margin-left: auto; width: 177px; margin-right: auto;" />
+	<div>
+		<h3 style="height: 3px;">Temperature</h3>
+	</div>
+	<div>
+		<hr />
+		<table style="height: 21px; width: 429.6px; float: left;">
+			<tbody>
+				<tr>
+					<td style="width: 101px;">
+						<h1 id="temp" style="text-align: center;">25c</h1>
+					</td>
+					<td style="width: 314.6px;">
+						<table style="height: 34px; width: 177px; float: left;">
+							<tbody>
+								<tr>
+									<td style="width: 52px; text-align: center;">min</td>
+									<td style="width: 52px; text-align: center;">max</td>
+									<td style="width: 53px; text-align: center;">tend</td>
+								</tr>
+								<tr>
+									<td id="tempMin" style="width: 52px; text-align: center;">10c</td>
+									<td id="tempMax" style="width: 52px; text-align: center;">25c</td>
+									<td id="tempTrend" style="width: 53px; text-align: center;">&nbsp;</td>
+								</tr>
+							</tbody>
+						</table>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		&nbsp;
+	</div>
+	<br />
+	<br />
+	<div>
+		<h3 style="height: 4px; text-align: left">Prevision</h3>
+		<hr />
+	</div>
+	<div>
+		<p>Tendance blablabla</p>
+	</div>
+	
+	<div>
+		<h3 style="height: 3px;">Pages Configuration</h3>
+		<hr />
+	</div>
+	<span id="lstCfg">cfg</span>
+<!-- 	<div> -->
+		
+<!-- 		<input type="checkbox" -->
+<!-- 			onchange="changeSetting(0x20,100,'displaypage', this.checked )" />Heure -->
+<!-- 	</div> -->
+<!-- 	<div> -->
+<!-- 		<input type="checkbox" -->
+<!-- 			onchange="changeSetting(0x1,101,'displaypage', this.checked )" />Temperature -->
+<!-- 	</div> -->
+<!-- 	<div> -->
+<!-- 		<input type="checkbox" -->
+<!-- 			onchange="changeSetting(0x2,102,'displaypage', this.checked )" />Meteo -->
+<!-- 	</div> -->
+<!-- 	<div> -->
+<!-- 		<input type="checkbox" -->
+<!-- 			onchange="changeSetting(0x4,104,'displaypage', this.checked )" />Open -->
+<!-- 		Bar -->
+<!-- 	</div> -->
+<!-- 	<div> -->
+<!-- 		<input type="checkbox" -->
+<!-- 			onchange="changeSetting(0x8,105,'displaypage', this.checked )" />Joyeux -->
+<!-- 		Noel -->
+<!-- 	</div> -->
+<!-- 	<div> -->
+<!-- 		<input type="checkbox" -->
+<!-- 			onchange="changeSetting(0x10,106,'displaypage', this.checked )" />Bonne -->
+<!-- 		Annee -->
+<!-- 	</div> -->
+<!-- 	<div> -->
+<!-- 		<input type="checkbox" -->
+<!-- 			onchange="changeSetting(0x40,110,'displaypage', this.checked )" />Page -->
+<!-- 		1 -->
+<!-- 	</div> -->
+<!-- 	<div> -->
+<!-- 		<input type="checkbox" -->
+<!-- 			onchange="changeSetting(0x80,111,'displaypage', this.checked )" />Page -->
+<!-- 		2 -->
+<!-- 	</div> -->
+<!-- 	<div> -->
+<!-- 		<input type="checkbox" -->
+<!-- 			onchange="changeSetting(0x100,112,'displaypage', this.checked )" />Page -->
+<!-- 		3 -->
+<!-- 	</div> -->
+<!-- 	<div> -->
+<!-- 		<input type="checkbox" -->
+<!-- 			onchange="changeSetting(0x8000,200,'displaypage', this.checked )" />Log -->
+<!-- 	</div> -->
+	<div>
+		<br />
+		<div>
+			<input id="defID" type="checkbox" onchange="changeSetting(0,0,'def', this.checked )"  /> defilement 
+			<input id="freqID" type="number" value="10"  onchange="changeSetting(0,0,'freq', this.value )" " />
+		</div>
+	</div>
+	<hr />
+
+
+	<h2>
+		Tabs
+		<button onclick="saveConfiguration()">Save</button>
+	</h2>
+	<p>Click on the buttons inside the tabbed menu:</p>
+
+	<div class="tab">
+		<button class="tablinks" onclick="openPage(event, 'P1')">Page
+			1</button>
+		<button class="tablinks" onclick="openPage(event, 'P2')">Page
+			2</button>
+		<button class="tablinks" onclick="openPage(event, 'P3')">Page
+			3</button>
+	</div>
+
+	<div id="P1" class="tabcontent">
+		<h3>
+			<span id="namePage0">Files</span>
+		</h3>
+		<i><b><span id="lstPage0">Files</span></b></i>
+	</div>
+
+	<div id="P2" class="tabcontent">
+		<h3>
+			<span id="namePage1">Files</span>
+		</h3>
+		<i><b><span id="lstPage1">Files</span></b></i>
+	</div>
+
+	<div id="P3" class="tabcontent">
+		<h3>
+			<span id="namePage2">Files</span>
+		</h3>
+		<i><b><span id="lstPage2">Files</span></b></i>
+	</div>
+
+
+
+	<script>
+		
+			function saveConfiguration() {
+				var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						update(this.responseText)
+					}
+				};
+	
+				xhttp.open("GET", "save",true);
+				xhttp.send();	
+			}
+		
+			function openPage(evt, cityName) {
+				var i, tabcontent, tablinks;
+				tabcontent = document.getElementsByClassName("tabcontent");
+				for (i = 0; i < tabcontent.length; i++) {
+					tabcontent[i].style.display = "none";
+				}
+				tablinks = document.getElementsByClassName("tablinks");
+				for (i = 0; i < tablinks.length; i++) {
+					tablinks[i].className = tablinks[i].className.replace(
+							" active", "");
+				}
+				document.getElementById(cityName).style.display = "block";
+				evt.currentTarget.className += " active";
+			}
+			
+			function changeSetting(pID, oID, act, val) {
+				document.getElementById("version").innerHTML = val;
+				var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						update(this.responseText)
+					}
+				};
+				document.getElementById("version").innerHTML = val;
+				xhttp.open("GET", "setData?obj=" + oID+ "&page=" + pID + "&" + act + "=" + String(val).replace("#",""),
+						true);
+				xhttp.send();
+			};
+
+			function update(responseText) {
+				var myObj = JSON.parse(responseText);
+				document.getElementById("builddate").innerHTML = myObj.module.build_date;
+				document.getElementById("version").innerHTML = myObj.module.version;
+				document.getElementById("modulename").innerHTML = myObj.module.nom;
+				document.getElementById("uptime").innerHTML = myObj.module.uptime;
+
+				document.getElementById("temp").innerHTML = myObj.bmp.Btemperature.value;
+				document.getElementById("tempMax").innerHTML = myObj.bmp.Btemperature.maxValue;
+				document.getElementById("tempMin").innerHTML = myObj.bmp.Btemperature.minValue;
+				document.getElementById("tempTrend").innerHTML = myObj.bmp.Btemperature.trend;
+				
+				document.getElementById("defID").innerHTML = myObj.setting.displayedMode;
+				document.getElementById("freqID").innerHTML = myObj.setting.displayedFreq;
+				
+				
+				/* Build cfg */
+				var res = "";
+				var tmp="";
+				var page ;
+				res = buildDisplayPages(myObj.setting.predefpage );
+				res += buildDisplayPages(myObj.setting.page );
+				document.getElementById("lstCfg").innerHTML = res;
+				
+				for (i in myObj.setting.page) {
+				 	page = myObj.setting.page[i];
+					var pName = "Page"+ i;
+					document.getElementById("name"+pName).innerHTML = page.name;
+					res = "";
+					tmp="";
+					var lstType = ["Text","Heure","Date","Temperature","Temperature Min", "Temperature Max", "Tendances", "je ne sais pas"];
+					var lstFont = ["Petite","Moyenne","Grande"];
+					for (j in page.obj) {
+						var ob = page.obj[j];
+						res += '<hr />';
+						res += ob.id
+						if (ob.active==1)tmp="checked "; else tmp=" ";
+						res += '<input type="checkbox" ' + tmp + buildOnChangeSettingCheck( page.id, ob.id, "active") + '\>';
+						res += 'Type:<select name="type"' +  buildOnChangeSetting( page.id, ob.id, "type") + '\>';
+						res += buildDropdown(ob.type,lstType);
+						res += '</select>';
+						res += 'Font:<select name="type"' +  buildOnChangeSetting( page.id, ob.id, "font") + '\>';
+						res += buildDropdown(ob.font,lstFont);
+						res += '</select>';
+						res += 'Couleur<input type="color" value="' + ob.color + '"'
+							+ buildOnChangeSetting(page.id, ob.id, "color") + '\>';
+						
+						res += '<div>X:<input type="number" style = "padding-left:6px;width:60px;" value=' + ob.x
+						 		+ buildOnChangeSetting(page.id, ob.id, "x") + '\>';
+						
+						res += 'Y:<input type="number" style = "padding-left:6px;width:60px;" value=' + ob.y
+								+ buildOnChangeSetting(page.id, ob.id, "y") + '\>';
+		
+						res += '<br />Text<input type="edit" value=' + ob.txt
+								+ buildOnChangeSetting(page.id, ob.id, "txt") + '\>';
+					};
+					document.getElementById("lst"+pName).innerHTML = res;
+				};
+			};
+			
+			
+			function buildDisplayPages(lstPages ) {
+				var res = "";
+				var tmp="";
+				var page ;
+				for (i in lstPages) {					
+					page = lstPages[i];					
+					if (page.active==1)tmp="checked "; else tmp=" ";
+					res += '<input type="checkbox" ' + tmp + buildOnChangeSettingCheck( page.id, 100, "displaypage")+'\>' + page.name + '<br>';
+				}
+				return res;
+			}
+			
+			function buildOnChangeSettingCheck(pID, oID,oTXT) {
+				var res = ' onchange="changeSetting('
+					+ pID + ',' + oID + ',\'' + oTXT + '\',this.checked)"';
+				return res;
+			}
+			
+			function buildOnChangeSetting(pID, oID,oTXT) {
+				var res = ' onchange="changeSetting('
+					+ pID + ',' + oID + ',\'' + oTXT + '\',this.value)"';
+				return res;
+			}
+			
+			function buildDropdown(sel,lstOption) {
+				
+				
+				var res = "";
+				for (i in lstOption) {
+					var selected=" ";
+					if (i==sel) selected=" selected";
+					res += '<option value='+ i + selected +' >' + lstOption[i] + '</option>';
+				};
+				
+			  return res
+			}
+
+			function init() {
+				var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						update(this.responseText)
+					}
+				};
+
+				xhttp.open("GET", "status", true);
+				xhttp.send();
+			}
+			window.onload = init;
+		</script>
+
+</body>
+</html>
