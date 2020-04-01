@@ -32,7 +32,7 @@
 *.out
 *.app
 
-.pio
+# .pio
 .pioenvs
 .piolibdeps
 .clang_complete
