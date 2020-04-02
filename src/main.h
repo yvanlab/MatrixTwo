@@ -5,19 +5,19 @@
 #include <Arduino.h>
 
 
-#include <WifiManagerV2.h>
+#include <wifiManagerV2.h>
 #include <myTimer.h>
 //#include <FlashLed.h>
 
 //#include <ESP8266HTTPClient.h>
 //#include <SPI.h>
 
-#include "SettingManager.h"
+#include "settingManager.h"
 
 #include "networkUI.h"
 
 //#include "thingSpeakManager.h"
-#include "MatrixPages.h"
+#include "matrixPages.h"
 #include "BMPManagerV2.h"
 #include <presenceHelper.h>
 #include <thingSpeakManager.h>
@@ -45,7 +45,7 @@ extern SettingManager      *smManager;
 extern WifiManager         *wfManager;
 extern BMPManagerV2		   *bmpMesure;
 extern MatrixPages         *mpPages;
-
+extern SettingManager 	   *smManager;
 
 #ifdef MCPOC_TELNET
 //extern RemoteDebug          Debug;

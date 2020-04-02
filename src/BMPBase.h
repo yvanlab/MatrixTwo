@@ -12,9 +12,9 @@
 #include "WProgram.h"
 
 #endif
-//#include "BaseManager.h"
+//#include "baseManager.h"
 
-#include "SensorBase.h"
+#include "sensorBase.h"
 
 #include <Wire.h>
 #include <Sodaq_BMP085.h>

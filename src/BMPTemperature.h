@@ -12,10 +12,10 @@
 #include "WProgram.h"
 
 #endif
-//#include "BaseManager.h"
+//#include "baseManager.h"
 
 #include "BMPBase.h"
-//#include <SensorBase.h>
+//#include <sensorBase.h>
 #include <Sodaq_BMP085.h>
 
 class BMPTemperature : public BMPBase

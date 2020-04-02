@@ -12,12 +12,12 @@
 #include "WProgram.h"
 
 #endif
-//#include "BaseManager.h"
+//#include "baseManager.h"
 
 #include "BMPBase.h"
 
 //#include <DHT.h>
-//#include <SensorBase.h>
+//#include <sensorBase.h>
 //#include <Wire.h>
 #include <Sodaq_BMP085.h>
 #define BPM_TEMPS_BEAU     1 //:   > 1020               :  Beau ou assez beau. Journées chaudes, nuits fraîches.

@@ -15,8 +15,8 @@
 
 //
 
-#include "BaseManager.h"
-#include "SettingManager.h"
+#include "baseManager.h"
+#include "settingManager.h"
 //#include "main.h"
 //#include <Ticker.h>
 #include <PxMatrix.h>

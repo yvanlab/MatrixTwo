@@ -45,6 +45,9 @@ void processCmdRemoteDebug() {
 
 
 void startWiFiserver() {
+	wfManager->getServer()->on("/firmware", firmware);
+	wfManager->getServer()->on("/clear", clearEEPROM);
+
 	if (wfManager->begin(IPAddress(MODULE_IP), MODULE_NAME, MODULE_MDNS,
 			MODULE_MDNS_AP) == WL_CONNECTED) {
 		wfManager->getServer()->on("/", dataPage);
@@ -120,6 +123,14 @@ void  setup(void) {
 	mtTimer.setCustomMS(1000);
 	
 	thinkSpeakMgr = new thingSpeakManager(PIN_LED);
+
+
+	//DEBUGLOG(configurationMgr->toString(STD_TEXT));
+  	if(!SPIFFS.begin(true)){
+        Serial.println("SPIFFS Mount Failed");
+        return;
+    }else Serial.println("SPIFFS Mount OK");
+
 
 	xTaskCreatePinnedToCore(
 			screemManagement,   /* Task function. */

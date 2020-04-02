@@ -1,8 +1,10 @@
 
 
-#include "MatrixPages.h"
+#include "matrixPages.h"
+
 //#include "myTimer.h"
-//#include "SettingManager.h"
+//#include "settingManager.h"
+
 #include "main.h"
 
 #include "constString.h"
@@ -61,7 +63,7 @@ MatrixPages::MatrixPages(unsigned char pinLed) : BaseManager(pinLed){
 	randomSeed(analogRead(0));
 	//m_myCOLORS[8]={myRED,myGREEN,myBLUE,myWHITE,myYELLOW,myCYAN,myMAGENTA,myBLACK};
 
-}
+};
 
 void MatrixPages::begin(){
 
@@ -129,7 +131,10 @@ void MatrixPages::displayPage(){
 
 
 	Page *pp=smManager->getPage(page);
-	if (pp != NULL) {
+	if (pp != NULL  && pp->id == TEST_PAGE_ID) {
+		displayStopPage();
+	
+	} else 	if (pp != NULL) {
 		displayScreen(pp);
 	} else {
 		DEBUGLOGF("Display Error %d\n",page);
@@ -137,6 +142,8 @@ void MatrixPages::displayPage(){
 		tp.element[0].set(Element::TEXT,2,15,"PROBLEME",Element::SMALL,0,0,255,true);
 		displayScreen(&tp);
 	}
+
+
 
 	/*Page pp;
 	switch (page) {
@@ -322,7 +329,7 @@ void MatrixPages::displayScreen(Page *page){
 				sprintf(tmpString,"%2.1f",bmpMesure->getTemperatureSensor()->getAverage());
 				m_display.print(page->element[i].txt + tmpString);
 			}else if (page->element[i].type == Element::TEMP_MIN) {
-				sprintf(tmpString,"%2.1f",bmpMesure->getTemperatureSensor()->getLastMinValue());
+				sprintf(tmpString,"%2.1fFreeMonoBoldOblique9pt7b",bmpMesure->getTemperatureSensor()->getLastMinValue());
 				m_display.print(page->element[i].txt + tmpString);
 			}else if (page->element[i].type == Element::TEMP_MAX) {
 				sprintf(tmpString,"%2.1f",bmpMesure->getTemperatureSensor()->getLastMaxValue());
@@ -426,7 +433,7 @@ void MatrixPages::displayMeteoPage(){
     		+"-"+FPSTR (weatherString[bmpMesure->getPressionSensor()->getWeatherTrend()]);
     m_display.setCursor(2,0);
     m_display.setTextColor(m_display.color565(255, 255, 0));
-    m_display.print(ss.c_str());
+
     ss = String(bmpMesure->getTemperatureSensor()->getValue(),1) + "C,"
     	+ String(bmpMesure->getTemperatureSensor()->getLastMaxValue(),1) + "C,"
 		+ String(bmpMesure->getTemperatureSensor()->getLastMinValue(),1) + "C";
@@ -442,11 +449,40 @@ String MatrixPages::toString(boolean bJson){
 }
 
 
+
+
+
 void MatrixPages::displayStopPage(){
- /* if (manageTransition(FROM_RIGHT) || mtTimer.is25MSPeriod()) {
-    siInterface.readSensor(TIMEOUT_DETECTION_FAR);
-    //matrix.clear();
-    matrix.drawText(0,0,"STUP",font8_16, false);
-    //matrix.drawText(40,0,String(millis() - siInterface.cfgDetectedTime).c_str(),font8_16, false);
-  }*/
+	m_display.clearDisplay();
+	m_display.setCursor(32, 16);
+	//m_display.drawBitmap();
+	int ss = 6*second();
+	int mn = 6*minute();
+	int hh = 30*hourFormat12();
+
+	m_display.drawCircle(32,16,12,m_display.color565(0,0,255));
+	m_display.drawLine(32,16,32+10.0*sin(mn),16+10.0*cos(mn), m_display.color565(0,255,0));
+	m_display.drawLine(32,16,32+5.0*sin(hh),16+5.0*cos(hh), m_display.color565(255,0,0));
+	m_display.drawLine(32,16,32+10.0*sin(ss),16+10.0*cos(ss), m_display.color565(255,255,0));
+	
+	m_display.setFont(&TomThumb);
+	m_display.setCursor(0, 6);
+    m_display.print(String(ss).c_str());
+	m_display.setCursor(0, 13);
+	m_display.print(String(mn).c_str());
+	m_display.setCursor(0, 19);
+	m_display.print(String(hh).c_str());	
+	
+	m_display.setCursor(46, 6);
+    m_display.print(String(second()).c_str());
+	m_display.setCursor(46, 13);
+	m_display.print(String(minute()).c_str());
+	m_display.setCursor(46, 19);
+	m_display.print(String(hourFormat12()).c_str());	
+
+
+	m_display.setCursor(32, 31);	
+	m_display.print(NTP.getTimeStr().c_str());		
+	
+
 }

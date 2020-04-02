@@ -1,6 +1,6 @@
 
 
-#include "SettingManager.h"
+#include "settingManager.h"
 #include "main.h"
 
 
@@ -52,6 +52,24 @@ unsigned char SettingManager::readData(){
   predefinedPage[1].set(OPENBAR_PAGE_ID,OPENBAR_PAGE_NAME,2);
   predefinedPage[1].element[0].set(Element::TEXT,2,12,"Open",Element::BIG,0,0,255,true);
   predefinedPage[1].element[1].set(Element::TEXT,30,27,"bar",Element::BIG,255,255,255,true);
+
+  predefinedPage[2].set(NOEL_PAGE_ID,NOEL_PAGE_NAME,2);
+  predefinedPage[2].element[0].set(Element::TEXT,0,11,"Joyeux",Element::MEDIUM,255,0,0,true);
+  predefinedPage[2].element[1].set(Element::TEXT,25,25,"Noel",Element::MEDIUM,255,255,0,true);
+
+  predefinedPage[3].set(NEWYEAR_PAGE_ID,NEWYEAR_PAGE_NAME,3);
+  predefinedPage[3].element[0].set(Element::TEXT,24,11,"Annee",Element::MEDIUM,0,255,0,true);
+  predefinedPage[3].element[1].set(Element::TEXT,10,11,"Bonne",Element::BIG,0,0,255,true);
+  predefinedPage[3].element[2].set(Element::TEXT,21,28,"2020",Element::BIG,255,0,0,true);
+
+  predefinedPage[4].set(METEO_PAGE_ID,METEO_PAGE_NAME,2);
+  predefinedPage[4].element[0].set(Element::TEXT,0,11,"Meteo",Element::MEDIUM,255,0,0,true);
+  predefinedPage[4].element[1].set(Element::TEXT,25,25,"Chez pas",Element::MEDIUM,255,255,0,true);
+
+  predefinedPage[5].set(TEST_PAGE_ID,TEST_PAGE_NAME,1);
+  predefinedPage[5].element[0].set(Element::TEXT,0,11,"Test",Element::MEDIUM,255,0,0,true);
+
+
 
   switchOff();
   return m_iEEprom;

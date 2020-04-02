@@ -15,7 +15,7 @@
 //#include <DHT.h>
 #include "BMPPression.h"
 #include "BMPTemperature.h"
-//#include "BaseManager.h"
+//#include "baseManager.h"
 
 
 

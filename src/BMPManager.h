@@ -14,7 +14,7 @@
 #endif
 #include <Wire.h>
 #include <Sodaq_BMP085.h>
-#include "BaseManager.h"
+#include "baseManager.h"
 
 #define BPM_TEMPS_BEAU     1 //:   > 1020               :  Beau ou assez beau. Journées chaudes, nuits fraîches.
 #define BPM_TEMPS_ORAGEUX  2 //: De 1013 à 1020 hPa	  :  Assez beau ou ondées orageuses. Journées chaudes, nuits un peu fraîches.

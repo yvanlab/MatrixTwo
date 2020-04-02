@@ -7,5 +7,8 @@ void dataJson();
 void setData();
 void saveConfiguration();
 void dataPage();
+void firmware();
+void clearEEPROM ();
+
 
 #endif

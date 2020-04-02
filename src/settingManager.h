@@ -40,16 +40,20 @@
 #define CUSTOM_2_PAGE_ID  		0b0000010000000000 //0x100
 
 
-#define CFG_PAGE_ID     	0b1000000000000000 //0x8000
-#define CFG_PAGE_NAME     	"cfg"
+#define TEST_PAGE_ID 	    0b0100000000000000
+#define TEST_PAGE_NAME 	    "Test"
 
-#define ETEINDRE_PAGE_ID 	0b0000000000000000
-#define ETEINDRE_PAGE_NAME 	"Eteindre"
+#define CFG_PAGE_ID     	    0b1000000000000000 //0x8000
+#define CFG_PAGE_NAME     	    "cfg"
+
+#define ETEINDRE_PAGE_ID 	    0b0000000000000000
+#define ETEINDRE_PAGE_NAME 	    "Eteindre"
+
 
 
 
 #include <EEPROM.h>
-#include <BaseManager.h>
+#include <baseManager.h>
 #include <BaseSettingManager.h>
 
 class Element
@@ -194,7 +198,7 @@ class SettingManager : public BaseSettingManager
 
 
     static const uint8_t nbCustomPages = 3;
-    static const uint8_t predefnbPages = 2;
+    static const uint8_t predefnbPages = 6;
     Page 	customPage[nbCustomPages];
     Page 	predefinedPage[predefnbPages];
 
