@@ -59,7 +59,7 @@
 class Element
 {
 public:
-	enum OBJECT_TYPE {TEXT=0, HOUR=1, DATE=2,TEMP=3, TEMP_MIN=4, TEMP_MAX=5, TEMP_TREND=6};
+	enum OBJECT_TYPE {TEXT=0, HOUR=1, DATE=2,WATCH=3, TEMP=4, TEMP_MIN=5, TEMP_MAX=6, TEMP_TREND=7 };
 	enum FONT_TYPE {SMALL=0, MEDIUM=1, BIG=2};
 
 	Element () {};
@@ -101,11 +101,11 @@ public:
 class Page
 {
 public:
-	uint8_t nbElement = 3;
+	uint8_t nbElement = 6;
 	uint8_t active = 0;
 	uint16_t id;
 	String name;
-	Element element[3];
+	Element element[6];
 	Page () {};
 
 	void set(uint16_t _id, String _name, uint8_t _nbElts) {

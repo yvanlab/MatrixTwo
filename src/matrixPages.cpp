@@ -290,7 +290,16 @@ void MatrixPages::displayJoyeuxNoel(){
 }
 
 //static int16_t xDec=0;
-
+String MatrixPages::buildTxt(String txt, String var) {
+	String res=txt;
+	if (txt.indexOf("{s}")>=0)
+		res.replace("{s}",var );
+	else
+		res += var;
+	DEBUGLOGF ("buildTxt %s,%s = [%s]\n",txt.c_str(), var.c_str(), res.c_str() );
+	
+	return res;
+}
 
 void MatrixPages::displayScreen(Page *page){
 
@@ -317,27 +326,40 @@ void MatrixPages::displayScreen(Page *page){
 			}
 
 			m_display.setCursor(page->element[i].x,page->element[i].y);
+			uint16_t color = m_display.color565(page->element[i].red, page->element[i].green,page->element[i].blue);
 
-			m_display.setTextColor(m_display.color565(page->element[i].red, page->element[i].green,page->element[i].blue));
+			m_display.setTextColor(color);
 			if (page->element[i].type == Element::TEXT) {
 				m_display.print(page->element[i].txt);
 			} else if (page->element[i].type == Element::HOUR) {
-				m_display.print(page->element[i].txt + NTP.getTimeStr());
+				m_display.print(buildTxt(page->element[i].txt,NTP.getTimeStr()));
 			}else if (page->element[i].type == Element::DATE) {
-				m_display.print(page->element[i].txt + NTP.getDateStr());
+				m_display.print(buildTxt(page->element[i].txt, NTP.getDateStr()));
 			}else if (page->element[i].type == Element::TEMP) {
 				sprintf(tmpString,"%2.1f",bmpMesure->getTemperatureSensor()->getAverage());
-				m_display.print(page->element[i].txt + tmpString);
+				m_display.print(buildTxt(page->element[i].txt , tmpString));
 			}else if (page->element[i].type == Element::TEMP_MIN) {
-				sprintf(tmpString,"%2.1fFreeMonoBoldOblique9pt7b",bmpMesure->getTemperatureSensor()->getLastMinValue());
-				m_display.print(page->element[i].txt + tmpString);
+				sprintf(tmpString,"%2.1f",bmpMesure->getTemperatureSensor()->getLastMinValue());
+				m_display.print(buildTxt(page->element[i].txt, tmpString));
 			}else if (page->element[i].type == Element::TEMP_MAX) {
 				sprintf(tmpString,"%2.1f",bmpMesure->getTemperatureSensor()->getLastMaxValue());
-				m_display.print(page->element[i].txt  + tmpString);
+				m_display.print(buildTxt(page->element[i].txt, tmpString));
 			}else if (page->element[i].type == Element::TEMP_TREND) {
-				sprintf(tmpString,"%2.1f",bmpMesure->getTemperatureSensor()->getTrend());
-				m_display.print(tmpString);
+				displayTrend(page->element[i].x,page->element[i].y, color,
+					bmpMesure->getTemperatureSensor()->getTrend());
+				//sprintf(tmpString,"%2.1f",bmpMesure->getTemperatureSensor()->getTrend());
+				//m_display.print(tmpString);
+			}else if (page->element[i].type == Element::WATCH) {
+				uint8_t r = 15;
+				if (!page->element[i].txt.isEmpty()){					
+					r = page->element[i].txt.toInt();
+				}
+				displayWatch(page->element[i].x, page->element[i].y, r, color );
+				
 			}
+
+
+
 		}
 	}
 }
@@ -449,39 +471,108 @@ String MatrixPages::toString(boolean bJson){
 }
 
 
+void MatrixPages::displayWatch(uint8_t x, uint8_t y, uint8_t r,  uint16_t color ){
+	
+	double ss = radians(6*second());
+	double mn = radians(6*minute());
+	double hh = radians(30.0*hourFormat12() + (3.0*minute())/6.0);
+	double ssTige = r*0.9;
+	double hhTige = r*0.7;
+	double mnTige = r*0.9;
 
+	/*for (uint8_t h=0;h<360; h++) {
+		m_display.drawPixel(x+r*sin(radians(h)),y-r*cos(radians(h)),color );	//1	
+	}*/
+
+	m_display.drawCircle(x,y,r,color);
+	//m_display.fillCircle(x,y,r,color);
+	m_display.drawPixel(x,y+r-1,color); //
+	m_display.drawPixel(x,y-r+1,color);
+	m_display.drawPixel(x-r+1,y,color);
+	m_display.drawPixel(x+r-1,y,color);	
+	uint16_t hhColor = m_display.color565(255,255,255);
+	for (uint8_t h=0;h<4; h++) {
+		float si = r*sin(radians(h*30));
+		float co = r*cos(radians(h*30));
+		m_display.drawPixel(x+si,y-co,hhColor );	//1	
+		m_display.drawPixel(x+si,y+co,hhColor );	//1	
+		m_display.drawPixel(x-si,y-co,hhColor );	//1	
+		m_display.drawPixel(x-si,y+co,hhColor );	//1	
+	}
+/*	m_display.drawPixel(x+mnTige*sin(radians(30)),y-mnTige*cos(radians(30)),hhColor );	//1
+	m_display.drawPixel(x+mnTige*sin(radians(60)),y-mnTige*cos(radians(60)),hhColor );	//2
+	m_display.drawPixel(x+mnTige*sin(radians(120)),y-mnTige*cos(radians(120)),hhColor );	//4
+m_display.drawPixel(x+mnTige*sin(radians(120)),y-mnTige*cos(radians(120)),hhColor );	//4	*/
+
+
+	m_display.drawLine(x,y,x+mnTige*sin(mn),y-mnTige*cos(mn), m_display.color565(0,255,0));
+	m_display.drawLine(x,y,x+hhTige*sin(hh),y-hhTige*cos(hh), m_display.color565(255,0,0));
+	m_display.drawLine(x,y,x+ssTige*sin(ss),y-ssTige*cos(ss), m_display.color565(255,255,255));
+
+	/*m_display.setCursor(50, 6);
+    m_display.print(String(second()).c_str());*/
+}
+
+void MatrixPages::displayTrend(uint8_t x, uint8_t y, uint16_t color, float trend) {
+	uint8_t size = 5;
+	if (trend == 0) {
+		m_display.drawLine(x,y,x+size,y, color);	
+		m_display.drawLine(x,y+1,x+size,y+1, color);	
+		m_display.drawLine(x,y+2,x+size,y+2, color);			
+		m_display.drawPixelRGB565(x+size+1,y+1, color);			
+		m_display.drawPixelRGB565(x+size-2,y+3, color);			
+		m_display.drawPixelRGB565(x+size-2,y-1, color);			
+	} else if (trend < 0) {
+		m_display.drawLine(x,y,x+size,y+4, color);	
+		m_display.drawLine(x,y+1,x+size,y+5, color);	
+		m_display.drawLine(x,y+2,x+size,y+6, color);			
+	} else {
+		m_display.drawLine(x,y,x+size,y-4, color);	
+		m_display.drawLine(x,y+1,x+size,y-3, color);	
+		m_display.drawLine(x,y+2,x+size,y-2, color);			
+
+		m_display.drawPixelRGB565(x+size+1,y-3, color);			
+		m_display.drawPixelRGB565(x+size-2,y-4, color);			
+		m_display.drawPixelRGB565(x+size-2,y, color);			
+
+	}
+	/*m_display.setCursor(50, 6);
+    m_display.print(String(trend).c_str());*/
+
+}
 
 
 void MatrixPages::displayStopPage(){
 	m_display.clearDisplay();
 	m_display.setCursor(32, 16);
 	//m_display.drawBitmap();
-	int ss = 6*second();
-	int mn = 6*minute();
-	int hh = 30*hourFormat12();
+	double ss = radians(6*second());
+	double mn = radians(6*minute());
+	double hh = radians(30*hourFormat12());
 
-	m_display.drawCircle(32,16,12,m_display.color565(0,0,255));
-	m_display.drawLine(32,16,32+10.0*sin(mn),16+10.0*cos(mn), m_display.color565(0,255,0));
-	m_display.drawLine(32,16,32+5.0*sin(hh),16+5.0*cos(hh), m_display.color565(255,0,0));
-	m_display.drawLine(32,16,32+10.0*sin(ss),16+10.0*cos(ss), m_display.color565(255,255,0));
+	m_display.drawCircle(17,16,15,m_display.color565(0,0,255));
+	m_display.drawLine(17,16,17+14.0*sin(mn),16-14.0*cos(mn), m_display.color565(0,255,0));
+	m_display.drawLine(17,16,17+10.0*sin(hh),16-10.0*cos(hh), m_display.color565(255,0,0));
+	m_display.drawLine(17,16,17+15.0*sin(ss),16-15.0*cos(ss), m_display.color565(255,255,0));
 	
 	m_display.setFont(&TomThumb);
-	m_display.setCursor(0, 6);
+	m_display.setTextColor(m_display.color565(255,255,255));
+	/*m_display.setCursor(0, 6);
     m_display.print(String(ss).c_str());
 	m_display.setCursor(0, 13);
 	m_display.print(String(mn).c_str());
 	m_display.setCursor(0, 19);
-	m_display.print(String(hh).c_str());	
+	m_display.print(String(hh).c_str());	*/
 	
-	m_display.setCursor(46, 6);
+	m_display.setCursor(50, 6);
     m_display.print(String(second()).c_str());
-	m_display.setCursor(46, 13);
+	m_display.setCursor(50, 13);
 	m_display.print(String(minute()).c_str());
-	m_display.setCursor(46, 19);
+	m_display.setCursor(50, 19);
 	m_display.print(String(hourFormat12()).c_str());	
 
 
-	m_display.setCursor(32, 31);	
+	m_display.setCursor(35, 31);	
 	m_display.print(NTP.getTimeStr().c_str());		
 	
 

@@ -27,9 +27,9 @@ unsigned char SettingManager::readData(){
   displayedFrequence = readEEPROM();
 
 
-  customPage[0].set(CUSTOM_0_PAGE_ID, "cust1", 3);
-  customPage[1].set(CUSTOM_1_PAGE_ID, "cust2", 3);
-  customPage[2].set(CUSTOM_2_PAGE_ID, "cust3", 3);
+  customPage[0].set(CUSTOM_0_PAGE_ID, "cust1", 6);
+  customPage[1].set(CUSTOM_1_PAGE_ID, "cust2", 6);
+  customPage[2].set(CUSTOM_2_PAGE_ID, "cust3", 6);
   /*Page 	tmpPage[3];
   readPage(&tmpPage[0]);
   readPage(&tmpPage[1]);
@@ -42,11 +42,16 @@ unsigned char SettingManager::readData(){
   }else{
 		DEBUGLOG("EEPROM version not correct ==> use default values");
   }
+  customPage[0].nbElement = 6;
+  customPage[1].nbElement = 6;
+  customPage[2].nbElement = 6;
+
+
 //Custom Page
 
   //Predefined Page
   predefinedPage[0].set(HOUR_PAGE_ID,HOUR_PAGE_NAME,2);
-  predefinedPage[0].element[0].set(Element::DATE,21,8,"",Element::SMALL,255,255,255,true);
+  predefinedPage[0].element[0].set(Element::DATE,20,8,"",Element::SMALL,255,255,255,true);
   predefinedPage[0].element[1].set(Element::HOUR,0,24,"",Element::BIG,0,0,255,true);
 
   predefinedPage[1].set(OPENBAR_PAGE_ID,OPENBAR_PAGE_NAME,2);
@@ -54,8 +59,8 @@ unsigned char SettingManager::readData(){
   predefinedPage[1].element[1].set(Element::TEXT,30,27,"bar",Element::BIG,255,255,255,true);
 
   predefinedPage[2].set(NOEL_PAGE_ID,NOEL_PAGE_NAME,2);
-  predefinedPage[2].element[0].set(Element::TEXT,0,11,"Joyeux",Element::MEDIUM,255,0,0,true);
-  predefinedPage[2].element[1].set(Element::TEXT,25,25,"Noel",Element::MEDIUM,255,255,0,true);
+  predefinedPage[2].element[0].set(Element::TEXT,0,11,"Joyeux",Element::BIG,255,0,0,true);
+  predefinedPage[2].element[1].set(Element::TEXT,25,25,"Noel",Element::BIG,255,255,0,true);
 
   predefinedPage[3].set(NEWYEAR_PAGE_ID,NEWYEAR_PAGE_NAME,3);
   predefinedPage[3].element[0].set(Element::TEXT,24,11,"Annee",Element::MEDIUM,0,255,0,true);

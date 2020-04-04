@@ -46,7 +46,7 @@ void processCmdRemoteDebug() {
 
 void startWiFiserver() {
 	wfManager->getServer()->on("/firmware", firmware);
-	wfManager->getServer()->on("/clear", clearEEPROM);
+	wfManager->getServer()->on("/cleabr", clearEEPROM);
 
 	if (wfManager->begin(IPAddress(MODULE_IP), MODULE_NAME, MODULE_MDNS,
 			MODULE_MDNS_AP) == WL_CONNECTED) {

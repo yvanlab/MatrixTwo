@@ -112,6 +112,12 @@ class MatrixPages : public BaseManager
     void displayBonneAnnee();
     void displayCustomPage();
 
+
+    String buildTxt(String txt, String var);
+
+    void displayWatch(uint8_t x, uint8_t y, uint8_t r, uint16_t color );
+    void displayTrend(uint8_t x, uint8_t y,uint16_t color, float trend );
+
     String getClassName(){return "MatrixPages";}
 
     String toString(boolean bJson);
