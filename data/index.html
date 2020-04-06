@@ -268,6 +268,9 @@ body {
 		
 						res += '<br />Text<input type="edit" value=' + ob.txt
 								+ buildOnChangeSetting(page.id, ob.id, "txt") + '\>';
+						res += 'Image:<select name="type"' +  buildOnChangeSetting( page.id, ob.id, "txt") + '\>';
+								res += buildDropdown(ob.id,myObj.setting.lstBMP);
+						res += '</select>';
 					};
 					document.getElementById("lst"+pName).innerHTML = res;
 				};
