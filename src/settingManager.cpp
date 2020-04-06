@@ -14,10 +14,15 @@
 extern portMUX_TYPE 		wtimerMux;// = portMUX_INITIALIZER_UNLOCKED;
 #endif
 
+#include <SPIFFS.h>
+
+
 
 SettingManager::SettingManager(unsigned char pinLed) : BaseSettingManager(pinLed){
 
 }
+
+#include <SD.h>
 
 unsigned char SettingManager::readData(){
   BaseSettingManager::readData();
@@ -74,7 +79,20 @@ unsigned char SettingManager::readData(){
   predefinedPage[5].set(TEST_PAGE_ID,TEST_PAGE_NAME,1);
   predefinedPage[5].element[0].set(Element::TEXT,0,11,"Test",Element::MEDIUM,255,0,0,true);
 
-
+  // Read BMP List
+  String str = "";
+  File dir = SPIFFS.open("","r");
+  uint8_t iTab = 0;
+  while (dir.openNextFile()) {
+    str = dir.name();
+    if (str.indexOf(".bmp")>0 ) {
+      lstBMP[iTab] = new char[str.length()+1];
+      str.toCharArray(lstBMP[iTab],str.length());
+      iTab++;
+    }
+    dir.close();
+    DEBUGLOGF("BMP File %s\n", str.c_str());
+  }
 
   switchOff();
   return m_iEEprom;

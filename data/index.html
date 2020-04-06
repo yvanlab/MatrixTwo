@@ -204,7 +204,7 @@ body {
 				var xhttp = new XMLHttpRequest();
 				xhttp.onreadystatechange = function() {
 					if (this.readyState == 4 && this.status == 200) {
-						update(this.responseText)
+						//update(this.responseText)
 					}
 				};
 				document.getElementById("version").innerHTML = val;
@@ -243,7 +243,7 @@ body {
 					document.getElementById("name"+pName).innerHTML = page.name;
 					res = "";
 					tmp="";
-					var lstType = ["Text","Heure","Date","Montre", "Temperature","Temperature Min", "Temperature Max", "Tendances", "je ne sais pas"];
+					var lstType = ["Text","Heure","Date","Montre", "Temperature","Temperature Min", "Temperature Max", "Tendances", "Bitmap", "je ne sais pas"];
 					var lstFont = ["Petite","Moyenne","Grande"];
 					for (j in page.obj) {
 						var ob = page.obj[j];

@@ -6,14 +6,15 @@
 //#include "settingManager.h"
 
 #include "main.h"
+#include "BMPFile.h"
 
 #include "constString.h"
 
 #include <PxMatrix.h>
-#include <Fonts/FreeMonoBoldOblique9pt7b.h>
-#include <Fonts/FreeSerifBold24pt7b.h>
+//#include <Fonts/FreeMonoBoldOblique9pt7b.h>
+//#include <Fonts/FreeSerifBold24pt7b.h>
 #include <Fonts/FreeSerif9pt7b.h>
-#include <Fonts/FreeSerif12pt7b.h>
+//#include <Fonts/FreeSerif12pt7b.h>
 //#include <Fonts/Org_01.h>
 #include <Fonts/TomThumb.h>
 
@@ -82,7 +83,7 @@ void MatrixPages::begin(){
 	    m_display.display(0);
 	    delta_timer = micros() - start_timer;
 	    DEBUGLOGF("Display update latency in us: %ld\n",delta_timer);
-	    m_display.setFastUpdate(true);
+	    //m_display.setFastUpdate(true);
 
 #ifdef ESP8266
    display_ticker.attach(0.002, display_updater);
@@ -95,7 +96,8 @@ void MatrixPages::begin(){
 
    //timerAttachInterrupt(timer, &setDisplayTrigger, true);
    timerAttachInterrupt(timer, &MatrixPages::display_updater, true);
-   timerAlarmWrite(timer, 2000, true);
+   //timerAlarmWrite(timer, 2000, true);
+   timerAlarmWrite(timer, 5000, true);   
    timerAlarmEnable(timer);
  #endif
 
@@ -132,7 +134,7 @@ void MatrixPages::displayPage(){
 
 	Page *pp=smManager->getPage(page);
 	if (pp != NULL  && pp->id == TEST_PAGE_ID) {
-		displayStopPage();
+		displayTestPage();
 	
 	} else 	if (pp != NULL) {
 		displayScreen(pp);
@@ -296,7 +298,7 @@ String MatrixPages::buildTxt(String txt, String var) {
 		res.replace("{s}",var );
 	else
 		res += var;
-	DEBUGLOGF ("buildTxt %s,%s = [%s]\n",txt.c_str(), var.c_str(), res.c_str() );
+	//DEBUGLOGF ("buildTxt %s,%s = [%s]\n",txt.c_str(), var.c_str(), res.c_str() );
 	
 	return res;
 }
@@ -354,14 +356,18 @@ void MatrixPages::displayScreen(Page *page){
 				if (!page->element[i].txt.isEmpty()){					
 					r = page->element[i].txt.toInt();
 				}
-				displayWatch(page->element[i].x, page->element[i].y, r, color );
-				
-			}
-
-
-
+				displayWatch(page->element[i].x, page->element[i].y, r, color );		
+			 } else if (page->element[i].type == Element::BITMAP) {
+				String filename = "default.bmp";
+				if (!page->element[i].txt.isEmpty()){					
+					filename = page->element[i].txt;
+				}
+				displayBitmap(page->element[i].x, page->element[i].y, filename, page->element[i].id, page->element[i].isChanged);
+			 }
 		}
 	}
+	m_display.showBuffer();
+	DEBUGLOGF("freemem %d\n", ESP.getFreeHeap());
 }
 
 void MatrixPages::displayCfgPage(){
@@ -450,7 +456,7 @@ void MatrixPages::displayVMCPage(){
 
 void MatrixPages::displayMeteoPage(){
 	//if (manageTransition(FROM_RIGHT) || mtTimer.is1MNPeriod()) {
-	m_display.setFont(&FreeMonoBoldOblique9pt7b);
+	//m_display.setFont(&TomThumb);
     String ss = "METEO " + String( bmpMesure->getPressionSensor()->getWeatherTrend())
     		+"-"+FPSTR (weatherString[bmpMesure->getPressionSensor()->getWeatherTrend()]);
     m_display.setCursor(2,0);
@@ -515,6 +521,9 @@ m_display.drawPixel(x+mnTige*sin(radians(120)),y-mnTige*cos(radians(120)),hhColo
 
 void MatrixPages::displayTrend(uint8_t x, uint8_t y, uint16_t color, float trend) {
 	uint8_t size = 5;
+	uint8_t incline = size*0.7;
+	trend = -1;
+
 	if (trend == 0) {
 		m_display.drawLine(x,y,x+size,y, color);	
 		m_display.drawLine(x,y+1,x+size,y+1, color);	
@@ -525,15 +534,29 @@ void MatrixPages::displayTrend(uint8_t x, uint8_t y, uint16_t color, float trend
 	} else if (trend < 0) {
 		m_display.drawLine(x,y,x+size,y+4, color);	
 		m_display.drawLine(x,y+1,x+size,y+5, color);	
-		m_display.drawLine(x,y+2,x+size,y+6, color);			
-	} else {
-		m_display.drawLine(x,y,x+size,y-4, color);	
-		m_display.drawLine(x,y+1,x+size,y-3, color);	
-		m_display.drawLine(x,y+2,x+size,y-2, color);			
+		m_display.drawLine(x,y+2,x+size,y+6, color);	
+		
+		m_display.drawLine(x,y,x+incline,y+incline, color);	
+		m_display.drawLine(x+1,y+1,x+1+incline,y+1+incline, color);	
+		m_display.drawLine(x+2,y+2,x+2+incline,y+2+incline, color);	
 
-		m_display.drawPixelRGB565(x+size+1,y-3, color);			
-		m_display.drawPixelRGB565(x+size-2,y-4, color);			
-		m_display.drawPixelRGB565(x+size-2,y, color);			
+		color = m_display.color565(0,00,255);
+		m_display.drawLine(x-1+incline,y+incline,x+1+1+incline,y+1-1+incline, color);
+		m_display.drawLine(x+2+incline,y+2+1+incline,x+1+1+incline,y+1-1+incline, color);	
+
+
+	} else {
+		m_display.drawLine(x,y,x+incline,y-incline, color);	
+		m_display.drawLine(x+1,y+1,x+1+incline,y+1-incline, color);	
+		m_display.drawLine(x+2,y+2,x+2+incline,y+2-incline, color);	
+		
+		//color = m_display.color565(0,00,255);
+		m_display.drawLine(x-1+incline,y-incline,x+1+1+incline,y+1-1-incline, color);
+		m_display.drawLine(x+2+incline,y+2+1-incline,x+1+1+incline,y+1-1-incline, color);	
+		
+		/*m_display.drawPixelRGB565(x+size+1,y-3, color);			
+		drawPixelRGB565(x+size-2,y-4, color);			
+		m_display.drawPixelRGB565(x+size-2,y, color);*/
 
 	}
 	/*m_display.setCursor(50, 6);
@@ -542,38 +565,84 @@ void MatrixPages::displayTrend(uint8_t x, uint8_t y, uint16_t color, float trend
 }
 
 
+void MatrixPages::displayBitmap(uint8_t x, uint8_t y, String filename, uint8_t id, boolean isChanged) {
+	
+
+	if (isChanged &&  bitmapCache[id] != NULL) {
+		delete bitmapCache[id];
+		bitmapCache[id] = NULL;
+	}
+	
+	if (bitmapCache[id] == NULL) {
+		stopTimer();
+		bitmapCache[id] = new BMPFile;
+		if (bitmapCache[id]->loadBitmap(filename) != 0) {
+			delete bitmapCache[id];
+			bitmapCache[id] = NULL;
+			startTimer();		
+			return;
+		}
+		startTimer();				
+	}
+  	
+  	uint16_t *buffer = bitmapCache[id]->getBuffer();
+	uint16_t counter =0;
+ 	for (int yy = 0; yy < bitmapCache[id]->getHeight() ; yy++) {
+   		for (int xx = 0; xx < bitmapCache[id]->getWidth(); xx++){
+     		m_display.drawPixel(xx + x , yy + y,buffer[counter]);
+     		counter++;
+   		}
+ 	}
+
+}   
+
+//#include "bb.h"
+void MatrixPages::displayTestPage() {
+
+
+stopTimer();
+
+  BMPFile ff;
+  ff.loadBitmap("/bb.bmp");
+  uint16_t *buffer = ff.getBuffer();
+  
+/*  ff = SPIFFS.open("/bb.bmp", "r");
+  bb.loadImageHeader();
+  bb.loadImage565(buffer);
+  ff.close();*/
+startTimer();
+  uint16_t counter =0;
+ for (int yy = 0; yy < ff.getHeight() ; yy++)
+ {
+   for (int xx = 0; xx < ff.getWidth(); xx++)
+   {
+     m_display.drawPixel(xx + 1 , yy + 1,buffer[counter]);
+     counter++;
+   }
+ }
+
+
+
+/* int imageHeight = 32;
+ int imageWidth = 32;
+ int counter = 0;
+ for (int yy = 0; yy < imageHeight; yy++)
+ {
+   for (int xx = 0; xx < imageWidth; xx++)
+   {
+     m_display.drawPixel(xx + 1 , yy + 1, (uint16_t)pgm_read_word(&GIMP_IMAGE_pixel_data[counter]));
+
+     counter+=2;
+	 
+   }
+ }*/
+
+}
+
+
+
 void MatrixPages::displayStopPage(){
-	m_display.clearDisplay();
-	m_display.setCursor(32, 16);
-	//m_display.drawBitmap();
-	double ss = radians(6*second());
-	double mn = radians(6*minute());
-	double hh = radians(30*hourFormat12());
 
-	m_display.drawCircle(17,16,15,m_display.color565(0,0,255));
-	m_display.drawLine(17,16,17+14.0*sin(mn),16-14.0*cos(mn), m_display.color565(0,255,0));
-	m_display.drawLine(17,16,17+10.0*sin(hh),16-10.0*cos(hh), m_display.color565(255,0,0));
-	m_display.drawLine(17,16,17+15.0*sin(ss),16-15.0*cos(ss), m_display.color565(255,255,0));
-	
-	m_display.setFont(&TomThumb);
-	m_display.setTextColor(m_display.color565(255,255,255));
-	/*m_display.setCursor(0, 6);
-    m_display.print(String(ss).c_str());
-	m_display.setCursor(0, 13);
-	m_display.print(String(mn).c_str());
-	m_display.setCursor(0, 19);
-	m_display.print(String(hh).c_str());	*/
-	
-	m_display.setCursor(50, 6);
-    m_display.print(String(second()).c_str());
-	m_display.setCursor(50, 13);
-	m_display.print(String(minute()).c_str());
-	m_display.setCursor(50, 19);
-	m_display.print(String(hourFormat12()).c_str());	
-
-
-	m_display.setCursor(35, 31);	
-	m_display.print(NTP.getTimeStr().c_str());		
 	
 
 }

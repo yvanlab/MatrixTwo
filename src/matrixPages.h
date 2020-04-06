@@ -17,6 +17,7 @@
 
 #include "baseManager.h"
 #include "settingManager.h"
+#include "BMPFile.h"
 //#include "main.h"
 //#include <Ticker.h>
 #include <PxMatrix.h>
@@ -117,6 +118,8 @@ class MatrixPages : public BaseManager
 
     void displayWatch(uint8_t x, uint8_t y, uint8_t r, uint16_t color );
     void displayTrend(uint8_t x, uint8_t y,uint16_t color, float trend );
+    void displayBitmap(uint8_t x, uint8_t y, String filename, uint8_t id, boolean isChanged);    
+    void displayTestPage();
 
     String getClassName(){return "MatrixPages";}
 
@@ -125,7 +128,7 @@ class MatrixPages : public BaseManager
     uint16_t page = 0;
     uint16_t m_myCOLORS[8];
     uint8_t m_colorIndex = 0;
-
+    BMPFile *bitmapCache[6] = {NULL,NULL,NULL,NULL,NULL,NULL};
 
   private:
     boolean manageTransition(byte transitionType);

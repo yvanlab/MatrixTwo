@@ -59,7 +59,7 @@
 class Element
 {
 public:
-	enum OBJECT_TYPE {TEXT=0, HOUR=1, DATE=2,WATCH=3, TEMP=4, TEMP_MIN=5, TEMP_MAX=6, TEMP_TREND=7 };
+	enum OBJECT_TYPE {TEXT=0, HOUR=1, DATE=2,WATCH=3, TEMP=4, TEMP_MIN=5, TEMP_MAX=6, TEMP_TREND=7, BITMAP=8 };
 	enum FONT_TYPE {SMALL=0, MEDIUM=1, BIG=2};
 
 	Element () {};
@@ -76,6 +76,7 @@ public:
 	uint8_t  green = 0;
 	uint8_t  blue=0;
 	String 	 txt={"defaut"};
+	boolean  isChanged = true;
 
 	String toString(boolean bJson) {
 		String ss;
@@ -205,6 +206,8 @@ class SettingManager : public BaseSettingManager
     uint8_t displayedPage = 0;
     uint8_t displayedMode = 0;
     uint8_t displayedFrequence = 0;
+	
+	char *lstBMP[10] = {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
 
 
 };

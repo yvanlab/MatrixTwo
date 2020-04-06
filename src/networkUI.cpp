@@ -180,14 +180,18 @@ void setData(){
 		  pp->element[nbElt].active = str == "true";
  	  	  changed = true;
  	 }
+	if ( changed ) {
+		pp->element[nbElt].isChanged = true;
+	}
   }
 
 
   if ( changed ) {
 	mpPages->displayPage();
   }
-
-  dataPage();
+  
+  wfManager->getServer()->send( 200, "text/html","ok");
+  //dataPage();
 }
 
 
