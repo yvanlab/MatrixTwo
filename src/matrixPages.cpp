@@ -368,7 +368,7 @@ void MatrixPages::displayScreen(Page *page){
 		}
 	}
 	m_display.showBuffer();
-	DEBUGLOGF("freemem %d\n", ESP.getFreeHeap());
+	//DEBUGLOGF("freemem %d\n", ESP.getFreeHeap());
 }
 
 void MatrixPages::displayCfgPage(){

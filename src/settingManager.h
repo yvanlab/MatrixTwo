@@ -87,7 +87,7 @@ public:
 		char dataString[10];
 		sprintf(dataString,"#%02X%02X%02X",red,green,blue);
 		ss +=  "\"color\":\""+ String(dataString) +  "\"," ;
-		ss +=  "\"txt\":\"."+ txt + "\"," ;
+		ss +=  "\"txt\":\""+ txt + "\"," ;
 		ss +=  "\"x\":\""+ String(x) + "\"," ;
 		ss +=  "\"y\":\""+ String(y) + "\"," ;
 		ss += "\"red\":\""+ String(red) + "\"," ;
