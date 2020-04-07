@@ -162,6 +162,15 @@ class SettingManager : public BaseSettingManager
     	  ss += "\"displayedMode\":\"" + String(displayedMode) + "\",";
     	  ss += "\"displayedFreq\":\"" + String(displayedMode) + "\",";
 
+		  uint8_t iIndex = 0;
+		  ss += "\"lstBMP\":[";
+		  while (iIndex<10 && lstBMP[iIndex] !=NULL ) {
+		  	ss += "\"" + String(lstBMP[iIndex]).substring(1) + "\"";
+			iIndex++;
+			if (iIndex<10 && lstBMP[iIndex]!=NULL)
+				ss += ",";
+		  }
+		  ss += "],";
     	  ss += "\"page\":[";
     	  for (uint8_t iPage = 0; iPage<nbCustomPages; iPage++ ) {
     		  ss += customPage[iPage].toString(JSON_TEXT);

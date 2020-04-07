@@ -363,6 +363,7 @@ void MatrixPages::displayScreen(Page *page){
 					filename = page->element[i].txt;
 				}
 				displayBitmap(page->element[i].x, page->element[i].y, filename, page->element[i].id, page->element[i].isChanged);
+				page->element[i].isChanged = false;
 			 }
 		}
 	}
@@ -571,6 +572,7 @@ void MatrixPages::displayBitmap(uint8_t x, uint8_t y, String filename, uint8_t i
 	if (isChanged &&  bitmapCache[id] != NULL) {
 		delete bitmapCache[id];
 		bitmapCache[id] = NULL;
+		DEBUGLOGF("displayBitmap delete [%d]", id);
 	}
 	
 	if (bitmapCache[id] == NULL) {

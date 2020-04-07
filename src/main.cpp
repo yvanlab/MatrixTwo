@@ -109,6 +109,13 @@ void  setup(void) {
 	phPresence = new PresenceHelper();
 	phPresence->setCallback(presenceManagement);
 
+//DEBUGLOG(configurationMgr->toString(STD_TEXT));
+  	if(!SPIFFS.begin(true)){
+        Serial.println("SPIFFS Mount Failed");
+        return;
+    }else Serial.println("SPIFFS Mount OK");
+
+
 	smManager->readData();
 	DEBUGLOG(smManager->toString(STD_TEXT));
 	startWiFiserver();
@@ -125,12 +132,7 @@ void  setup(void) {
 	thinkSpeakMgr = new thingSpeakManager(PIN_LED);
 
 
-	//DEBUGLOG(configurationMgr->toString(STD_TEXT));
-  	if(!SPIFFS.begin(true)){
-        Serial.println("SPIFFS Mount Failed");
-        return;
-    }else Serial.println("SPIFFS Mount OK");
-
+	
 
 	xTaskCreatePinnedToCore(
 			screemManagement,   /* Task function. */

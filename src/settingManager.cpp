@@ -81,17 +81,19 @@ unsigned char SettingManager::readData(){
 
   // Read BMP List
   String str = "";
-  File dir = SPIFFS.open("","r");
+  File root = SPIFFS.open("/");
+  File file = root.openNextFile();
   uint8_t iTab = 0;
-  while (dir.openNextFile()) {
-    str = dir.name();
+  while (file) {
+    str = file.name();
     if (str.indexOf(".bmp")>0 ) {
       lstBMP[iTab] = new char[str.length()+1];
       str.toCharArray(lstBMP[iTab],str.length());
       iTab++;
     }
-    dir.close();
+    file.close();
     DEBUGLOGF("BMP File %s\n", str.c_str());
+    file = root.openNextFile();
   }
 
   switchOff();
