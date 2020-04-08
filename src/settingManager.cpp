@@ -79,6 +79,17 @@ unsigned char SettingManager::readData(){
   predefinedPage[5].set(TEST_PAGE_ID,TEST_PAGE_NAME,1);
   predefinedPage[5].element[0].set(Element::TEXT,0,11,"Test",Element::MEDIUM,255,0,0,true);
 
+  predefinedPage[6].set(CFG_PAGE_ID,CFG_PAGE_NAME,6);
+  predefinedPage[6].element[0].set(Element::HOUR,0,6,"",Element::SMALL,255,0,0,true);
+  predefinedPage[6].element[1].set(Element::TEMP,27,6,"",Element::SMALL,00,0,255,true);
+  predefinedPage[6].element[2].set(Element::BITMAP,14,14,"tst.bmp",Element::SMALL,00,255,255,true);
+  predefinedPage[6].element[3].set(Element::TEMP_TREND,40,2,"M{s}",Element::SMALL,255,255,255,true);
+  predefinedPage[6].element[4].set(Element::DATE,1,12,"",Element::SMALL,00,255,0,true);
+  predefinedPage[6].element[5].set(Element::WATCH,7,20,"5",Element::SMALL,255,255,0,true);
+// free mem
+// capteur position
+// internet
+
   // Read BMP List
   String str = "";
   File root = SPIFFS.open("/");
@@ -88,7 +99,7 @@ unsigned char SettingManager::readData(){
     str = file.name();
     if (str.indexOf(".bmp")>0 ) {
       lstBMP[iTab] = new char[str.length()+1];
-      str.toCharArray(lstBMP[iTab],str.length());
+      str.toCharArray(lstBMP[iTab],str.length()+1);
       iTab++;
     }
     file.close();

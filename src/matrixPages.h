@@ -98,20 +98,9 @@ class MatrixPages : public BaseManager
     boolean isTransition() {return startTransition!=0;};
 
     void displayPage();
-    void displayMessagePage();
-    void displayCurrentPage();
-    void displayVMCPage();
-    void displayMeteoPage();
-    void displayCfgPage();
-    void displayStopPage();
-    void displayHourPage();
 
 
     void displayScreen(Page *page);
-    void displayOpenBar();
-    void displayJoyeuxNoel();
-    void displayBonneAnnee();
-    void displayCustomPage();
 
 
     String buildTxt(String txt, String var);
@@ -123,12 +112,8 @@ class MatrixPages : public BaseManager
 
     String getClassName(){return "MatrixPages";}
 
-    String toString(boolean bJson);
+    String toString(boolean bJson){return "MatrixPages";}
 
-    uint16_t page = 0;
-    uint16_t m_myCOLORS[8];
-    uint8_t m_colorIndex = 0;
-    BMPFile *bitmapCache[6] = {NULL,NULL,NULL,NULL,NULL,NULL};
 
   private:
     boolean manageTransition(byte transitionType);
@@ -137,11 +122,8 @@ class MatrixPages : public BaseManager
     int16_t startTransition=0;
 
     hw_timer_t * timer;
-
-    //portMUX_TYPE timerMux;// = portMUX_INITIALIZER_UNLOCKED;
-    //Periferic *periferic;
-    //Ticker m_display_ticker;
-
+    uint16_t _numPage = 0;
+    BMPFile *bitmapCache[6] = {NULL,NULL,NULL,NULL,NULL,NULL};
     Page pp;
 };
 
