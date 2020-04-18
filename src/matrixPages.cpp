@@ -57,28 +57,32 @@ MatrixPages::MatrixPages(unsigned char pinLed) : BaseManager(pinLed){
 
 void MatrixPages::begin(){
 
-	   m_display.begin(16);
-	   m_display.flushDisplay();
-	   m_display.clearDisplay();
+	m_display.begin(16);
+	m_display.flushDisplay();
+	m_display.clearDisplay();
 
-	    unsigned long start_timer = micros();
-	    m_display.drawPixel(1, 1, 0);
-	    unsigned long delta_timer = micros() - start_timer;
-	    DEBUGLOGF("Pixel draw latency in us: %ld\n",delta_timer);
+	unsigned long start_timer = micros();
+	m_display.drawPixel(1, 1, 0);
+	unsigned long delta_timer = micros() - start_timer;
+	DEBUGLOGF("Pixel draw latency in us: %ld\n",delta_timer);
 
-	    start_timer = micros();
-	    m_display.display(0);
-	    delta_timer = micros() - start_timer;
-	    DEBUGLOGF("Display update latency in us: %ld\n",delta_timer);
+	start_timer = micros();
+	m_display.display(0);
+	delta_timer = micros() - start_timer;
+	DEBUGLOGF("Display update latency in us: %ld\n",delta_timer);
+	m_display.setFlip(true);
+
+	tranPages = new TransitionPages(&win, m_display.width(), m_display.height());
+	//m_display.setRotate(true);
+	//m_display.setRotation(2);
+
 
 #ifdef ESP8266
    display_ticker.attach(0.002, display_updater);
  #endif
 
-
- //vALIDER avec le timerBegin(0, 80, true);
  #ifdef ESP32
-  timer = timerBegin(1, 80, true);
+  timer = timerBegin(MATRIX_TIMER_NUM, 80, true);
 
    //timerAttachInterrupt(timer, &setDisplayTrigger, true);
    timerAttachInterrupt(timer, &MatrixPages::display_updater, true);
@@ -96,6 +100,8 @@ void MatrixPages::begin(){
 	    m_display.setCursor(2,0);
 	    m_display.print("Pixel");
 
+	win.set(0,0,64,32);
+
 	    setPage(HOUR_PAGE_ID);
 	    displayPage();
 }
@@ -103,20 +109,24 @@ void MatrixPages::begin(){
 
 void MatrixPages::displayPage(){
 
-
 	Page *pp=smManager->getPage(_numPage);
-	if (pp != NULL  && pp->id == TEST_PAGE_ID) {
-		displayTestPage();
-	
-	} else 	if (pp != NULL) {
-		displayScreen(pp);
-	} else {
+	m_display.clearDisplay();
+	if (pp == NULL) { 
 		DEBUGLOGF("Display Error %d\n",_numPage);
 		Page tp;
-		tp.element[0].set(Element::TEXT,2,15,"PROBLEME",Element::SMALL,0,0,255,true);
+		tp.element[0].set(Element::TEXT,2,15,"Page not found ",Element::SMALL,255,0,0,true);
 		displayScreen(&tp);
+		m_display.showBuffer();
+		return;
 	}
-
+	if (pp->id == TEST_PAGE_ID) {
+		displayTestPage();
+	} else if (pp->id == CFG_PAGE_ID) {
+		displayCfgPage();
+	} else{
+		displayScreen(pp);
+	}
+	m_display.showBuffer();
 }
 
 
@@ -124,6 +134,7 @@ void  MatrixPages::setPage(uint16_t num) {
  DEBUGLOGF("Page %d\n",num);
  if (num==_numPage) return;
   m_display.clearDisplay();
+  tranPages->startTransition(TransitionPages::TRANSITION_ROTATION);
   startTransition = 128;
   _numPage=num;
 };
@@ -155,9 +166,83 @@ boolean MatrixPages::manageTransition(byte transitionType) {
 	 return true;
 }
 
+String MatrixPages::buildGeneric(String txt) {
+	char tmpString[20];
+
+	//{h-full heure},{hh-heure},{hm-minute},{hs-second} {d-full date}
+	txt.replace("{h}",NTP.getTimeStr() );	
+	txt.replace("{d}",NTP.getDateStr() );	
+	if (txt.indexOf("{y}")>=0) {
+		txt.replace("{y}",String(year()) );	
+	}
+	if (txt.indexOf("{hh}")>=0) {
+		txt.replace("{hh}",String(hour()) );	
+	}
+	if (txt.indexOf("{hm}")>=0) {
+		txt.replace("{hm}",String(minute()) );	
+	}
+	if (txt.indexOf("{hs}")>=0) {
+		txt.replace("{hs}",String(second()) );	
+	}
+	//{t-temperature},{tM-temp Max},{tm-temp min},{tt - Temp tendance},
+	if (txt.indexOf("{t}")>=0) {
+		sprintf(tmpString,"%2.1f",bmpMesure->getTemperatureSensor()->getLastValue());
+		txt.replace("{t}",tmpString );	
+	}
+	if (txt.indexOf("{tM}")>=0) {
+		sprintf(tmpString,"%2.1f",bmpMesure->getTemperatureSensor()->getLastMaxValue());
+		txt.replace("{tM}",tmpString );	
+	}
+	if (txt.indexOf("{tm}")>=0) {
+		sprintf(tmpString,"%2.1f",bmpMesure->getTemperatureSensor()->getLastMinValue());
+		txt.replace("{tm}",tmpString );	
+	}
+	if (txt.indexOf("{tt}")>=0) {
+		sprintf(tmpString,"%2.1f",bmpMesure->getTemperatureSensor()->getTrend());
+		txt.replace("{tt}",tmpString );	
+	}
+	//{mp-prevision pression},{mt-prevision text},{mi-prevision icon}
+	if (txt.indexOf("{mp}")>=0) {
+		sprintf(tmpString,"%d",bmpMesure->getPressionSensor()->getWeatherTrend());
+		txt.replace("{mp}",tmpString );	
+	}
+	if (txt.indexOf("{mt}")>=0) {
+//		sprintf(tmpString,"%d",bmpMesure->getPressionSensor()->getWeatherTrend());
+		txt.replace("{mt}",weatherString[bmpMesure->getPressionSensor()->getWeatherTrend()] );	
+	}
+
+	//{im-memoire},{id-duree on},{it-internal temperature}, 
+	//{im-detecteur mouvement}, {iv-version}
+	if (txt.indexOf("{im}")>=0) {
+		txt.replace("{im}",String(ESP.getFreeHeap()/1000));	
+	}
+	if (txt.indexOf("{id}")>=0) {
+		txt.replace("{id}",String(NTP.getUptimeString()));	
+	}
+	if (txt.indexOf("{it}")>=0) {
+		txt.replace("{it}",String((temprature_sens_read() - 32) / 1.8));	
+	}
+	if (txt.indexOf("{ip}")>=0) {
+		txt.replace("{ip}",String((phPresence->getInput())));	
+	}
+	if (txt.indexOf("{iv}")>=0) {
+		txt.replace("{iv}",String(LA_MATRIX2_VERSION));	
+	}
+	if (txt.indexOf("{ipd}")>=0) {
+		txt.replace("{ipd}",String(phPresence->getRemaining()));	
+	}
+	//DEBUGLOGF ("buildGeneric %s\n",txt.c_str() );
+	return txt;
+}
 
 
 String MatrixPages::buildTxt(String txt, String var) {
+	//{t-temperature},{tM-temp Max},{tm-temp min},{tt - Temp tendqnce},
+	//{mp-prevision pression},{mt-prevision text},{mi-prevision icon}
+	//{h-heure},{d-date}
+	//{mm-memoire},{dd-duree on}, {detecteur}
+
+
 	String res=txt;
 	if (txt.indexOf("{s}")>=0)
 		res.replace("{s}",var );
@@ -170,8 +255,10 @@ String MatrixPages::buildTxt(String txt, String var) {
 
 void MatrixPages::displayScreen(Page *page){
 
-	m_display.clearDisplay();
-	char tmpString[10];
+
+	char tmpString[20];
+
+	tranPages->nextStep();
 
 	for (uint8_t i=0; i<page->nbElement ;i++) {
 		//DEBUGLOGF("x[%d] y[%d], Red[%d], Green[%d], Blue[%d]\n",smManager.screen[i].x, smManager.screen[i].y, smManager.screen[i].red, smManager.screen[i].green, smManager.screen[i].blue);
@@ -180,71 +267,122 @@ void MatrixPages::displayScreen(Page *page){
 			switch (page->element[i].font){
 			case Element::SMALL:
 				m_display.setFont(&TomThumb);
+				m_gfxFont.set((GFXfont *)&TomThumb);
 				break;
 			case Element::MEDIUM:
 				//m_display.setFont(&FreeSerif9pt7b);
 				m_display.setFont();
+				m_gfxFont.set();				
 				break;
 			case Element::BIG:
 				//m_display.setFont(&FreeSerif12pt7b);
 				m_display.setFont(&FreeSerif9pt7b);
+				m_gfxFont.set((GFXfont *)&FreeSerif9pt7b);
 				break;
 
 			}
 
-			m_display.setCursor(page->element[i].x,page->element[i].y);
-			uint16_t color = m_display.color565(page->element[i].red, page->element[i].green,page->element[i].blue);
+			m_display.setCursor(win.getX(page->element[i].x),win.getY(page->element[i].y));
+			//uint16_t color = m_display.color565(page->element[i].red, page->element[i].green,page->element[i].blue);
 
-			m_display.setTextColor(color);
+			//m_display.setTextColor(color);
 			if (page->element[i].type == Element::TEXT) {
-				m_display.print(page->element[i].txt);
+				print(&page->element[i],page->element[i].txt );
 			} else if (page->element[i].type == Element::HOUR) {
-				m_display.print(buildTxt(page->element[i].txt,NTP.getTimeStr()));
+				print(&page->element[i],buildTxt(page->element[i].txt,NTP.getTimeStr()));
 			}else if (page->element[i].type == Element::DATE) {
-				m_display.print(buildTxt(page->element[i].txt, NTP.getDateStr()));
+				print(&page->element[i],buildTxt(page->element[i].txt, NTP.getDateStr()));
 			}else if (page->element[i].type == Element::TEMP) {
-				sprintf(tmpString,"%2.1f",bmpMesure->getTemperatureSensor()->getAverage());
-				m_display.print(buildTxt(page->element[i].txt , tmpString));
+				sprintf(tmpString,"%2.1f",bmpMesure->getTemperatureSensor()->getLastValue());
+				print(&page->element[i],buildTxt(page->element[i].txt , tmpString));
 			}else if (page->element[i].type == Element::TEMP_MIN) {
 				sprintf(tmpString,"%2.1f",bmpMesure->getTemperatureSensor()->getLastMinValue());
-				m_display.print(buildTxt(page->element[i].txt, tmpString));
+				print(&page->element[i],buildTxt(page->element[i].txt, tmpString));
 			}else if (page->element[i].type == Element::TEMP_MAX) {
 				sprintf(tmpString,"%2.1f",bmpMesure->getTemperatureSensor()->getLastMaxValue());
-				m_display.print(buildTxt(page->element[i].txt, tmpString));
+				print(&page->element[i],buildTxt(page->element[i].txt, tmpString));
 			}else if (page->element[i].type == Element::TEMP_TREND) {
-				displayTrend(page->element[i].x,page->element[i].y, color,
-					bmpMesure->getTemperatureSensor()->getTrend());
-				//sprintf(tmpString,"%2.1f",bmpMesure->getTemperatureSensor()->getTrend());
-				//m_display.print(tmpString);
+				displayTrend(&page->element[i], bmpMesure->getTemperatureSensor()->getTrend());			
+			}else if (page->element[i].type == Element::METEO_PRESSION) {
+				sprintf(tmpString,"%d",(int)bmpMesure->getPressionSensor()->getLastValue());
+				print(&page->element[i],buildTxt(page->element[i].txt, tmpString));
+			}else if (page->element[i].type == Element::METEO_TEXT) {
+				print(&page->element[i],weatherString[bmpMesure->getPressionSensor()->getWeatherTrend()]);
+			}else if (page->element[i].type == Element::METEO_ICON) {
+				sprintf(tmpString,"Ic%d",bmpMesure->getPressionSensor()->getWeatherTrend());
+				print(&page->element[i],buildTxt(page->element[i].txt, tmpString));
+} 			else if (page->element[i].type == Element::GENERIC_TEXT) {
+				print(&page->element[i],buildGeneric(page->element[i].txt));
 			}else if (page->element[i].type == Element::WATCH) {
-				uint8_t r = 15;
-				if (!page->element[i].txt.isEmpty()){					
-					r = page->element[i].txt.toInt();
-				}
-				displayWatch(page->element[i].x, page->element[i].y, r, color );		
+				displayWatch(&page->element[i]);		
 			 } else if (page->element[i].type == Element::BITMAP) {
-				String filename = "default.bmp";
-				if (!page->element[i].txt.isEmpty()){					
-					filename = "/"+page->element[i].txt;
-				}
-				displayBitmap(page->element[i].x, page->element[i].y, filename, page->element[i].id, page->element[i].isChanged);
+				displayBitmap(&page->element[i]);
 				page->element[i].isChanged = false;
 			 }
 		}
 	}
-	m_display.showBuffer();
 	//DEBUGLOGF("freemem %d\n", ESP.getFreeHeap());
 }
 
+void MatrixPages::print(Element *pElt, String txt) {
 
-void MatrixPages::displayWatch(uint8_t x, uint8_t y, uint8_t r,  uint16_t color ){
+	uint8_t  nbDisplayedChar = 0;
+    uint16_t color 	= m_display.color565(pElt->red, pElt->green,pElt->blue);
+	int16_t  x  	= win.getX(pElt->x) + pElt->xDec;
+	int16_t  xa 	= 0;
+	
+	//DEBUGLOGF("X[%d],xDec[%d]\n",pElt->x,pElt->xDec);
+	for (uint8_t i=0; i<txt.length(); i++ ) {
+		char c = txt[i];
+		xa = m_gfxFont.getXadvance(c);
+		if (xa>0) { // Char present in this font?
+			//DEBUGLOGF("C[%c],x[%d],xa[%d]",c,x,xa);
+			if (x < pElt->x) {
+				x += xa;
+				//DEBUGLOG(" - Before X\n");
+			}else if ((x + xa )<=(win.getW()+xa) ) {
+				m_display.drawChar(x, win.getY(pElt->y), c, color,color, 1);
+				//DEBUGLOG(" - Displayed\n");
+				x += xa;
+				nbDisplayedChar++;
+			}else {
+				//DEBUGLOG(" - No Display\n");
+				break;
+			}
+		}
+	}
+	if (!tranPages->isTransition()) {
+		if (nbDisplayedChar==0) {
+			pElt->xDec = win.getW()-(win.getX(pElt->x)+xa+2);
+		} else if (nbDisplayedChar < txt.length()) {
+			pElt->xDec -= 1;
+		} else {
+			pElt->xDec = 0;
+		}
+	}
+
+}
+
+
+
+void MatrixPages::displayWatch(Element *pElt){
 	
 	double ss = radians(6*second());
 	double mn = radians(6*minute());
 	double hh = radians(30.0*hourFormat12() + (3.0*minute())/6.0);
+
+	int16_t x = win.getX(pElt->x);
+	int16_t y = win.getY(pElt->y);
+	uint16_t color = m_display.color565(pElt->red, pElt->green, pElt->blue);
+	uint8_t r = 15;
+	if (!pElt->txt.isEmpty()){					
+		r = pElt->txt.toInt();
+	}
 	double ssTige = r*0.9;
 	double hhTige = r*0.7;
 	double mnTige = r*0.9;
+
+
 
 	m_display.drawCircle(x,y,r,color);
 
@@ -267,9 +405,12 @@ void MatrixPages::displayWatch(uint8_t x, uint8_t y, uint8_t r,  uint16_t color 
 	m_display.drawLine(x,y,x+ssTige*sin(ss),y-ssTige*cos(ss), m_display.color565(255,255,255));
 }
 
-void MatrixPages::displayTrend(uint8_t x, uint8_t y, uint16_t color, float trend) {
+void MatrixPages::displayTrend(Element *pElt, float trend) {
 	uint8_t size = 5;
 	uint8_t incline = size*0.7;
+	int16_t x = win.getX(pElt->x);
+	int16_t y = win.getY(pElt->y);
+	uint16_t color = m_display.color565(pElt->red, pElt->green, pElt->blue);
 
 	if (trend == 0) {
 		m_display.drawLine(x,y  ,x+size,y, color);	
@@ -300,8 +441,19 @@ void MatrixPages::displayTrend(uint8_t x, uint8_t y, uint16_t color, float trend
 }
 
 
-void MatrixPages::displayBitmap(uint8_t x, uint8_t y, String filename, uint8_t id, boolean isChanged) {
+void MatrixPages::displayBitmap(Element *pElt) {
 	
+
+	String filename = "/tst.bmp";
+	if (!pElt->txt.isEmpty()){					
+		filename = "/"+pElt->txt;
+	}
+	int16_t x = win.getX(pElt->x);
+	int16_t y = win.getY(pElt->y);
+	//uint16_t color = m_display.color565(pElt->red, pElt->green, pElt->blue);
+	boolean isChanged = pElt->isChanged;
+	uint8_t id = pElt->id;
+
 
 	if (isChanged &&  bitmapCache[id] != NULL) {
 		delete bitmapCache[id];
@@ -321,16 +473,31 @@ void MatrixPages::displayBitmap(uint8_t x, uint8_t y, String filename, uint8_t i
 		startTimer();				
 	}
   	
-  	uint16_t *buffer = bitmapCache[id]->getBuffer();
-	uint16_t counter =0;
- 	for (int yy = 0; yy < bitmapCache[id]->getHeight() ; yy++) {
-   		for (int xx = 0; xx < bitmapCache[id]->getWidth(); xx++){
-     		m_display.drawPixel(xx + x , yy + y,buffer[counter]);
-     		counter++;
-   		}
- 	}
-
+  	
+	m_display.drawRGBBitmap(x,y,bitmapCache[id]->getBuffer(),
+                    bitmapCache[id]->getWidth(), bitmapCache[id]->getHeight());
 }   
+
+void MatrixPages::displayCfgPage() {
+	Page *pp=smManager->getPage(CFG_PAGE_ID);
+	displayScreen(pp);
+
+	String sPres;
+	if (phPresence->getInput()) {
+		sPres = "On";
+	} else  {
+		sPres = "Off";
+	}
+	//freemem
+	//last reboot
+	Page tp;
+	tp.element[0].set(Element::TEXT,win.getX(31),win.getY(19),sPres,Element::SMALL,0,0,255,true);
+	tp.element[1].set(Element::METEO_PRESSION,win.getX(31),win.getY(27),"",Element::SMALL,0,255,0,true);
+	tp.element[2].set(Element::METEO_ICON,win.getX(53),win.getY(19),"",Element::SMALL,0,255,0,true);	
+	displayScreen(&tp);
+
+}
+
 
 void MatrixPages::displayTestPage() {
 
@@ -355,21 +522,4 @@ startTimer();
      counter++;
    }
  }
-
-
-
-/* int imageHeight = 32;
- int imageWidth = 32;
- int counter = 0;
- for (int yy = 0; yy < imageHeight; yy++)
- {
-   for (int xx = 0; xx < imageWidth; xx++)
-   {
-     m_display.drawPixel(xx + 1 , yy + 1, (uint16_t)pgm_read_word(&GIMP_IMAGE_pixel_data[counter]));
-
-     counter+=2;
-	 
-   }
- }*/
-
 }

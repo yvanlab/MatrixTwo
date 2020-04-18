@@ -2,7 +2,7 @@
 
 #include "settingManager.h"
 #include "main.h"
-
+#include "SPIFFS.h"
 
 #if defined(ARDUINO) && ARDUINO >= 100
 #include "Arduino.h"
@@ -101,11 +101,24 @@ unsigned char SettingManager::readData(){
       lstBMP[iTab] = new char[str.length()+1];
       str.toCharArray(lstBMP[iTab],str.length()+1);
       iTab++;
-    }
+    }    
+    DEBUGLOGF("BMP File %s[%d]\n", str.c_str(),file.size());
     file.close();
-    DEBUGLOGF("BMP File %s\n", str.c_str());
     file = root.openNextFile();
   }
+
+  if (SPIFFS.exists("/config.json")){
+    file = SPIFFS.open("/config.json", FILE_READ);
+    DEBUGLOG("Config file SART READING");
+    String sCfg = file.readStringUntil(EOF);
+    //DEBUGLOGF("Config file : %s\n", sCfg.c_str());
+    file.close();
+  } else {
+      DEBUGLOG("Config file does not exist");
+  }
+
+
+
 
   switchOff();
   return m_iEEprom;
@@ -134,6 +147,8 @@ void SettingManager::writePage(Page *page) {
 		writeEEPROM(tmpText);
 	}
 }
+
+
 
 void SettingManager::readPage(Page *page) {
 	char tmpText[21];
@@ -181,6 +196,17 @@ unsigned char SettingManager::writeData(){
   //portEXIT_CRITICAL_ISR(&wtimerMux);
   DEBUGLOGF("SettingManager::writeData() Commit [%d)]\n",m_iEEprom );
   setStatus( m_iEEprom, "written");
+
+  //Write Spiff configuration
+  String ss = "{"+toStringCfg(JSON_TEXT)+"}";
+  File cfgFile = SPIFFS.open("/config.json", FILE_WRITE);
+  if (cfgFile.print(ss) == ss.length() ) {
+    DEBUGLOGF("Configuration file saved");
+  } else {
+    DEBUGLOGF("Configuration PROBLEM");
+  };
+  cfgFile.close();
+
   mpPages->startTimer();
   switchOff();
   return m_iEEprom;

@@ -46,6 +46,7 @@ extern WifiManager         *wfManager;
 extern BMPManagerV2		   *bmpMesure;
 extern MatrixPages         *mpPages;
 extern SettingManager 	   *smManager;
+extern PresenceHelper	   *phPresence;
 
 #ifdef MCPOC_TELNET
 //extern RemoteDebug          Debug;
@@ -54,6 +55,20 @@ extern SettingManager 	   *smManager;
 #ifdef ESP32
 extern portMUX_TYPE 		wtimerMux;// = portMUX_INITIALIZER_UNLOCKED;
 #endif
+
+#ifdef ESP32
+extern "C"
+{
+  uint8_t temprature_sens_read();
+}
+#endif
+#ifdef ESP8266
+uint8_t temprature_sens_read()
+{
+  return 0;
+}
+#endif
+
 
 
 #endif

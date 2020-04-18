@@ -2,18 +2,6 @@
 #include "main.h"
 
 
-#ifdef ESP32
-extern "C"
-{
-  uint8_t temprature_sens_read();
-}
-#endif
-#ifdef ESP8266
-uint8_t temprature_sens_read()
-{
-  return 0;
-}
-#endif
 
 String getJson()
 {
@@ -65,7 +53,7 @@ void clearEEPROM () {
 
 	//mpPages->startTimer();
 	digitalWrite ( PIN_LED, HIGH );
-	mpPages->startTimer();
+	phPresence->forceStatus(true);
 
 }
 
@@ -134,13 +122,13 @@ void setData(){
   }else{
 	  str = wfManager->getServer()->arg("x");
 	  if (str!=NULL){
-		  pp->element[nbElt].x = (uint8_t)atoi(str.c_str());
+		  pp->element[nbElt].x = (uint16_t)atoi(str.c_str());
 		  changed = true;
 	  }
 
 	  str = wfManager->getServer()->arg("y");
 	  if (str!=NULL) {
-		  pp->element[nbElt].y = (uint8_t)atoi(str.c_str());
+		  pp->element[nbElt].y = (uint16_t)atoi(str.c_str());
 		  changed = true;
 	  }
 
@@ -160,6 +148,10 @@ void setData(){
 		  if (str==NULL) {
 			  str="";
 		  }
+		  if (pp->element[nbElt].type == Element::BITMAP && str != pp->element[nbElt].txt){
+			pp->element[nbElt].isChanged = true;
+		  }
+
 		  pp->element[nbElt].txt = str;
 		  changed = true;
 	  }
@@ -180,16 +172,16 @@ void setData(){
 		  pp->element[nbElt].active = str == "true";
  	  	  changed = true;
  	 }
-	if ( changed ) {
+/*	if ( changed ) {
 		pp->element[nbElt].isChanged = true;
-	}
+	}*/
   }
 
 
   if ( changed ) {
 	mpPages->displayPage();
   }
-  
+  phPresence->forceStatus(true);
   wfManager->getServer()->send( 200, "text/html","ok");
   //dataPage();
 }
@@ -204,7 +196,7 @@ void dataPage() {
   	wfManager->loadFromSpiffs("/index.html");
 	//wfManager->getServer()->send_P ( 200, "text/html", HTML );
 
-	mpPages->startTimer();
+	phPresence->forceStatus(true);
 	digitalWrite ( PIN_LED, HIGH );
 
 

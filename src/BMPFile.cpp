@@ -70,7 +70,7 @@ uint8_t BMPFile::loadImageHeader() {
     DEBUGLOGF("Read loadImageHeader size [%d]\n", _info.biSizeImage);
 
     DEBUGLOGF("Read biBitCount size [%d]\n", _info.biBitCount);
-    if (_info.biBitCount < 16) {
+   /* if (_info.biBitCount < 16) {
         _file.seek(sizeof(struct BitmapFileHeader) + _info.biSize);
         int _paletteSize = _info.biClrUsed;
         if (_paletteSize == 0) {
@@ -80,7 +80,7 @@ uint8_t BMPFile::loadImageHeader() {
         for (int i = 0; i < _paletteSize; i++) {
             _file.read((uint8_t *)&_palette[i], sizeof(struct BitmapPixel32));
         }
-    }
+    }*/
     
     _file.seek(_header.bfBitmapOffset);
     _spos = _header.bfBitmapOffset;
