@@ -21,8 +21,8 @@
 #include "BMPManagerV2.h"
 #include <presenceHelper.h>
 #include <thingSpeakManager.h>
-/*#include "periferic.h"
-#include "SensorInterface.h"*/
+#include "periferic.h"
+/*#include "SensorInterface.h"*/
 
 
 
@@ -41,12 +41,13 @@
 
 
 
-extern SettingManager      *smManager;
-extern WifiManager         *wfManager;
-extern BMPManagerV2		   *bmpMesure;
-extern MatrixPages         *mpPages;
-extern SettingManager 	   *smManager;
-extern PresenceHelper	   *phPresence;
+extern SettingManager     *smManager;
+extern WifiManager        *wfManager;
+extern BMPManagerV2		    *bmpMesure;
+extern MatrixPages        *mpPages;
+extern SettingManager 	  *smManager;
+extern PresenceHelper	    *phPresence;
+extern Periferic	        *phPeriferic;
 
 #ifdef MCPOC_TELNET
 //extern RemoteDebug          Debug;

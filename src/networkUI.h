@@ -9,6 +9,7 @@ void saveConfiguration();
 void dataPage();
 void firmware();
 void clearEEPROM ();
+void configPage();
 
 
 #endif

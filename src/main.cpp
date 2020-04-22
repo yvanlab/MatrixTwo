@@ -12,7 +12,7 @@ PresenceHelper			*phPresence;
 
 BMPManagerV2			*bmpMesure;//(PIN_LED);
 thingSpeakManager       *thinkSpeakMgr;//(pinLed);
-
+Periferic	        	*phPeriferic;
 
 #define LOG_LABEL  "log"
  #define TEMP_PIECE_LABEL        1 //"vmcHUM"
@@ -57,6 +57,7 @@ void startWiFiserver() {
 	wfManager->getServer()->on("/setting", dataPage);
 	wfManager->getServer()->on("/setData", setData);
 	wfManager->getServer()->on("/save", saveConfiguration);
+	wfManager->getServer()->on("/config", configPage);
 
 	Serial.println(wfManager->toString(STD_TEXT));
 }
@@ -95,10 +96,11 @@ void  setup(void) {
 	disableCore0WDT();
 	disableCore1WDT();
 
-	smManager = new SettingManager(PIN_LED);
-	wfManager = new WifiManager(PIN_LED, smManager);
-	phPresence = new PresenceHelper();
+	smManager 	= new SettingManager(PIN_LED);
+	wfManager 	= new WifiManager(PIN_LED, smManager);
+	phPresence 	= new PresenceHelper();
 	phPresence->setCallback(presenceManagement);
+	phPeriferic = new Periferic(PIN_LED);
 
   	if(!SPIFFS.begin(true)){
         Serial.println("SPIFFS Mount Failed");
@@ -117,6 +119,8 @@ void  setup(void) {
 	bmpMesure->set();
 	DEBUGLOG("BMPManagerV2");DEBUGLOG(bmpMesure->toString(STD_TEXT));
 
+	//phPeriferic->retrievePeriphericInfo();
+	
 	mtTimer.begin(timerFrequence);
 	mtTimer.setCustomMS(50);
 	
@@ -175,10 +179,23 @@ void /*RAMFUNC*/ loop(void) {
 		}
 	}
 	if (mtTimer.is1MNPeriod()){
-		bmpMesure->mesure();
-		bmpMesure->set();
-		//bmpMesure->mesure();
+		if (!phPresence->isPresence()) {
+			bmpMesure->mesure();
+			bmpMesure->set();
+		}
 	}
+
+	if (mtTimer.is1MNPeriod()){
+		phPeriferic->retrievePeriphericInfo();		
+	}
+
+	if (Serial.available()) {
+		char c = Serial.read();
+		Serial.print(c);
+		if (c == 'p') 
+			phPeriferic->retrievePeriphericInfo();		
+	}
+
 
 	if (mtTimer.isCustomPeriod()) {
 		//m_display->clearDisplay();

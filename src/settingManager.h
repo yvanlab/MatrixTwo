@@ -101,6 +101,21 @@ public:
 		return ss;
 	}
 
+	void fromJson(JsonObject doc) {
+		id 		= doc["id"]; // "0"
+		font 	= (FONT_TYPE)(doc["font"].as<uint8_t>()); // "0"
+		type 	= (OBJECT_TYPE)(doc["type"].as<uint8_t>()); // "1"
+		active 	= doc["active"]; // "1"
+		//color =doc["color"]; // "#FF0000"
+		txt 	= doc["txt"].as<String>(); // ""
+		x 		= doc["x"]; // "0"
+		y 		= doc["y"]; // "6"
+		red 	= doc["red"]; // "255"
+		green 	= doc["green"]; // "0"
+		blue 	= doc["blue"]; // "0"
+		DEBUGLOGF("Load Elt [%d]\n",id);		
+	}
+
 };
 
 class Page
@@ -140,33 +155,17 @@ public:
 	}
 
 
-	void fromJson(JsonDocument doc) {
+	void fromJson(JsonObject doc) {
 		name 		= doc["name"].as<String>();
 		id 			= doc["id"];
 		nbElement 	= doc["nbElts"];
 		active		= doc["active"];
-		lstObj 		= doc["obj"];
-		for (uint8_t iElt =0; iElt < page->nbElement; iElt++) {
-
-		page->element[iElt].type = (Element::OBJECT_TYPE)readEEPROM();
-		page->element[iElt].font = (Element::FONT_TYPE)readEEPROM();
-		page->element[iElt].active = readEEPROM();
-		page->element[iElt].id = readEEPROM();
-		page->element[iElt].x = readEEPROM();
-		page->element[iElt].y = readEEPROM();
-		//writeEEPROM(page->xDec);
-		page->element[iElt].red = readEEPROM();
-		page->element[iElt].green = readEEPROM();
-		page->element[iElt].blue = readEEPROM();
-		readEEPROM(tmpText,20);
-		page->element[iElt].txt= String(tmpText);
+		DEBUGLOGF("Load Page [%s]\n",name.c_str());
+		JsonArray lstObj = doc["obj"];
+		for (uint8_t iElt =0; iElt < lstObj.size(); iElt++) {
+			element[iElt].fromJson(lstObj[iElt]);
+		}
 	}
-
-
-	
-	
-	}
-
 
 };
 
@@ -207,10 +206,6 @@ class SettingManager : public BaseSettingManager
       if (bJson ==STD_TEXT) {
         ss = BaseSettingManager::toString(bJson);
       } else {
-    	  /*ss = "\"displayedPage\":\"" + String(displayedPage) + "\",";
-    	  ss += "\"displayedMode\":\"" + String(displayedMode) + "\",";
-    	  ss += "\"displayedFreq\":\"" + String(displayedMode) + "\",";*/
-
 		  uint8_t iIndex = 0;
 		  ss += "\"lstBMP\":[";
 		  while (iIndex<10 && lstBMP[iIndex] !=NULL ) {
@@ -220,12 +215,6 @@ class SettingManager : public BaseSettingManager
 				ss += ",";
 		  }
 		  ss += "],";
-    	/*  ss += "\"page\":[";
-    	  for (uint8_t iPage = 0; iPage<nbCustomPages; iPage++ ) {
-    		  ss += customPage[iPage].toString(JSON_TEXT);
-    		  if (iPage!=nbCustomPages-1)ss = ss + ",";
-    	  }
-    	  ss = ss + "],";*/
 
     	  //predefined pqge
     	  ss += "\"predefpage\":[";

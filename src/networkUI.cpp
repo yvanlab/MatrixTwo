@@ -202,3 +202,13 @@ void dataPage() {
 
 }
 
+void configPage() {
+	digitalWrite ( PIN_LED, LOW );
+	mpPages->stopTimer();
+
+	DEBUGLOG("config Page");
+  	wfManager->loadFromSpiffs("/config.json");
+	phPresence->forceStatus(true);	  
+	digitalWrite ( PIN_LED, HIGH );
+}
+

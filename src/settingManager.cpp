@@ -27,9 +27,9 @@ SettingManager::SettingManager(unsigned char pinLed) : BaseSettingManager(pinLed
 unsigned char SettingManager::readData(){
   BaseSettingManager::readData();
   switchOn();
-  displayedPage = readEEPROM();
+/*  displayedPage = readEEPROM();
   displayedMode = readEEPROM();
-  displayedFrequence = readEEPROM();
+  displayedFrequence = readEEPROM();*/
 
 
   customPage[0].set(CUSTOM_0_PAGE_ID, "cust1", 6);
@@ -40,13 +40,13 @@ unsigned char SettingManager::readData(){
   readPage(&tmpPage[1]);
   readPage(&tmpPage[2]);*/
 
-  if (m_version == EEPROM_VERSION) {
+/*  if (m_version == EEPROM_VERSION) {
 	  readPage(&customPage[0]);
 	  readPage(&customPage[1]);
 	  readPage(&customPage[2]);
   }else{
 		DEBUGLOG("EEPROM version not correct ==> use default values");
-  }
+  }*/
   customPage[0].nbElement = 6;
   customPage[1].nbElement = 6;
   customPage[2].nbElement = 6;
@@ -86,9 +86,6 @@ unsigned char SettingManager::readData(){
   predefinedPage[6].element[3].set(Element::TEMP_TREND,40,2,"M{s}",Element::SMALL,255,255,255,true);
   predefinedPage[6].element[4].set(Element::DATE,1,12,"",Element::SMALL,00,255,0,true);
   predefinedPage[6].element[5].set(Element::WATCH,7,20,"5",Element::SMALL,255,255,0,true);
-// free mem
-// capteur position
-// internet
 
   // Read BMP List
   String str = "";
@@ -106,12 +103,23 @@ unsigned char SettingManager::readData(){
     file.close();
     file = root.openNextFile();
   }
-
-  if (SPIFFS.exists("/config.json")){
-    file = SPIFFS.open("/config.json", FILE_READ);
-    DEBUGLOG("Config file SART READING");
-    String sCfg = file.readStringUntil(EOF);
-    //DEBUGLOGF("Config file : %s\n", sCfg.c_str());
+  // Read configuartion file
+  char cfgFileName[] =  "/config.json";
+  if (SPIFFS.exists(cfgFileName)){
+    DynamicJsonDocument doc(8000);
+    file = SPIFFS.open(cfgFileName, FILE_READ);
+    DeserializationError error = deserializeJson(doc, file);
+    if (!error) {
+      displayedPage = doc[F("displayedPage")];
+      displayedMode = doc[F("displayedMode")];
+      displayedFrequence = doc[F("displayedFreq")];
+      JsonArray lstPage = doc[F("page")];
+		  for (uint8_t iPage =0; iPage < lstPage.size(); iPage++) {
+			  customPage[iPage].fromJson(lstPage[iPage]);
+		  }
+    } else {
+      DEBUGLOGF("Config file SART READING [%s]",error.c_str());
+    }
     file.close();
   } else {
       DEBUGLOG("Config file does not exist");
@@ -124,6 +132,7 @@ unsigned char SettingManager::readData(){
   return m_iEEprom;
 }
 
+/*
 void SettingManager::writePage(Page *page) {
 	char tmpText[20];
 	page->name.toCharArray(tmpText, 20);
@@ -146,9 +155,9 @@ void SettingManager::writePage(Page *page) {
 		page->element[iElt].txt.toCharArray(tmpText, 20);
 		writeEEPROM(tmpText);
 	}
-}
+}*/
 
-
+/*
 
 void SettingManager::readPage(Page *page) {
 	char tmpText[21];
@@ -173,14 +182,14 @@ void SettingManager::readPage(Page *page) {
 		page->element[iElt].txt= String(tmpText);
 	}
 }
-
+*/
 
 unsigned char SettingManager::writeData(){
   mpPages->stopTimer();
 
   BaseSettingManager::writeData();
   switchOn();
-
+/*
   //active
   writeEEPROM(displayedPage);
   writeEEPROM(displayedMode);
@@ -191,11 +200,11 @@ unsigned char SettingManager::writeData(){
   }
 
   DEBUGLOGF("SettingManager::writeData() [%d)]\n",m_iEEprom );
-  //portENTER_CRITICAL_ISR(&wtimerMux);
   EEPROM.commit();
   //portEXIT_CRITICAL_ISR(&wtimerMux);
   DEBUGLOGF("SettingManager::writeData() Commit [%d)]\n",m_iEEprom );
   setStatus( m_iEEprom, "written");
+*/
 
   //Write Spiff configuration
   String ss = "{"+toStringCfg(JSON_TEXT)+"}";

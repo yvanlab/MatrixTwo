@@ -201,6 +201,20 @@ String MatrixPages::buildGeneric(String txt) {
 		sprintf(tmpString,"%2.1f",bmpMesure->getTemperatureSensor()->getTrend());
 		txt.replace("{tt}",tmpString );	
 	}
+	
+	//{cg-courant garage},{tg-temp Garage},{te-temp exterieur},
+	if (txt.indexOf("{cg}")>=0) {
+		sprintf(tmpString,"%2.1f",phPeriferic->getInstantCurrentGarage());
+		txt.replace("{cg}",tmpString );	
+	}
+	if (txt.indexOf("{tg}")>=0) {
+		sprintf(tmpString,"%2.1f",phPeriferic->getITemperartureGarage());
+		txt.replace("{tg}",tmpString );	
+	}
+	if (txt.indexOf("{te}")>=0) {
+		sprintf(tmpString,"%2.1f",phPeriferic->getExtTemp());
+		txt.replace("{te}",tmpString );	
+	}
 	//{mp-prevision pression},{mt-prevision text},{mi-prevision icon}
 	if (txt.indexOf("{mp}")>=0) {
 		sprintf(tmpString,"%d",bmpMesure->getPressionSensor()->getWeatherTrend());
@@ -254,12 +268,8 @@ String MatrixPages::buildTxt(String txt, String var) {
 }
 
 void MatrixPages::displayScreen(Page *page){
-
-
 	char tmpString[20];
-
 	tranPages->nextStep();
-
 	for (uint8_t i=0; i<page->nbElement ;i++) {
 		//DEBUGLOGF("x[%d] y[%d], Red[%d], Green[%d], Blue[%d]\n",smManager.screen[i].x, smManager.screen[i].y, smManager.screen[i].red, smManager.screen[i].green, smManager.screen[i].blue);
 		//DEBUGLOGF("type [%d], txt[%s]\n",smManager.screen[i].type, smManager.screen[i].txt.c_str());
@@ -279,7 +289,6 @@ void MatrixPages::displayScreen(Page *page){
 				m_display.setFont(&FreeSerif9pt7b);
 				m_gfxFont.set((GFXfont *)&FreeSerif9pt7b);
 				break;
-
 			}
 
 			m_display.setCursor(win.getX(page->element[i].x),win.getY(page->element[i].y));
@@ -387,10 +396,10 @@ void MatrixPages::displayWatch(Element *pElt){
 	m_display.drawCircle(x,y,r,color);
 
 	uint16_t hhColor = m_display.color565(255,255,255);
-	m_display.drawPixel(x,y+r-1,color); //
-	m_display.drawPixel(x,y-r+1,color);
-	m_display.drawPixel(x-r+1,y,color);
-	m_display.drawPixel(x+r-1,y,color);	
+	m_display.drawPixel(x,y+r-1,hhColor); //
+	m_display.drawPixel(x,y-r+1,hhColor);
+	m_display.drawPixel(x-r+1,y,hhColor);
+	m_display.drawPixel(x+r-1,y,hhColor);	
 	for (uint8_t h=0;h<4; h++) {
 		float si = r*sin(radians(h*30));
 		float co = r*cos(radians(h*30));
