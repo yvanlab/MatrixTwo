@@ -12,7 +12,7 @@ PresenceHelper			*phPresence;
 
 BMPManagerV2			*bmpMesure;//(PIN_LED);
 thingSpeakManager       *thinkSpeakMgr;//(pinLed);
-
+Periferic	        	*phPeriferic;
 
 #define LOG_LABEL  "log"
  #define TEMP_PIECE_LABEL        1 //"vmcHUM"
@@ -57,6 +57,7 @@ void startWiFiserver() {
 	wfManager->getServer()->on("/setting", dataPage);
 	wfManager->getServer()->on("/setData", setData);
 	wfManager->getServer()->on("/save", saveConfiguration);
+	wfManager->getServer()->on("/config", configPage);
 
 	Serial.println(wfManager->toString(STD_TEXT));
 }
@@ -66,20 +67,13 @@ void startWiFiserver() {
 void screemManagement( void * pvParameters ){
 	DEBUGLOG("Task1 running on core ");
 	DEBUGLOG(xPortGetCoreID());
-  mpPages = new MatrixPages(PIN_LED);
-  mpPages->begin();
-  mpPages->setPage(HOUR_PAGE_ID);
+  	mpPages = new MatrixPages(PIN_LED);
+  	mpPages->begin();
+  	mpPages->setPage(HOUR_PAGE_ID);
 
 
   while(true){
-	 /* if (displayTrigger) {
-		  //mpPages->display_updater();
-		  mpPages->display_updater();
-		  displayTrigger = false;
-		  //DEBUGLOG("displayTrigger");
-	  }*/
 	  delay(1);
-
   };
 }
 
@@ -89,11 +83,9 @@ void presenceManagement(boolean bPresent) {
 		mpPages->startTimer();
 	} else {
 		mpPages->stopTimer();
-
 	}
-
-
 }
+
 void  setup(void) {
 	//gdbstub_init();
 	//node.setcpufreq(node.CPU160MHZ)
@@ -104,16 +96,17 @@ void  setup(void) {
 	disableCore0WDT();
 	disableCore1WDT();
 
-	smManager = new SettingManager(PIN_LED);
-	wfManager = new WifiManager(PIN_LED, smManager);
-	phPresence = new PresenceHelper();
+	smManager 	= new SettingManager(PIN_LED);
+	wfManager 	= new WifiManager(PIN_LED, smManager);
+	phPresence 	= new PresenceHelper();
 	phPresence->setCallback(presenceManagement);
+	phPeriferic = new Periferic(PIN_LED);
 
-//DEBUGLOG(configurationMgr->toString(STD_TEXT));
   	if(!SPIFFS.begin(true)){
         Serial.println("SPIFFS Mount Failed");
         return;
-    }else Serial.println("SPIFFS Mount OK");
+    } else 
+		Serial.println("SPIFFS Mount OK");
 
 
 	smManager->readData();
@@ -126,8 +119,10 @@ void  setup(void) {
 	bmpMesure->set();
 	DEBUGLOG("BMPManagerV2");DEBUGLOG(bmpMesure->toString(STD_TEXT));
 
+	//phPeriferic->retrievePeriphericInfo();
+	
 	mtTimer.begin(timerFrequence);
-	mtTimer.setCustomMS(1000);
+	mtTimer.setCustomMS(50);
 	
 	thinkSpeakMgr = new thingSpeakManager(PIN_LED);
 
@@ -163,24 +158,13 @@ void  setup(void) {
 	//Serial.println("Testing device connections...");
 #endif
 
-	 //mqtt.subscribe(&OnOffbutton);
-	//mpPages->stopTimer();
 	DEBUGLOG("Begin");
-/*	EEPROM.begin(512);
-	DEBUGLOG("writeString");
-	EEPROM.writeString(0, "test");
-	DEBUGLOG("commint");
-	  EEPROM.commit();
-	  DEBUGLOG("Fini");
-	 // mpPages->startTimer();*/
-	//smManager->writeData();
-
 }
 
 
 void /*RAMFUNC*/ loop(void) {
 	wfManager->handleClient();
-	//phPresence->handle();
+	phPresence->handle();
 
 	//MatrixPages::display_updater();
 	 //display.display(30);
@@ -188,67 +172,31 @@ void /*RAMFUNC*/ loop(void) {
 	 // Ensure the connection to the MQTT server is alive (this will make the first
 	  // connection and automatically reconnect when disconnected).  See the MQTT_connect
 	  // function definition further below.
-	if (mtTimer.is1SPeriod()){
-		mpPages->displayPage();
-		//bmpMesure->mesure();
-
-
-		//DEBUGLOGF("1S : %s\n",String(millis()/1000).c_str());
-	 /* MQTT_connect();
-
-	  // this is our 'wait for incoming subscription packets' busy subloop
-	  // try to spend your time here
-
-	  Adafruit_MQTT_Subscribe *subscription;
-	  while ((subscription = mqtt.readSubscription(250))) {
-		 // DEBUGLOGF("loop : %d\n",millis()/1000);
-	    // Check if its the OnOff button feed
-	    if (subscription == &OnOffbutton) {
-
-	      int iCode = atoi((char *)OnOffbutton.lastread);
-	      DEBUGLOGF("On-Off button: %d\n",iCode);
-	      Serial.println(iCode);
-	      if (iCode==OPENBAR_PAGE) {
-	    	  DEBUGLOG("OPENBAR_PAGE");
-	    	  mpPages->setPage(OPENBAR_PAGE);
-	      } else if  (iCode==NEWYEAR_PAGE) {
-	    	  DEBUGLOG("NEWYEAR_PAGE");
-	    	  mpPages->setPage(NEWYEAR_PAGE);
-	      } else if  (iCode==NOEL_PAGE) {
-	    	  DEBUGLOG("NOEL_PAGE");
-	    	  mpPages->setPage(NOEL_PAGE);
-	      } else if  (iCode==CUSTOM_PAGE) {
-	    	  DEBUGLOG("CUSTOM_PAGE");
-	    	  mpPages->setPage(CUSTOM_PAGE);
-	      }else if  (iCode==ETEINDRE_PAGE) {
-	    	  DEBUGLOG("ETEINDRE_PAGE");
-	    	  mpPages->setPage(ETEINDRE_PAGE);
-	      }else if  (iCode==HOUR_PAGE) {
-	    	  DEBUGLOG("HOUR_PAGE");
-	    	  mpPages->setPage(HOUR_PAGE);
-	      }
-	      mpPages->displayPage();
-
-	    }
-	  }*/
+	//if (mtTimer.is25MSPeriod()){
+	if (mtTimer.isCustomPeriod()) {		
+		if (phPresence->isPresence()) {
+			mpPages->displayPage();
+		}
 	}
 	if (mtTimer.is1MNPeriod()){
-		bmpMesure->mesure();
-		bmpMesure->set();
-		bmpMesure->mesure();
-
-		// ping the server to keep the mqtt connection alive
-			/*  if(! mqtt.ping()) {
-			    mqtt.disconnect();
-			  }*/
+		if (!phPresence->isPresence()) {
+			bmpMesure->mesure();
+			bmpMesure->set();
+		}
 	}
 
-	/*if (phPresence.isPresence()) {
-		DEBUGLOG("Preesnce");
-	}*/
+	if (mtTimer.is1MNPeriod()){
+		phPeriferic->retrievePeriphericInfo();		
+	}
 
-	//}
-	//yield();
+	if (Serial.available()) {
+		char c = Serial.read();
+		Serial.print(c);
+		if (c == 'p') 
+			phPeriferic->retrievePeriphericInfo();		
+	}
+
+
 	if (mtTimer.isCustomPeriod()) {
 		//m_display->clearDisplay();
 		//DEBUGLOG("1s");
@@ -260,29 +208,16 @@ void /*RAMFUNC*/ loop(void) {
 
 	}
 	if (mtTimer.is5MNPeriod()) {
-
-
-		 if (WiFi.isConnected()) {
-			 thinkSpeakMgr->addVariable(TEMP_PIECE_LABEL      	, String(bmpMesure->getTemperatureSensor()->getValue()));
-			 thinkSpeakMgr->addVariable(PRESSION_LABEL   	, String(bmpMesure->getPressionSensor()->getValue()));
-			 thinkSpeakMgr->addVariable(PRESENCE_LABEL      	, String(phPresence->isPresence()));
-			 thinkSpeakMgr->addVariable(TEMP_PROC_LABEL   		, String(temperatureRead()));
-			 thinkSpeakMgr->sendIoT( smManager->m_privateKey, smManager->m_publicKey);
+		if (WiFi.isConnected()) {
+		 thinkSpeakMgr->addVariable(TEMP_PIECE_LABEL      	, String(bmpMesure->getTemperatureSensor()->getValue()));
+		 thinkSpeakMgr->addVariable(PRESSION_LABEL   	, String(bmpMesure->getPressionSensor()->getValue()));
+		 thinkSpeakMgr->addVariable(PRESENCE_LABEL      	, String(phPresence->isPresence()));
+		 thinkSpeakMgr->addVariable(TEMP_PROC_LABEL   		, String(temperatureRead()));
+		 thinkSpeakMgr->sendIoT( smManager->m_privateKey, smManager->m_publicKey);
 
 
 			 // second thinkSpeakMgr->sendIoT( smManager->m_privateKey, smManager->m_publicKey);
 		      }
-
-		DEBUGLOG("10s");
-
-/*		bmpMesure.mesure();
-		DEBUGLOGF("pression %fd\n", bmpMesure.getPressionSensor()->getValue());
-		DEBUGLOGF("Temp %f\n", bmpMesure.getTemperatureSensor()->getValue());
-		DEBUGLOG(bmpMesure.toString(JSON_TEXT));
-		DEBUGLOG(bmpMesure.log(JSON_TEXT));
-		mpPages->nextPage();
-		mpPages->displayPage();*/
-
 	}
 
 	/*
@@ -338,10 +273,7 @@ void /*RAMFUNC*/ loop(void) {
 	  if (!WiFi.isConnected()) {
 	    ESP.restart();
 	  }
-	  //mpPages->setPage(MESSAGE_PAGE);
 	}
-
-
-	  mtTimer.clearPeriod();
+	mtTimer.clearPeriod();
 
 }

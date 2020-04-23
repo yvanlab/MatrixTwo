@@ -31,11 +31,7 @@
 #ifndef _BMPFILE_H
 #define _BMPFILE_H
 
-//#include <DSPI.h>
-//#include <DisplayCore.h>
 #include <SD.h>
-//#include <BMP.h>
-
 
 struct BitmapFileHeader {
     uint16_t bfType;
@@ -87,7 +83,7 @@ class BMPFile /*: public Image*/ {
         struct BitmapFileHeader _header;
         struct BitmapInfoHeader _info;
         File _file;
-        struct BitmapPixel32 _palette[256];
+        //struct BitmapPixel32 _palette[256];
         uint16_t _paletteSize;
         uint32_t _chunkSize;
         uint32_t _spos;

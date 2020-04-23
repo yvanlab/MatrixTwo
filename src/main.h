@@ -21,8 +21,8 @@
 #include "BMPManagerV2.h"
 #include <presenceHelper.h>
 #include <thingSpeakManager.h>
-/*#include "periferic.h"
-#include "SensorInterface.h"*/
+#include "periferic.h"
+/*#include "SensorInterface.h"*/
 
 
 
@@ -41,11 +41,13 @@
 
 
 
-extern SettingManager      *smManager;
-extern WifiManager         *wfManager;
-extern BMPManagerV2		   *bmpMesure;
-extern MatrixPages         *mpPages;
-extern SettingManager 	   *smManager;
+extern SettingManager     *smManager;
+extern WifiManager        *wfManager;
+extern BMPManagerV2		    *bmpMesure;
+extern MatrixPages        *mpPages;
+extern SettingManager 	  *smManager;
+extern PresenceHelper	    *phPresence;
+extern Periferic	        *phPeriferic;
 
 #ifdef MCPOC_TELNET
 //extern RemoteDebug          Debug;
@@ -54,6 +56,20 @@ extern SettingManager 	   *smManager;
 #ifdef ESP32
 extern portMUX_TYPE 		wtimerMux;// = portMUX_INITIALIZER_UNLOCKED;
 #endif
+
+#ifdef ESP32
+extern "C"
+{
+  uint8_t temprature_sens_read();
+}
+#endif
+#ifdef ESP8266
+uint8_t temprature_sens_read()
+{
+  return 0;
+}
+#endif
+
 
 
 #endif

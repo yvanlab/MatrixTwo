@@ -243,7 +243,7 @@ body {
 					document.getElementById("name"+pName).innerHTML = page.name;
 					res = "";
 					tmp="";
-					var lstType = ["Text","Heure","Date","Montre", "Temperature","Temperature Min", "Temperature Max", "Tendances", "Bitmap", "je ne sais pas"];
+					var lstType = ["Text","Heure","Date","Montre", "Temperature","Temperature Min", "Temperature Max", "Tendances", "Bitmap", "Pression","Meteo Icon","Meteo Text", "Text generic","je ne sais pas"];
 					var lstFont = ["Petite","Moyenne","Grande"];
 					for (j in page.obj) {
 						var ob = page.obj[j];
@@ -264,10 +264,15 @@ body {
 						 		+ buildOnChangeSetting(page.id, ob.id, "x") + '\>';
 						
 						res += 'Y:<input type="number" style = "padding-left:6px;width:60px;" value=' + ob.y
-								+ buildOnChangeSetting(page.id, ob.id, "y") + '\>';
-		
-						res += '<br />Text<input type="edit" value=' + ob.txt
+									+ buildOnChangeSetting(page.id, ob.id, "y") + '\>';
+						
+						tmp = " ";
+						if 	(ob.txt != "" )	{
+							tmp = 'value=' + ob.txt;							
+						}
+						res += '<br />Text<input type="edit"' + tmp
 								+ buildOnChangeSetting(page.id, ob.id, "txt") + '\>';
+
 						res += 'Image:<select name="type"' +  buildOnChangeSetting( page.id, ob.id, "txt") + '\>';
 								res += buildStringDropdown(ob.txt,myObj.setting.lstBMP);
 						res += '</select>';

@@ -13,6 +13,10 @@
 
 #endif
 
+#include "ArduinoJson.h"
+
+
+
 #define TEMPERATURE_PAGE_ID    0b0000000000000001 //0x1
 #define TEMPERATURE_PAGE_NAME  "Temperature"
 
@@ -31,7 +35,7 @@
 #define HOUR_PAGE_ID   		0b0000000000100000 //0x20
 #define HOUR_PAGE_NAME   	"Heure"
 
-#define CLOSEBAR_PAGE_ID   	0b0000000001000000 //0x40
+#define HAPPYHOUR_PAGE_ID   0b0000000001000000 //0x40
 #define HAPPYHOUR_PAGE_NAME "Happy hour"
 
 
@@ -59,7 +63,7 @@
 class Element
 {
 public:
-	enum OBJECT_TYPE {TEXT=0, HOUR=1, DATE=2,WATCH=3, TEMP=4, TEMP_MIN=5, TEMP_MAX=6, TEMP_TREND=7, BITMAP=8 };
+	enum OBJECT_TYPE {TEXT=0, HOUR=1, DATE=2,WATCH=3, TEMP=4, TEMP_MIN=5, TEMP_MAX=6, TEMP_TREND=7, BITMAP=8, METEO_PRESSION=9, METEO_ICON=10, METEO_TEXT=11, GENERIC_TEXT=12 };
 	enum FONT_TYPE {SMALL=0, MEDIUM=1, BIG=2};
 
 	Element () {};
@@ -71,7 +75,7 @@ public:
 	uint8_t id;
 	int16_t  x=10;
 	int16_t  y=10;
-	int16_t  xDec;
+	int16_t  xDec=0;
 	uint8_t  red=255;
 	uint8_t  green = 0;
 	uint8_t  blue=0;
@@ -95,6 +99,21 @@ public:
 		ss += "\"blue\":\""+ String(blue)+ "\"" ;
 		ss = ss + "}";
 		return ss;
+	}
+
+	void fromJson(JsonObject doc) {
+		id 		= doc["id"]; // "0"
+		font 	= (FONT_TYPE)(doc["font"].as<uint8_t>()); // "0"
+		type 	= (OBJECT_TYPE)(doc["type"].as<uint8_t>()); // "1"
+		active 	= doc["active"]; // "1"
+		//color =doc["color"]; // "#FF0000"
+		txt 	= doc["txt"].as<String>(); // ""
+		x 		= doc["x"]; // "0"
+		y 		= doc["y"]; // "6"
+		red 	= doc["red"]; // "255"
+		green 	= doc["green"]; // "0"
+		blue 	= doc["blue"]; // "0"
+		DEBUGLOGF("Load Elt [%d]\n",id);		
 	}
 
 };
@@ -138,6 +157,18 @@ public:
 	}
 
 
+	void fromJson(JsonObject doc) {
+		name 		= doc["name"].as<String>();
+		id 			= doc["id"];
+		nbElement 	= doc["nbElts"];
+		active		= doc["active"];
+		DEBUGLOGF("Load Page [%s]\n",name.c_str());
+		JsonArray lstObj = doc["obj"];
+		for (uint8_t iElt =0; iElt < lstObj.size(); iElt++) {
+			element[iElt].fromJson(lstObj[iElt]);
+		}
+	}
+
 };
 
 
@@ -155,15 +186,28 @@ class SettingManager : public BaseSettingManager
     void readPage(Page *page);
 
     String getClassName(){return "SettingManager";}
+
+	String toStringCfg(boolean bJson){
+      	String ss;
+      	if (bJson ==STD_TEXT)
+        	return  BaseSettingManager::toString(bJson);
+		ss = "\"displayedPage\":\"" + String(displayedPage) + "\",";
+    	ss += "\"displayedMode\":\"" + String(displayedMode) + "\",";
+    	ss += "\"displayedFreq\":\"" + String(displayedMode) + "\",";
+    	ss += "\"page\":[";
+    	for (uint8_t iPage = 0; iPage<nbCustomPages; iPage++ ) {
+    		ss += customPage[iPage].toString(JSON_TEXT);
+    		if (iPage!=nbCustomPages-1)ss = ss + ",";
+    	}
+    	ss = ss + "]";
+		return ss;
+	}
+
     String toString(boolean bJson){
       String ss;
       if (bJson ==STD_TEXT) {
         ss = BaseSettingManager::toString(bJson);
       } else {
-    	  ss = "\"displayedPage\":\"" + String(displayedPage) + "\",";
-    	  ss += "\"displayedMode\":\"" + String(displayedMode) + "\",";
-    	  ss += "\"displayedFreq\":\"" + String(displayedMode) + "\",";
-
 		  uint8_t iIndex = 0;
 		  ss += "\"lstBMP\":[";
 		  while (iIndex<10 && lstBMP[iIndex] !=NULL ) {
@@ -173,12 +217,6 @@ class SettingManager : public BaseSettingManager
 				ss += ",";
 		  }
 		  ss += "],";
-    	  ss += "\"page\":[";
-    	  for (uint8_t iPage = 0; iPage<nbCustomPages; iPage++ ) {
-    		  ss += customPage[iPage].toString(JSON_TEXT);
-    		  if (iPage!=nbCustomPages-1)ss = ss + ",";
-    	  }
-    	  ss = ss + "],";
 
     	  //predefined pqge
     	  ss += "\"predefpage\":[";
@@ -186,7 +224,8 @@ class SettingManager : public BaseSettingManager
     		  ss += predefinedPage[iPage].toString(JSON_TEXT);
     		  if (iPage!=predefnbPages-1)ss = ss + ",";
     	    }
-    	    ss = ss + "]";
+    	    ss = ss + "],";
+		ss = ss + toStringCfg(bJson);
        }
       return ss;
     }
@@ -210,7 +249,7 @@ class SettingManager : public BaseSettingManager
 
 
     static const uint8_t nbCustomPages = 3;
-    static const uint8_t predefnbPages = 6;
+    static const uint8_t predefnbPages = 7;
     Page 	customPage[nbCustomPages];
     Page 	predefinedPage[predefnbPages];
 
