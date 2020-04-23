@@ -156,7 +156,7 @@ body {
 				xhttp.send();	
 			}
 		
-			function openPage(evt, cityName) {
+			function openPage(evt, idTab, idPage) {
 				var i, tabcontent, tablinks;
 				tabcontent = document.getElementsByClassName("tabcontent");
 				for (i = 0; i < tabcontent.length; i++) {
@@ -167,8 +167,10 @@ body {
 					tablinks[i].className = tablinks[i].className.replace(
 							" active", "");
 				}
-				document.getElementById(cityName).style.display = "block";
+				document.getElementById('P'+idTab).style.display = "block";
 				evt.currentTarget.className += " active";
+				changeSetting(idPage, 100, "displaypage","true");
+				
 			}
 			
 			function changeSetting(pID, oID, act, val) {
@@ -214,7 +216,7 @@ body {
 				for (i in myObj.setting.page) {
 				 	page = myObj.setting.page[i];
 					var pName = "Page"+ i;
-					res += '<button class="tablinks" onclick="openPage(event,\'P' + i + '\')">' + page.name + '</button>';
+					res += '<button class="tablinks" onclick="openPage(event,'+ i +','+ page.id+')">' + page.name + '</button>';
 				}
 				res += '</div>';
 				document.getElementById("tabHeader").innerHTML = res;
@@ -233,7 +235,7 @@ body {
 					var lstFont = ["Petite","Moyenne","Grande"];
 										
 					if (page.active==1)tmp="checked "; else tmp=" ";
-					res += '<input type="checkbox" ' + tmp + buildOnChangeSettingCheck( page.id, 100, "displaypage")+'/>'
+					res += '<input type="checkbox" ' + tmp + buildOnChangeSettingCheck( page.id, 100, "activatepage")+'/>'
 					res +=  'Name <input type="edit" value=' + page.name
 								+ buildOnChangeSetting(page.id, 100, "name") + '/>';
 					res +='<input type="time" value=' + page.time + buildOnChangeSetting( page.id, 100, "hour") + '/> <br />';
