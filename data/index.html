@@ -284,7 +284,8 @@ body {
 				for (i in lstPages) {					
 					page = lstPages[i];					
 					if (page.active==1)tmp="checked "; else tmp=" ";
-					res += '<input type="checkbox" ' + tmp + buildOnChangeSettingCheck( page.id, 100, "displaypage")+'\>' + page.name + '<br>';
+					res += '<input type="checkbox" ' + tmp + buildOnChangeSettingCheck( page.id, 100, "displaypage")+'\>' + page.name 
+					+'<input type="time" value=' + page.time + buildOnChangeSetting( page.id, 100, "hour") + '\> <br>';
 				}
 				return res;
 			}

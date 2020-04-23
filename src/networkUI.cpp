@@ -114,7 +114,8 @@ void setData(){
 	  pp = smManager->getPage(idPage);
 	  if (pp==NULL) DEBUGLOGF("Not page associated to [%d]", idPage);
   }
-
+ 
+  
   str = wfManager->getServer()->arg("obj");
 
   if (str!=NULL){
@@ -131,7 +132,9 @@ void setData(){
 	  }else {
 		  pp->active = false;
 	  }
-  }else{
+  } else  if (str=wfManager->getServer()->arg("hour") !=NULL){
+ 		pp->hour = str;
+  }  else{
 	  str = wfManager->getServer()->arg("x");
 	  if (str!=NULL){
 		  pp->element[nbElt].x = (uint8_t)atoi(str.c_str());

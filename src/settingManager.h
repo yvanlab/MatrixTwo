@@ -105,6 +105,7 @@ public:
 	uint8_t nbElement = 6;
 	uint8_t active = 0;
 	uint16_t id;
+	String hourMinute; 
 	String name;
 	Element element[6];
 	Page () {};
@@ -124,6 +125,7 @@ public:
 		ss += "\"name\":\""+name+ "\"," ;
 		ss += "\"nbElts\":\""+String(nbElement)+ "\"," ;
 		ss += "\"active\":\""+String(active)+ "\"," ;
+		ss += "\"hour\":\""+hourMinute+ "\"," ;
 
 		ss += "\"obj\":[";
 		for (uint8_t iElt=0; iElt<nbElement;iElt++) {
