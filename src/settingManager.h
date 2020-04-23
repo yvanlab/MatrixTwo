@@ -1,5 +1,4 @@
 
-
 #ifndef SettingManager_h
 #define SettingManager_h
 
@@ -102,17 +101,17 @@ public:
 	}
 
 	void fromJson(JsonObject doc) {
-		id 		= doc["id"]; // "0"
-		font 	= (FONT_TYPE)(doc["font"].as<uint8_t>()); // "0"
-		type 	= (OBJECT_TYPE)(doc["type"].as<uint8_t>()); // "1"
-		active 	= doc["active"]; // "1"
+		id 		= doc[F("id")]; // "0"
+		font 	= (FONT_TYPE)(doc[F("font")].as<uint8_t>()); // "0"
+		type 	= (OBJECT_TYPE)(doc[F("type")].as<uint8_t>()); // "1"
+		active 	= doc[F("active")]; // "1"
 		//color =doc["color"]; // "#FF0000"
-		txt 	= doc["txt"].as<String>(); // ""
-		x 		= doc["x"]; // "0"
-		y 		= doc["y"]; // "6"
-		red 	= doc["red"]; // "255"
-		green 	= doc["green"]; // "0"
-		blue 	= doc["blue"]; // "0"
+		txt 	= doc[F("txt")].as<String>(); // ""
+		x 		= doc[F("x")]; // "0"
+		y 		= doc[F("y")]; // "6"
+		red 	= doc[F("red")]; // "255"
+		green 	= doc[F("green")]; // "0"
+		blue 	= doc[F("blue")]; // "0"
 		DEBUGLOGF("Load Elt [%d]\n",id);		
 	}
 
@@ -158,10 +157,11 @@ public:
 
 
 	void fromJson(JsonObject doc) {
-		name 		= doc["name"].as<String>();
-		id 			= doc["id"];
-		nbElement 	= doc["nbElts"];
-		active		= doc["active"];
+		name 		= doc[F("name")].as<String>();
+		id 			= doc[F("id")];
+		nbElement 	= doc[F("nbElts")];
+		active		= doc[F("active")];
+		hourMinute  = doc[F("hour")].as<String>();
 		DEBUGLOGF("Load Page [%s]\n",name.c_str());
 		JsonArray lstObj = doc["obj"];
 		for (uint8_t iElt =0; iElt < lstObj.size(); iElt++) {

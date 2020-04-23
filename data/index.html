@@ -138,39 +138,11 @@ body {
 	</h2>
 	<p>Click on the buttons inside the tabbed menu:</p>
 
-	<div class="tab">
-		<button class="tablinks" onclick="openPage(event, 'P1')">Page
-			1</button>
-		<button class="tablinks" onclick="openPage(event, 'P2')">Page
-			2</button>
-		<button class="tablinks" onclick="openPage(event, 'P3')">Page
-			3</button>
-	</div>
-
-	<div id="P1" class="tabcontent">
-		<h3>
-			<span id="namePage0">Files</span>
-		</h3>
-		<i><b><span id="lstPage0">Files</span></b></i>
-	</div>
-
-	<div id="P2" class="tabcontent">
-		<h3>
-			<span id="namePage1">Files</span>
-		</h3>
-		<i><b><span id="lstPage1">Files</span></b></i>
-	</div>
-
-	<div id="P3" class="tabcontent">
-		<h3>
-			<span id="namePage2">Files</span>
-		</h3>
-		<i><b><span id="lstPage2">Files</span></b></i>
-	</div>
-
-
-
+	<span id="tabHeader">Files</span>
+	<span id="tabContentLst">Files</span>
+	
 	<script>
+
 		
 			function saveConfiguration() {
 				var xhttp = new XMLHttpRequest();
@@ -237,48 +209,72 @@ body {
 				res += buildDisplayPages(myObj.setting.page );
 				document.getElementById("lstCfg").innerHTML = res;
 				
+				// Build TAB list
+				res = '<div class="tab">';
 				for (i in myObj.setting.page) {
 				 	page = myObj.setting.page[i];
 					var pName = "Page"+ i;
-					document.getElementById("name"+pName).innerHTML = page.name;
-					res = "";
+					res += '<button class="tablinks" onclick="openPage(event,\'P' + i + '\')">' + page.name + '</button>';
+				}
+				res += '</div>';
+				document.getElementById("tabHeader").innerHTML = res;
+				
+				//Build TAB content
+
+				res = ""
+				for (i in myObj.setting.page) {
+				 	page = myObj.setting.page[i];
+					var pName = "Page"+ i;
+					//document.getElementById("name"+pName).innerHTML = page.name;
+					res += '<div id="P' + i + '" class="tabcontent">';
+					res += '<i><b>';
 					tmp="";
 					var lstType = ["Text","Heure","Date","Montre", "Temperature","Temperature Min", "Temperature Max", "Tendances", "Bitmap", "Pression","Meteo Icon","Meteo Text", "Text generic","je ne sais pas"];
 					var lstFont = ["Petite","Moyenne","Grande"];
+										
+					if (page.active==1)tmp="checked "; else tmp=" ";
+					res += '<input type="checkbox" ' + tmp + buildOnChangeSettingCheck( page.id, 100, "displaypage")+'/>'
+					res +=  'Name <input type="edit" value=' + page.name
+								+ buildOnChangeSetting(page.id, 100, "name") + '/>';
+					res +='<input type="time" value=' + page.time + buildOnChangeSetting( page.id, 100, "hour") + '/> <br />';
+					
 					for (j in page.obj) {
 						var ob = page.obj[j];
 						res += '<hr />';
 						res += ob.id
 						if (ob.active==1)tmp="checked "; else tmp=" ";
-						res += '<input type="checkbox" ' + tmp + buildOnChangeSettingCheck( page.id, ob.id, "active") + '\>';
-						res += 'Type:<select name="type"' +  buildOnChangeSetting( page.id, ob.id, "type") + '\>';
+						res += '<input type="checkbox" ' + tmp + buildOnChangeSettingCheck( page.id, ob.id, "active") + '/>';
+						res += 'Type:<select name="type"' +  buildOnChangeSetting( page.id, ob.id, "type") + '/>';
 						res += buildDropdown(ob.type,lstType);
 						res += '</select>';
-						res += 'Font:<select name="type"' +  buildOnChangeSetting( page.id, ob.id, "font") + '\>';
+						res += 'Font:<select name="type"' +  buildOnChangeSetting( page.id, ob.id, "font") + '/>';
 						res += buildDropdown(ob.font,lstFont);
 						res += '</select>';
 						res += 'Couleur<input type="color" value="' + ob.color + '"'
-							+ buildOnChangeSetting(page.id, ob.id, "color") + '\>';
+							+ buildOnChangeSetting(page.id, ob.id, "color") + '/>';
 						
-						res += '<div>X:<input type="number" style = "padding-left:6px;width:60px;" value=' + ob.x
-						 		+ buildOnChangeSetting(page.id, ob.id, "x") + '\>';
+						res += 'X:<input type="number" style = "padding-left:6px;width:60px;" value=' + ob.x
+						 		+ buildOnChangeSetting(page.id, ob.id, "x") + '/>';
 						
 						res += 'Y:<input type="number" style = "padding-left:6px;width:60px;" value=' + ob.y
-									+ buildOnChangeSetting(page.id, ob.id, "y") + '\>';
+									+ buildOnChangeSetting(page.id, ob.id, "y") + '/>';
 						
 						tmp = " ";
 						if 	(ob.txt != "" )	{
 							tmp = 'value=' + ob.txt;							
 						}
 						res += '<br />Text<input type="edit"' + tmp
-								+ buildOnChangeSetting(page.id, ob.id, "txt") + '\>';
+								+ buildOnChangeSetting(page.id, ob.id, "txt") + '/>';
 
-						res += 'Image:<select name="type"' +  buildOnChangeSetting( page.id, ob.id, "txt") + '\>';
-								res += buildStringDropdown(ob.txt,myObj.setting.lstBMP);
+						res += 'Image:<select name="type"' +  buildOnChangeSetting( page.id, ob.id, "txt") + '>';
+						res += buildStringDropdown(ob.txt,myObj.setting.lstBMP);
 						res += '</select>';
+						
 					};
-					document.getElementById("lst"+pName).innerHTML = res;
+					res += '</b></i></div>';
+					
 				};
+				document.getElementById("tabContentLst").innerHTML = res;
 			};
 			
 			
@@ -289,8 +285,8 @@ body {
 				for (i in lstPages) {					
 					page = lstPages[i];					
 					if (page.active==1)tmp="checked "; else tmp=" ";
-					res += '<input type="checkbox" ' + tmp + buildOnChangeSettingCheck( page.id, 100, "displaypage")+'\>' + page.name 
-					+'<input type="time" value=' + page.time + buildOnChangeSetting( page.id, 100, "hour") + '\> <br>';
+					res += '<input type="checkbox" ' + tmp + buildOnChangeSettingCheck( page.id, 100, "displaypage")+'/>' + page.name 
+					+'<input type="time" value=' + page.time + buildOnChangeSetting( page.id, 100, "hour") + '/> <br>';
 				}
 				return res;
 			}

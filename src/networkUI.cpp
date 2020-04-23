@@ -110,8 +110,7 @@ void setData(){
 	  nbElt = (uint8_t)atoi(str.c_str());
   }
 
-  str = wfManager->getServer()->arg("displaypage");
-  if (str!=NULL){
+  if (str = wfManager->getServer()->arg("displaypage") !=NULL){
 	  if (str == "true") {
 		  mpPages->setPage(idPage);
 		  smManager->displayedPage = idPage;
@@ -120,9 +119,11 @@ void setData(){
 	  }else {
 		  pp->active = false;
 	  }
-  } else  if (str=wfManager->getServer()->arg("hour") !=NULL){
- 		pp->hour = str;
-  }  else{
+  } else if (str=wfManager->getServer()->arg("name") !=NULL){
+	  pp->name = str;
+  } else if (str=wfManager->getServer()->arg("hour") !=NULL){
+ 		pp->hourMinute = str;
+  } else{
 	  str = wfManager->getServer()->arg("x");
 	  if (str!=NULL){
 		  pp->element[nbElt].x = (uint16_t)atoi(str.c_str());
