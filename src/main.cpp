@@ -178,15 +178,12 @@ void /*RAMFUNC*/ loop(void) {
 			mpPages->displayPage();
 		}
 	}
-	if (mtTimer.is1MNPeriod()){
+	if (mtTimer.is5MNPeriod()){
 		if (!phPresence->isPresence()) {
 			bmpMesure->mesure();
 			bmpMesure->set();
 		}
-	}
-
-	if (mtTimer.is1MNPeriod()){
-		phPeriferic->retrievePeriphericInfo();		
+		phPeriferic->retrievePeriphericInfo();				
 	}
 
 	if (Serial.available()) {

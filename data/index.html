@@ -221,6 +221,9 @@ body {
 				res += '</div>';
 				document.getElementById("tabHeader").innerHTML = res;
 				
+				var lstType = ["Text","Heure","Date","Montre", "Temperature","Temperature Min", "Temperature Max", "Tendances", "Bitmap", "Pression","Meteo Icon","Meteo Text", "Text generic","je ne sais pas"];
+				var lstFont = ["Petite","Moyenne","Grande"];
+
 				//Build TAB content
 
 				res = ""
@@ -231,8 +234,6 @@ body {
 					res += '<div id="P' + i + '" class="tabcontent">';
 					res += '<i><b>';
 					tmp="";
-					var lstType = ["Text","Heure","Date","Montre", "Temperature","Temperature Min", "Temperature Max", "Tendances", "Bitmap", "Pression","Meteo Icon","Meteo Text", "Text generic","je ne sais pas"];
-					var lstFont = ["Petite","Moyenne","Grande"];
 										
 					if (page.active==1)tmp="checked "; else tmp=" ";
 					res += '<input type="checkbox" ' + tmp + buildOnChangeSettingCheck( page.id, 100, "activatepage")+'/>'

@@ -248,7 +248,7 @@ class SettingManager : public BaseSettingManager
 
 
 
-    static const uint8_t nbCustomPages = 3;
+    static const uint8_t nbCustomPages = 11;
     static const uint8_t predefnbPages = 7;
     Page 	customPage[nbCustomPages];
     Page 	predefinedPage[predefnbPages];

@@ -4,6 +4,303 @@
     "displayedFreq": "0",
     "page": [
         {
+            "id": "32",
+            "name": "Heure",
+            "nbElts": "2",
+            "active": "0",
+            "hour": "",
+            "obj": [
+                {
+                    "id": "0",
+                    "font": "0",
+                    "type": "2",
+                    "active": "1",
+                    "color": "#FFFFFF",
+                    "txt": "",
+                    "x": "20",
+                    "y": "8",
+                    "red": "255",
+                    "green": "255",
+                    "blue": "255"
+                },
+                {
+                    "id": "1",
+                    "font": "2",
+                    "type": "1",
+                    "active": "1",
+                    "color": "#0000FF",
+                    "txt": "",
+                    "x": "0",
+                    "y": "24",
+                    "red": "0",
+                    "green": "0",
+                    "blue": "255"
+                }
+            ]
+        },
+        {
+            "id": "4",
+            "name": "Open Bar",
+            "nbElts": "2",
+            "active": "0",
+            "hour": "",
+            "obj": [
+                {
+                    "id": "0",
+                    "font": "2",
+                    "type": "0",
+                    "active": "1",
+                    "color": "#0000FF",
+                    "txt": "Open",
+                    "x": "2",
+                    "y": "12",
+                    "red": "0",
+                    "green": "0",
+                    "blue": "255"
+                },
+                {
+                    "id": "1",
+                    "font": "2",
+                    "type": "0",
+                    "active": "1",
+                    "color": "#FFFFFF",
+                    "txt": "bar",
+                    "x": "30",
+                    "y": "27",
+                    "red": "255",
+                    "green": "255",
+                    "blue": "255"
+                }
+            ]
+        },
+        {
+            "id": "8",
+            "name": "Noel",
+            "nbElts": "2",
+            "active": "0",
+            "hour": "",
+            "obj": [
+                {
+                    "id": "0",
+                    "font": "2",
+                    "type": "0",
+                    "active": "1",
+                    "color": "#FF0000",
+                    "txt": "Joyeux",
+                    "x": "0",
+                    "y": "11",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                },
+                {
+                    "id": "1",
+                    "font": "2",
+                    "type": "0",
+                    "active": "1",
+                    "color": "#FFFF00",
+                    "txt": "Noel",
+                    "x": "25",
+                    "y": "25",
+                    "red": "255",
+                    "green": "255",
+                    "blue": "0"
+                }
+            ]
+        },
+        {
+            "id": "16",
+            "name": "Newyear",
+            "nbElts": "3",
+            "active": "0",
+            "hour": "",
+            "obj": [
+                {
+                    "id": "0",
+                    "font": "1",
+                    "type": "0",
+                    "active": "1",
+                    "color": "#00FF00",
+                    "txt": "Annee",
+                    "x": "24",
+                    "y": "11",
+                    "red": "0",
+                    "green": "255",
+                    "blue": "0"
+                },
+                {
+                    "id": "1",
+                    "font": "2",
+                    "type": "0",
+                    "active": "1",
+                    "color": "#0000FF",
+                    "txt": "Bonne",
+                    "x": "10",
+                    "y": "11",
+                    "red": "0",
+                    "green": "0",
+                    "blue": "255"
+                },
+                {
+                    "id": "2",
+                    "font": "2",
+                    "type": "0",
+                    "active": "1",
+                    "color": "#FF0000",
+                    "txt": "2020",
+                    "x": "21",
+                    "y": "28",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                }
+            ]
+        },
+        {
+            "id": "2",
+            "name": "Meteo",
+            "nbElts": "2",
+            "active": "0",
+            "hour": "",
+            "obj": [
+                {
+                    "id": "0",
+                    "font": "1",
+                    "type": "0",
+                    "active": "1",
+                    "color": "#FF0000",
+                    "txt": "Meteo",
+                    "x": "0",
+                    "y": "11",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                },
+                {
+                    "id": "1",
+                    "font": "1",
+                    "type": "0",
+                    "active": "1",
+                    "color": "#FFFF00",
+                    "txt": "Chez pas",
+                    "x": "25",
+                    "y": "25",
+                    "red": "255",
+                    "green": "255",
+                    "blue": "0"
+                }
+            ]
+        },
+        {
+            "id": "16384",
+            "name": "Test",
+            "nbElts": "1",
+            "active": "0",
+            "hour": "",
+            "obj": [
+                {
+                    "id": "0",
+                    "font": "1",
+                    "type": "0",
+                    "active": "1",
+                    "color": "#FF0000",
+                    "txt": "Test",
+                    "x": "0",
+                    "y": "11",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                }
+            ]
+        },
+        {
+            "id": "32768",
+            "name": "cfg",
+            "nbElts": "6",
+            "active": "0",
+            "hour": "",
+            "obj": [
+                {
+                    "id": "0",
+                    "font": "0",
+                    "type": "1",
+                    "active": "1",
+                    "color": "#FF0000",
+                    "txt": "",
+                    "x": "0",
+                    "y": "6",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                },
+                {
+                    "id": "1",
+                    "font": "0",
+                    "type": "4",
+                    "active": "1",
+                    "color": "#0000FF",
+                    "txt": "",
+                    "x": "27",
+                    "y": "6",
+                    "red": "0",
+                    "green": "0",
+                    "blue": "255"
+                },
+                {
+                    "id": "2",
+                    "font": "0",
+                    "type": "8",
+                    "active": "1",
+                    "color": "#00FFFF",
+                    "txt": "tst.bmp",
+                    "x": "14",
+                    "y": "14",
+                    "red": "0",
+                    "green": "255",
+                    "blue": "255"
+                },
+                {
+                    "id": "3",
+                    "font": "0",
+                    "type": "7",
+                    "active": "1",
+                    "color": "#FFFFFF",
+                    "txt": "M{s}",
+                    "x": "40",
+                    "y": "2",
+                    "red": "255",
+                    "green": "255",
+                    "blue": "255"
+                },
+                {
+                    "id": "4",
+                    "font": "0",
+                    "type": "2",
+                    "active": "1",
+                    "color": "#00FF00",
+                    "txt": "",
+                    "x": "1",
+                    "y": "12",
+                    "red": "0",
+                    "green": "255",
+                    "blue": "0"
+                },
+                {
+                    "id": "5",
+                    "font": "0",
+                    "type": "3",
+                    "active": "1",
+                    "color": "#FFFF00",
+                    "txt": "5",
+                    "x": "7",
+                    "y": "20",
+                    "red": "255",
+                    "green": "255",
+                    "blue": "0"
+                }
+            ]
+        },
+        {
             "id": "256",
             "name": "cust1",
             "nbElts": "6",

@@ -29,16 +29,16 @@ Periferic::Periferic(unsigned char pinLed) : BaseManager(pinLed){
   http.setConnectTimeout(2000);
   client.setTimeout(2000);
   http.begin(client, urlService);  //Specify request destination
-  DEBUGLOG("http.begin");
+  //DEBUGLOG("http.begin");
   int httpCode = http.GET();                                                                  //Send the request
-  DEBUGLOGF("http.GET %d\n",httpCode);
+  //DEBUGLOGF("http.GET %d\n",httpCode);
 
   if (httpCode > 0) { //Check the returning code
     //DEBUGLOG(http.getString());
-    DEBUGLOG("Before deserializeJson");
+    //DEBUGLOG("Before deserializeJson");
     error = deserializeJson(*doc,client,DeserializationOption::Filter(*filter));
-    DEBUGLOG("Before serializeJsonPretty");
-    serializeJsonPretty(*doc, Serial);
+    //DEBUGLOG("Before serializeJsonPretty");
+    //serializeJsonPretty(*doc, Serial);
     //String result = http.getString();   //Get the request response payload
     
   } else 
@@ -48,7 +48,7 @@ Periferic::Periferic(unsigned char pinLed) : BaseManager(pinLed){
   http.end();   //Close connection
   
   //DEBUGLOG(httpCode);
-  DEBUGLOG(error.c_str());
+  //DEBUGLOG(error.c_str());
   return error;
 }
 
@@ -72,7 +72,7 @@ void Periferic::retrievePeriphericInfo() {
     m_TemperartureGarage   = 0.0;
     DEBUGLOGF("retrievePeriphericInfo GARAGE [%s] [%s]\n",CURRENT_GARAGE_IP_PROD, error.c_str()); 
   }
-  DEBUGLOGF("Free B [%d]\n", ESP.getFreeHeap());
+  //DEBUGLOGF("Free B [%d]\n", ESP.getFreeHeap());
 
   filter.clear();
   filter[F("EXT")][F("Btemperature")] = true;
@@ -83,6 +83,6 @@ void Periferic::retrievePeriphericInfo() {
     m_ExtTemp = 0.0;
     DEBUGLOGF("retrievePeriphericInfo VMC [%s] [%s]\n",VMC_METEO_IP_PROD, error.c_str()); 
   }
-  DEBUGLOGF("Free C [%d]\n", ESP.getFreeHeap());
+  //DEBUGLOGF("Free C [%d]\n", ESP.getFreeHeap());
 }
 

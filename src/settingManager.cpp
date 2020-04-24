@@ -106,7 +106,7 @@ unsigned char SettingManager::readData(){
   // Read configuartion file
   char cfgFileName[] =  "/config.json";
   if (SPIFFS.exists(cfgFileName)){
-    DynamicJsonDocument doc(8000);
+    DynamicJsonDocument doc(20000);
     file = SPIFFS.open(cfgFileName, FILE_READ);
     DeserializationError error = deserializeJson(doc, file);
     if (!error) {
