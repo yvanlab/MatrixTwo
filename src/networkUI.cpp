@@ -133,7 +133,7 @@ void setData()
 	}
 	else if ((str = wfManager->getServer()->arg("hour")) != NULL)
 	{
-		pp->hourMinute = str;
+		pp->setHourMinute(str);
 		changed = true;
 	}
 	else

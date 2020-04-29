@@ -22,6 +22,7 @@
 #include <presenceHelper.h>
 #include <thingSpeakManager.h>
 #include "periferic.h"
+#include "dictons.h"
 /*#include "SensorInterface.h"*/
 
 
@@ -48,6 +49,7 @@ extern MatrixPages        *mpPages;
 extern SettingManager 	  *smManager;
 extern PresenceHelper	    *phPresence;
 extern Periferic	        *phPeriferic;
+extern Dictons            *pDictons;
 
 #ifdef MCPOC_TELNET
 //extern RemoteDebug          Debug;

@@ -62,7 +62,9 @@
 class Element
 {
 public:
-	enum OBJECT_TYPE {TEXT=0, HOUR=1, DATE=2,WATCH=3, TEMP=4, TEMP_MIN=5, TEMP_MAX=6, TEMP_TREND=7, BITMAP=8, METEO_PRESSION=9, METEO_ICON=10, METEO_TEXT=11, GENERIC_TEXT=12 };
+	enum OBJECT_TYPE {TEXT=0, HOUR=1, DATE=2,WATCH=3, TEMP=4, TEMP_MIN=5, TEMP_MAX=6, TEMP_TREND=7, BITMAP=8, 
+					  METEO_PRESSION=9, METEO_ICON=10, METEO_TEXT=11, 
+					  GENERIC_TEXT=12, TEMP_EXT=13, CURRENT=14,DICTONS=15};
 	enum FONT_TYPE {SMALL=0, MEDIUM=1, BIG=2};
 
 	Element () {};
@@ -104,7 +106,7 @@ public:
 		id 		= doc[F("id")]; // "0"
 		font 	= (FONT_TYPE)(doc[F("font")].as<uint8_t>()); // "0"
 		type 	= (OBJECT_TYPE)(doc[F("type")].as<uint8_t>()); // "1"
-		active 	= doc[F("active")]; // "1"
+		active 	= doc[F("active")].as<uint8_t>() == 1; // "1"
 		//color =doc["color"]; // "#FF0000"
 		txt 	= doc[F("txt")].as<String>(); // ""
 		x 		= doc[F("x")]; // "0"
@@ -117,13 +119,15 @@ public:
 
 };
 
+
 class Page
 {
 public:
 	uint8_t nbElement = 6;
-	uint8_t active = 0;
+	boolean active = false;
 	uint16_t id;
 	String hourMinute; 
+	int16_t hourMinuteConverted;
 	String name;
 	Element element[6];
 	Page () {};
@@ -159,9 +163,9 @@ public:
 	void fromJson(JsonObject doc) {
 		name 		= doc[F("name")].as<String>();
 		id 			= doc[F("id")];
-		nbElement 	= doc[F("nbElts")];
-		active		= doc[F("active")];
-		hourMinute  = doc[F("hour")].as<String>();
+		//uint8_t nbElt 	= doc[F("nbElts")];
+		active		= doc[F("active")].as<uint8_t>() == 1;
+		setHourMinute(doc[F("hour")].as<String>());
 		DEBUGLOGF("Load Page [%s]\n",name.c_str());
 		JsonArray lstObj = doc["obj"];
 		for (uint8_t iElt =0; iElt < lstObj.size(); iElt++) {
@@ -169,6 +173,18 @@ public:
 		}
 	}
 
+
+	void setHourMinute(String hhMm) {
+		if (!hhMm.isEmpty() && hhMm.length() == 5) {
+			//22:12
+			uint8_t hh = hhMm.substring(0,2).toInt();
+			uint8_t mn = hhMm.substring(2,4).toInt();
+			DEBUGLOGF("Page [%s],[%d][%d]\n",hourMinute.c_str(), hh,mn);
+			hourMinuteConverted = hh*60+mn;
+			hourMinute = hhMm;
+		}
+		hourMinuteConverted = -1;
+	}
 };
 
 
@@ -219,24 +235,24 @@ class SettingManager : public BaseSettingManager
 		  ss += "],";
 
     	  //predefined pqge
-    	  ss += "\"predefpage\":[";
+/*    	  ss += "\"predefpage\":[";
     	  for (uint8_t iPage = 0; iPage<predefnbPages; iPage++ ) {
     		  ss += predefinedPage[iPage].toString(JSON_TEXT);
     		  if (iPage!=predefnbPages-1)ss = ss + ",";
     	    }
-    	    ss = ss + "],";
+    	    ss = ss + "],";*/
 		ss = ss + toStringCfg(bJson);
        }
       return ss;
     }
 
     Page *getPage(uint16_t id) {
-    	for (uint8_t iPage = 0; iPage<predefnbPages; iPage++ ) {
+    	/*for (uint8_t iPage = 0; iPage<predefnbPages; iPage++ ) {
     		//DEBUGLOGF("predefinedPage [%d/%d]\n",predefinedPage[iPage].id,id);
     		if (predefinedPage[iPage].id == id) {
     			return &predefinedPage[iPage];
     		}
-    	}
+    	}*/
     	for (uint8_t iPage = 0; iPage<nbCustomPages; iPage++ ) {
     		//DEBUGLOGF("customPage [%d/%d]\n",customPage[iPage].id,id);
         		if (customPage[iPage].id == id) {
@@ -249,9 +265,9 @@ class SettingManager : public BaseSettingManager
 
 
     static const uint8_t nbCustomPages = 11;
-    static const uint8_t predefnbPages = 7;
+    //static const uint8_t predefnbPages = 7;
     Page 	customPage[nbCustomPages];
-    Page 	predefinedPage[predefnbPages];
+    //Page 	predefinedPage[predefnbPages];
 
     uint8_t displayedPage = 0;
     uint8_t displayedMode = 0;

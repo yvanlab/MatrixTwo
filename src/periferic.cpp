@@ -42,7 +42,7 @@ Periferic::Periferic(unsigned char pinLed) : BaseManager(pinLed){
     //String result = http.getString();   //Get the request response payload
     
   } else 
-      DEBUGLOG("http error");
+      DEBUGLOGF("http error [%d]", httpCode);
 
    //client.stop();
   http.end();   //Close connection

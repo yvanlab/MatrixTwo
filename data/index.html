@@ -221,7 +221,7 @@ body {
 				res += '</div>';
 				document.getElementById("tabHeader").innerHTML = res;
 				
-				var lstType = ["Text","Heure","Date","Montre", "Temperature","Temperature Min", "Temperature Max", "Tendances", "Bitmap", "Pression","Meteo Icon","Meteo Text", "Text generic","je ne sais pas"];
+				var lstType = ["Text","Heure","Date","Montre", "Temperature","Temperature Min", "Temperature Max", "Tendances", "Bitmap", "Pression","Meteo Icon","Meteo Text", "Text generic","Temperature Exterieure", "Consommation courant", "Dictons","je ne sais pas"];
 				var lstFont = ["Petite","Moyenne","Grande"];
 
 				//Build TAB content
@@ -237,9 +237,13 @@ body {
 										
 					if (page.active==1)tmp="checked "; else tmp=" ";
 					res += '<input type="checkbox" ' + tmp + buildOnChangeSettingCheck( page.id, 100, "activatepage")+'/>'
-					res +=  'Name <input type="edit" value=' + page.name
+					tmp=" ";
+					if (page.name!="")tmp = 'value='+ page.name;
+					res +=  'Name <input type="edit" ' + tmp
 								+ buildOnChangeSetting(page.id, 100, "name") + '/>';
-					res +='<input type="time" value=' + page.time + buildOnChangeSetting( page.id, 100, "hour") + '/> <br />';
+					tmp=" ";
+					if (page.hour!="")tmp = 'value='+ page.hour;
+					res +='<input type="time" ' + tmp + buildOnChangeSetting( page.id, 100, "hour") + '/> <br />';
 					
 					for (j in page.obj) {
 						var ob = page.obj[j];

@@ -1,49 +1,105 @@
 {
-    "displayedPage": "0",
+    "datetime": {
+        "date": "29/04/2020",
+        "time": "21:02:20"
+    },
+    "displayedPage": "1",
     "displayedMode": "0",
     "displayedFreq": "0",
     "page": [
         {
-            "id": "32",
-            "name": "Heure",
-            "nbElts": "2",
+            "id": "6",
+            "name": "Test",
+            "nbElts": "6",
             "active": "0",
             "hour": "",
             "obj": [
                 {
                     "id": "0",
-                    "font": "0",
-                    "type": "2",
+                    "font": "1",
+                    "type": "0",
                     "active": "1",
-                    "color": "#FFFFFF",
-                    "txt": "",
-                    "x": "20",
-                    "y": "8",
+                    "color": "#FF0000",
+                    "txt": "Test",
+                    "x": "0",
+                    "y": "11",
                     "red": "255",
-                    "green": "255",
-                    "blue": "255"
+                    "green": "0",
+                    "blue": "0"
                 },
                 {
                     "id": "1",
-                    "font": "2",
-                    "type": "1",
-                    "active": "1",
-                    "color": "#0000FF",
-                    "txt": "",
-                    "x": "0",
-                    "y": "24",
-                    "red": "0",
+                    "font": "1",
+                    "type": "0",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
+                    "red": "255",
                     "green": "0",
-                    "blue": "255"
+                    "blue": "0"
+                },
+                {
+                    "id": "2",
+                    "font": "1",
+                    "type": "0",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                },
+                {
+                    "id": "3",
+                    "font": "1",
+                    "type": "0",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                },
+                {
+                    "id": "4",
+                    "font": "1",
+                    "type": "0",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                },
+                {
+                    "id": "5",
+                    "font": "1",
+                    "type": "0",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
                 }
             ]
         },
         {
-            "id": "4",
+            "id": "2",
             "name": "Open Bar",
-            "nbElts": "2",
-            "active": "0",
-            "hour": "",
+            "nbElts": "6",
+            "active": "1",
+            "hour": "19:00",
             "obj": [
                 {
                     "id": "0",
@@ -70,13 +126,65 @@
                     "red": "255",
                     "green": "255",
                     "blue": "255"
+                },
+                {
+                    "id": "2",
+                    "font": "1",
+                    "type": "0",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                },
+                {
+                    "id": "3",
+                    "font": "1",
+                    "type": "0",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                },
+                {
+                    "id": "4",
+                    "font": "1",
+                    "type": "0",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                },
+                {
+                    "id": "5",
+                    "font": "1",
+                    "type": "0",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
                 }
             ]
         },
         {
-            "id": "8",
+            "id": "3",
             "name": "Noel",
-            "nbElts": "2",
+            "nbElts": "6",
             "active": "0",
             "hour": "",
             "obj": [
@@ -105,13 +213,65 @@
                     "red": "255",
                     "green": "255",
                     "blue": "0"
+                },
+                {
+                    "id": "2",
+                    "font": "1",
+                    "type": "0",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                },
+                {
+                    "id": "3",
+                    "font": "1",
+                    "type": "0",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                },
+                {
+                    "id": "4",
+                    "font": "1",
+                    "type": "0",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                },
+                {
+                    "id": "5",
+                    "font": "1",
+                    "type": "0",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
                 }
             ]
         },
         {
-            "id": "16",
+            "id": "4",
             "name": "Newyear",
-            "nbElts": "3",
+            "nbElts": "6",
             "active": "0",
             "hour": "",
             "obj": [
@@ -153,15 +313,54 @@
                     "red": "255",
                     "green": "0",
                     "blue": "0"
+                },
+                {
+                    "id": "3",
+                    "font": "1",
+                    "type": "0",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                },
+                {
+                    "id": "4",
+                    "font": "1",
+                    "type": "0",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                },
+                {
+                    "id": "5",
+                    "font": "1",
+                    "type": "0",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
                 }
             ]
         },
         {
-            "id": "2",
+            "id": "5",
             "name": "Meteo",
-            "nbElts": "2",
+            "nbElts": "6",
             "active": "0",
-            "hour": "",
+            "hour": "01:10",
             "obj": [
                 {
                     "id": "0",
@@ -188,25 +387,55 @@
                     "red": "255",
                     "green": "255",
                     "blue": "0"
-                }
-            ]
-        },
-        {
-            "id": "16384",
-            "name": "Test",
-            "nbElts": "1",
-            "active": "0",
-            "hour": "",
-            "obj": [
+                },
                 {
-                    "id": "0",
+                    "id": "2",
                     "font": "1",
                     "type": "0",
-                    "active": "1",
+                    "active": "0",
                     "color": "#FF0000",
-                    "txt": "Test",
-                    "x": "0",
-                    "y": "11",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                },
+                {
+                    "id": "3",
+                    "font": "1",
+                    "type": "0",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                },
+                {
+                    "id": "4",
+                    "font": "1",
+                    "type": "0",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                },
+                {
+                    "id": "5",
+                    "font": "1",
+                    "type": "0",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
                     "red": "255",
                     "green": "0",
                     "blue": "0"
@@ -214,7 +443,94 @@
             ]
         },
         {
-            "id": "32768",
+            "id": "1",
+            "name": "Heure",
+            "nbElts": "6",
+            "active": "1",
+            "hour": "",
+            "obj": [
+                {
+                    "id": "0",
+                    "font": "0",
+                    "type": "2",
+                    "active": "1",
+                    "color": "#FFFFFF",
+                    "txt": "",
+                    "x": "20",
+                    "y": "8",
+                    "red": "255",
+                    "green": "255",
+                    "blue": "255"
+                },
+                {
+                    "id": "1",
+                    "font": "2",
+                    "type": "1",
+                    "active": "1",
+                    "color": "#0000FF",
+                    "txt": "",
+                    "x": "0",
+                    "y": "21",
+                    "red": "0",
+                    "green": "0",
+                    "blue": "255"
+                },
+                {
+                    "id": "2",
+                    "font": "1",
+                    "type": "11",
+                    "active": "1",
+                    "color": "#00FF12",
+                    "txt": "defaut",
+                    "x": "0",
+                    "y": "24",
+                    "red": "0",
+                    "green": "255",
+                    "blue": "18"
+                },
+                {
+                    "id": "3",
+                    "font": "0",
+                    "type": "4",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "",
+                    "x": "4",
+                    "y": "8",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                },
+                {
+                    "id": "4",
+                    "font": "1",
+                    "type": "0",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                },
+                {
+                    "id": "5",
+                    "font": "1",
+                    "type": "0",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                }
+            ]
+        },
+        {
+            "id": "7",
             "name": "cfg",
             "nbElts": "6",
             "active": "0",
@@ -301,10 +617,11 @@
             ]
         },
         {
-            "id": "256",
+            "id": "8",
             "name": "cust1",
             "nbElts": "6",
             "active": "0",
+            "hour": "",
             "obj": [
                 {
                     "id": "0",
@@ -387,10 +704,11 @@
             ]
         },
         {
-            "id": "512",
+            "id": "9",
             "name": "cust2",
             "nbElts": "6",
             "active": "0",
+            "hour": "",
             "obj": [
                 {
                     "id": "0",
@@ -473,10 +791,11 @@
             ]
         },
         {
-            "id": "1024",
+            "id": "10",
             "name": "cust3",
             "nbElts": "6",
             "active": "0",
+            "hour": "",
             "obj": [
                 {
                     "id": "0",
@@ -553,6 +872,93 @@
                     "x": "0",
                     "y": "0",
                     "red": "0",
+                    "green": "0",
+                    "blue": "0"
+                }
+            ]
+        },
+        {
+            "id": "11",
+            "name": "HappyHour",
+            "nbElts": "6",
+            "active": "1",
+            "hour": "18:00",
+            "obj": [
+                {
+                    "id": "0",
+                    "font": "2",
+                    "type": "0",
+                    "active": "1",
+                    "color": "#FF0000",
+                    "txt": "Happy",
+                    "x": "16",
+                    "y": "18",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                },
+                {
+                    "id": "1",
+                    "font": "2",
+                    "type": "0",
+                    "active": "1",
+                    "color": "#0026FF",
+                    "txt": "Hour",
+                    "x": "25",
+                    "y": "30",
+                    "red": "0",
+                    "green": "38",
+                    "blue": "255"
+                },
+                {
+                    "id": "2",
+                    "font": "1",
+                    "type": "0",
+                    "active": "1",
+                    "color": "#00FF22",
+                    "txt": "50%",
+                    "x": "36",
+                    "y": "1",
+                    "red": "0",
+                    "green": "255",
+                    "blue": "34"
+                },
+                {
+                    "id": "3",
+                    "font": "1",
+                    "type": "3",
+                    "active": "1",
+                    "color": "#FF0000",
+                    "txt": "8",
+                    "x": "8",
+                    "y": "10",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                },
+                {
+                    "id": "4",
+                    "font": "1",
+                    "type": "0",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
+                    "red": "255",
+                    "green": "0",
+                    "blue": "0"
+                },
+                {
+                    "id": "5",
+                    "font": "1",
+                    "type": "0",
+                    "active": "0",
+                    "color": "#FF0000",
+                    "txt": "defaut",
+                    "x": "10",
+                    "y": "10",
+                    "red": "255",
                     "green": "0",
                     "blue": "0"
                 }

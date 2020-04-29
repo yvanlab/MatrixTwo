@@ -13,6 +13,7 @@ PresenceHelper			*phPresence;
 BMPManagerV2			*bmpMesure;//(PIN_LED);
 thingSpeakManager       *thinkSpeakMgr;//(pinLed);
 Periferic	        	*phPeriferic;
+Dictons            		*pDictons;
 
 #define LOG_LABEL  "log"
  #define TEMP_PIECE_LABEL        1 //"vmcHUM"
@@ -101,6 +102,7 @@ void  setup(void) {
 	phPresence 	= new PresenceHelper();
 	phPresence->setCallback(presenceManagement);
 	phPeriferic = new Periferic(PIN_LED);
+	pDictons 	= new Dictons();
 
   	if(!SPIFFS.begin(true)){
         Serial.println("SPIFFS Mount Failed");
@@ -113,6 +115,7 @@ void  setup(void) {
 	DEBUGLOG(smManager->toString(STD_TEXT));
 	startWiFiserver();
 
+	//pDictons->findNewDicton(day());
 
 	bmpMesure = new BMPManagerV2(PIN_LED);
 	bmpMesure->mesure();
@@ -160,7 +163,7 @@ void  setup(void) {
 
 	DEBUGLOG("Begin");
 }
-
+uint8_t iDay=0;
 
 void /*RAMFUNC*/ loop(void) {
 	wfManager->handleClient();
@@ -185,6 +188,14 @@ void /*RAMFUNC*/ loop(void) {
 		}
 		phPeriferic->retrievePeriphericInfo();				
 	}
+
+	if (mtTimer.is1MNPeriod()){
+		mpPages->stopTimer();
+		pDictons->findNewDicton(iDay%5);
+		mpPages->startTimer();
+		iDay++;
+	}
+
 
 	if (Serial.available()) {
 		char c = Serial.read();

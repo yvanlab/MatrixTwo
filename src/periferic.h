@@ -22,12 +22,9 @@ class Periferic : public BaseManager
     Periferic(unsigned char pinLed);
     DeserializationError collectJson(String urlService,JsonDocument *doc,  JsonDocument *filter );
     
-    //String collectJson(String ipAddress);
-    //String buildPerifericOutput(String perifericName, uint8_t statusCode);
     void retrievePeriphericInfo();
 
-    float getExtTemp()     {return m_ExtTemp;}
-
+    float getExtTemp()                {return m_ExtTemp;}
     float getInstantCurrentGarage()   {return m_InstantCurrentGarage;}
     float getITemperartureGarage()    {return m_TemperartureGarage;}
 
@@ -41,15 +38,8 @@ class Periferic : public BaseManager
     
     // meteo
     float m_ExtTemp = 0.0;
-    
-
-/*    String m_ExtTempMax;
-    String m_ExtTempMin;*/
 
   private:
-/*    String getBlock(String jSon, String key);
-    String getValue(String jSon, String key);
-    String getKeyValue(String jSon, String key);*/
     
     WiFiClient client;
 
