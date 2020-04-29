@@ -101,16 +101,14 @@ void MatrixPages::begin()
 
 	win.set(0, 0, 64, 32);
 
-	setPage(HOUR_PAGE_ID);
+	setPage(1);
 	displayPage();
 }
 
 void MatrixPages::displayPage()
 {
-
-	Page *pp = smManager->getPage(_numPage);
 	m_display.clearDisplay();
-	if (pp == NULL)
+	if (m_pp == NULL)
 	{
 		DEBUGLOGF("Display Error %d\n", _numPage);
 		Page tp;
@@ -119,7 +117,7 @@ void MatrixPages::displayPage()
 		m_display.showBuffer();
 		return;
 	}
-	if (pp->id == TEST_PAGE_ID)
+/*	if (pp->id == TEST_PAGE_ID)
 	{
 		displayTestPage();
 	}
@@ -130,7 +128,8 @@ void MatrixPages::displayPage()
 	else
 	{
 		displayScreen(pp);
-	}
+	}*/
+	displayScreen(m_pp);
 	m_display.showBuffer();
 }
 
@@ -139,9 +138,10 @@ void MatrixPages::setPage(uint16_t num)
 	DEBUGLOGF("Page %d\n", num);
 	if (num == _numPage)
 		return;
+	m_pp = smManager->getPage(_numPage);
 	m_display.clearDisplay();
-	tranPages->startTransition(TransitionPages::TRANSITION_ROTATION);
-	startTransition = 128;
+	tranPages->startTransition(m_pp->transition);
+	//startTransition = 128;
 	_numPage = num;
 };
 
@@ -165,26 +165,6 @@ void MatrixPages::nextPage()
 	setPage(newpage);*/
 }
 
-boolean MatrixPages::manageTransition(byte transitionType)
-{
-	/* if (startTransition == 0) return false;
-  if (!mtTimer.isQuickPeriod()) return false;
-  startTransition--;
-  if (startTransition==0) {
-    matrix.clear();
-    return true;
-  }
-
-  if (transitionType == FROM_CENTER) {
-    matrix.setDisplayWindows(startTransition/2, startTransition/8,128-startTransition, 16-startTransition/8);
-    matrix.drawSquare(0,0,startTransition/8-1,16-startTransition/8-1,0);
-  }else if (transitionType == FROM_RIGHT) {
-    matrix.setDisplayWindows(startTransition, 0,128, 16);
-  }else   if (transitionType == FROM_LEFT) {
-    matrix.setDisplayWindows(startTransition, 0,128, 16);
-  }*/
-	return true;
-}
 
 String MatrixPages::buildGeneric(String txt)
 {
@@ -595,7 +575,7 @@ void MatrixPages::displayBitmap(Element *pElt)
 
 void MatrixPages::displayCfgPage()
 {
-	Page *pp = smManager->getPage(CFG_PAGE_ID);
+	/*Page *pp = smManager->getPage(CFG_PAGE_ID);
 	displayScreen(pp);
 
 	String sPres;
@@ -613,7 +593,7 @@ void MatrixPages::displayCfgPage()
 	tp.element[0].set(Element::TEXT, win.getX(31), win.getY(19), sPres, Element::SMALL, 0, 0, 255, true);
 	tp.element[1].set(Element::METEO_PRESSION, win.getX(31), win.getY(27), "", Element::SMALL, 0, 255, 0, true);
 	tp.element[2].set(Element::METEO_ICON, win.getX(53), win.getY(19), "", Element::SMALL, 0, 255, 0, true);
-	displayScreen(&tp);
+	displayScreen(&tp);*/
 }
 
 void MatrixPages::displayTestPage()

@@ -13,8 +13,9 @@
 #endif
 
 #include "ArduinoJson.h"
+#include "utils.h"
 
-
+/*
 
 #define TEMPERATURE_PAGE_ID    0b0000000000000001 //0x1
 #define TEMPERATURE_PAGE_NAME  "Temperature"
@@ -51,13 +52,14 @@
 
 #define ETEINDRE_PAGE_ID 	    0b0000000000000000
 #define ETEINDRE_PAGE_NAME 	    "Eteindre"
-
+*/
 
 
 
 #include <EEPROM.h>
 #include <baseManager.h>
 #include <BaseSettingManager.h>
+//#include "matrixPages.h"
 
 class Element
 {
@@ -129,6 +131,7 @@ public:
 	String hourMinute; 
 	int16_t hourMinuteConverted;
 	String name;
+	TransitionPages::TRANSTION_MODE transition = TransitionPages::TRANSITION_LEFT;
 	Element element[6];
 	Page () {};
 
@@ -148,6 +151,8 @@ public:
 		ss += "\"nbElts\":\""+String(nbElement)+ "\"," ;
 		ss += "\"active\":\""+String(active)+ "\"," ;
 		ss += "\"hour\":\""+hourMinute+ "\"," ;
+		ss += "\"transition\":\""+ String(transition)+ "\"," ;
+
 
 		ss += "\"obj\":[";
 		for (uint8_t iElt=0; iElt<nbElement;iElt++) {
@@ -166,6 +171,7 @@ public:
 		//uint8_t nbElt 	= doc[F("nbElts")];
 		active		= doc[F("active")].as<uint8_t>() == 1;
 		setHourMinute(doc[F("hour")].as<String>());
+		transition = (TransitionPages::TRANSTION_MODE)doc[F("transition")].as<uint8_t>();
 		DEBUGLOGF("Load Page [%s]\n",name.c_str());
 		JsonArray lstObj = doc["obj"];
 		for (uint8_t iElt =0; iElt < lstObj.size(); iElt++) {

@@ -223,6 +223,7 @@ body {
 				
 				var lstType = ["Text","Heure","Date","Montre", "Temperature","Temperature Min", "Temperature Max", "Tendances", "Bitmap", "Pression","Meteo Icon","Meteo Text", "Text generic","Temperature Exterieure", "Consommation courant", "Dictons","je ne sais pas"];
 				var lstFont = ["Petite","Moyenne","Grande"];
+				var lstTransition = ["Gauche","Droite","Monter","Descendre","Centre", "Rotation", "Etoile"];
 
 				//Build TAB content
 
@@ -244,6 +245,9 @@ body {
 					tmp=" ";
 					if (page.hour!="")tmp = 'value='+ page.hour;
 					res +='<input type="time" ' + tmp + buildOnChangeSetting( page.id, 100, "hour") + '/> <br />';
+					res += 'Transision:<select name="type"' +  buildOnChangeSetting( page.id, 100, "trans") + '/>';
+					res += buildDropdown(page.transition,lstTransition);
+					res += '</select>';
 					
 					for (j in page.obj) {
 						var ob = page.obj[j];

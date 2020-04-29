@@ -17,6 +17,7 @@
 #include "networkUI.h"
 
 //#include "thingSpeakManager.h"
+#include "utils.h"
 #include "matrixPages.h"
 #include "BMPManagerV2.h"
 #include <presenceHelper.h>

@@ -30,7 +30,7 @@ class Dictons
         if (SPIFFS.exists(cfgFileName)){
             File file = SPIFFS.open(cfgFileName, FILE_READ);
             while (file.available() && nbLine < numDay ) {
-                m_currentDicton = file.readString();
+                m_currentDicton = file.readStringUntil('\n');
                 nbLine++;
             }        
             file.close();

@@ -136,6 +136,11 @@ void setData()
 		pp->setHourMinute(str);
 		changed = true;
 	}
+	else if ((str = wfManager->getServer()->arg("trans")) != NULL)
+	{
+		pp->transition = (TransitionPages::TRANSTION_MODE) atoi(str.c_str());
+		changed = true;
+	}
 	else
 	{
 		if ((str = wfManager->getServer()->arg("x")) != NULL)

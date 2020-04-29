@@ -1,32 +1,32 @@
 #include "main.h"
 
-
 TaskHandle_t Task1;
 TaskHandle_t Task2;
 
-SettingManager 			*smManager;//(PIN_LED);
-WifiManager 			*wfManager;//(PIN_LED, &smManager);
-MatrixPages             *mpPages;//(PIN_LED);
+SettingManager *smManager; //(PIN_LED);
+WifiManager *wfManager;	   //(PIN_LED, &smManager);
+MatrixPages *mpPages;	   //(PIN_LED);
 portMUX_TYPE wtimerMux = portMUX_INITIALIZER_UNLOCKED;
-PresenceHelper			*phPresence;
+PresenceHelper *phPresence;
 
-BMPManagerV2			*bmpMesure;//(PIN_LED);
-thingSpeakManager       *thinkSpeakMgr;//(pinLed);
-Periferic	        	*phPeriferic;
-Dictons            		*pDictons;
+BMPManagerV2 *bmpMesure;		  //(PIN_LED);
+thingSpeakManager *thinkSpeakMgr; //(pinLed);
+Periferic *phPeriferic;
+Dictons *pDictons;
 
-#define LOG_LABEL  "log"
- #define TEMP_PIECE_LABEL        1 //"vmcHUM"
- #define PRESSION_LABEL     2 //"vmcTEMP"
- #define PRESENCE_LABEL         3 //"vmcVTS"
- #define TEMP_PROC_LABEL     4 //"extTEMP"
+#define LOG_LABEL "log"
+#define TEMP_PIECE_LABEL 1 //"vmcHUM"
+#define PRESSION_LABEL 2   //"vmcTEMP"
+#define PRESENCE_LABEL 3   //"vmcVTS"
+#define TEMP_PROC_LABEL 4  //"extTEMP"
 
 #ifdef MCPOC_TELNET
 RemoteDebug Debug;
 #endif
 
 #ifdef MCPOC_TELNET // Not in PRODUCTION
-void processCmdRemoteDebug() {
+void processCmdRemoteDebug()
+{
 	String lastCmd = Debug.getLastCommand();
 	/*  if (lastCmd == "o") {
 	 dManager.activateModule(true);
@@ -42,15 +42,14 @@ void processCmdRemoteDebug() {
 }
 #endif
 
-
-
-
-void startWiFiserver() {
+void startWiFiserver()
+{
 	wfManager->getServer()->on("/firmware", firmware);
 	wfManager->getServer()->on("/cleabr", clearEEPROM);
 
 	if (wfManager->begin(IPAddress(MODULE_IP), MODULE_NAME, MODULE_MDNS,
-			MODULE_MDNS_AP) == WL_CONNECTED) {
+						 MODULE_MDNS_AP) == WL_CONNECTED)
+	{
 		wfManager->getServer()->on("/", dataPage);
 		wfManager->getServer()->onNotFound(dataPage);
 	}
@@ -63,53 +62,58 @@ void startWiFiserver() {
 	Serial.println(wfManager->toString(STD_TEXT));
 }
 
-
-
-void screemManagement( void * pvParameters ){
+void screemManagement(void *pvParameters)
+{
 	DEBUGLOG("Task1 running on core ");
 	DEBUGLOG(xPortGetCoreID());
-  	mpPages = new MatrixPages(PIN_LED);
-  	mpPages->begin();
-  	mpPages->setPage(HOUR_PAGE_ID);
+	mpPages = new MatrixPages(PIN_LED);
+	mpPages->begin();
+	mpPages->setPage(1);
 
-
-  while(true){
-	  delay(1);
-  };
+	while (true)
+	{
+		delay(1);
+	};
 }
 
-void presenceManagement(boolean bPresent) {
+void presenceManagement(boolean bPresent)
+{
 	DEBUGLOGF("Presence trigged[%d]\n", bPresent);
-	if (bPresent) {
+	if (bPresent)
+	{
 		mpPages->startTimer();
-	} else {
+	}
+	else
+	{
 		mpPages->stopTimer();
 	}
 }
 
-void  setup(void) {
+void setup(void)
+{
 	//gdbstub_init();
 	//node.setcpufreq(node.CPU160MHZ)
-	Serial.begin(115200);	//delay(500);
+	Serial.begin(115200); //delay(500);
 	Serial.println("start debuging");
 	DEBUGLOGF("Frq : %d \n", ESP.getCpuFreqMHz());
 	DEBUGLOGF("Temp : %f \n", temperatureRead());
 	disableCore0WDT();
 	disableCore1WDT();
 
-	smManager 	= new SettingManager(PIN_LED);
-	wfManager 	= new WifiManager(PIN_LED, smManager);
-	phPresence 	= new PresenceHelper();
+	smManager = new SettingManager(PIN_LED);
+	wfManager = new WifiManager(PIN_LED, smManager);
+	phPresence = new PresenceHelper();
 	phPresence->setCallback(presenceManagement);
 	phPeriferic = new Periferic(PIN_LED);
-	pDictons 	= new Dictons();
+	pDictons = new Dictons();
 
-  	if(!SPIFFS.begin(true)){
-        Serial.println("SPIFFS Mount Failed");
-        return;
-    } else 
+	if (!SPIFFS.begin(true))
+	{
+		Serial.println("SPIFFS Mount Failed");
+		return;
+	}
+	else
 		Serial.println("SPIFFS Mount OK");
-
 
 	smManager->readData();
 	DEBUGLOG(smManager->toString(STD_TEXT));
@@ -120,29 +124,26 @@ void  setup(void) {
 	bmpMesure = new BMPManagerV2(PIN_LED);
 	bmpMesure->mesure();
 	bmpMesure->set();
-	DEBUGLOG("BMPManagerV2");DEBUGLOG(bmpMesure->toString(STD_TEXT));
+	DEBUGLOG("BMPManagerV2");
+	DEBUGLOG(bmpMesure->toString(STD_TEXT));
 
 	//phPeriferic->retrievePeriphericInfo();
-	
+
 	mtTimer.begin(timerFrequence);
 	mtTimer.setCustomMS(50);
-	
+
 	thinkSpeakMgr = new thingSpeakManager(PIN_LED);
 
-
-	
-
 	xTaskCreatePinnedToCore(
-			screemManagement,   /* Task function. */
-	                    "Task1",     /* name of task. */
-	                    10000,       /* Stack size of task */
-	                    NULL,        /* parameter of the task */
-	                    1,           /* priority of the task */
-	                    &Task1,      /* Task handle to keep track of created task */
-	                    0);          /* pin task to core 0 */
+		screemManagement, /* Task function. */
+		"Task1",		  /* name of task. */
+		10000,			  /* Stack size of task */
+		NULL,			  /* parameter of the task */
+		1,				  /* priority of the task */
+		&Task1,			  /* Task handle to keep track of created task */
+		0);				  /* pin task to core 0 */
 
-
-	delay (2000);
+	delay(2000);
 
 #ifdef MCPOC_TELNET
 	Debug.begin(MODULE_NAME);
@@ -155,77 +156,79 @@ void  setup(void) {
 	randomSeed(analogRead(0));
 #endif
 
-
-
 #ifdef MCPOC_TEST
 	//Serial.println("Testing device connections...");
 #endif
 
 	DEBUGLOG("Begin");
 }
-uint8_t iDay=0;
+uint8_t iDay = 0;
 
-void /*RAMFUNC*/ loop(void) {
+void /*RAMFUNC*/ loop(void)
+{
 	wfManager->handleClient();
 	phPresence->handle();
 
 	//MatrixPages::display_updater();
-	 //display.display(30);
+	//display.display(30);
 
-	 // Ensure the connection to the MQTT server is alive (this will make the first
-	  // connection and automatically reconnect when disconnected).  See the MQTT_connect
-	  // function definition further below.
+	// Ensure the connection to the MQTT server is alive (this will make the first
+	// connection and automatically reconnect when disconnected).  See the MQTT_connect
+	// function definition further below.
 	//if (mtTimer.is25MSPeriod()){
-	if (mtTimer.isCustomPeriod()) {		
-		if (phPresence->isPresence()) {
+	if (mtTimer.isCustomPeriod())
+	{
+		if (phPresence->isPresence())
+		{
 			mpPages->displayPage();
 		}
 	}
-	if (mtTimer.is5MNPeriod()){
-		if (!phPresence->isPresence()) {
+	if (mtTimer.is5MNPeriod())
+	{
+		if (!phPresence->isPresence())
+		{
 			bmpMesure->mesure();
 			bmpMesure->set();
 		}
-		phPeriferic->retrievePeriphericInfo();				
+		phPeriferic->retrievePeriphericInfo();
 	}
 
-	if (mtTimer.is1MNPeriod()){
+	if (mtTimer.is1MNPeriod())
+	{
 		mpPages->stopTimer();
-		pDictons->findNewDicton(iDay%5);
+		pDictons->findNewDicton(iDay % 5);
 		mpPages->startTimer();
 		iDay++;
 	}
 
-
-	if (Serial.available()) {
+	if (Serial.available())
+	{
 		char c = Serial.read();
 		Serial.print(c);
-		if (c == 'p') 
-			phPeriferic->retrievePeriphericInfo();		
+		if (c == 'p')
+			phPeriferic->retrievePeriphericInfo();
 	}
 
-
-	if (mtTimer.isCustomPeriod()) {
+	if (mtTimer.isCustomPeriod())
+	{
 		//m_display->clearDisplay();
 		//DEBUGLOG("1s");
 		//bmpMesure->mesure();
 
 		//DEBUGLOG("BMPManagerV2");DEBUGLOG(bmpMesure->toString(STD_TEXT));
-
-
-
 	}
-	if (mtTimer.is5MNPeriod()) {
-		if (WiFi.isConnected()) {
-		 thinkSpeakMgr->addVariable(TEMP_PIECE_LABEL      	, String(bmpMesure->getTemperatureSensor()->getValue()));
-		 thinkSpeakMgr->addVariable(PRESSION_LABEL   	, String(bmpMesure->getPressionSensor()->getValue()));
-		 thinkSpeakMgr->addVariable(PRESENCE_LABEL      	, String(phPresence->isPresence()));
-		 thinkSpeakMgr->addVariable(TEMP_PROC_LABEL   		, String(temperatureRead()));
-		 thinkSpeakMgr->sendIoT( smManager->m_privateKey, smManager->m_publicKey);
+	if (mtTimer.is5MNPeriod())
+	{
+		if (WiFi.isConnected())
+		{
+			thinkSpeakMgr->addVariable(TEMP_PIECE_LABEL, String(bmpMesure->getTemperatureSensor()->getValue()));
+			thinkSpeakMgr->addVariable(PRESSION_LABEL, String(bmpMesure->getPressionSensor()->getValue()));
+			thinkSpeakMgr->addVariable(PRESENCE_LABEL, String(phPresence->isPresence()));
+			thinkSpeakMgr->addVariable(TEMP_PROC_LABEL, String(temperatureRead()));
+			thinkSpeakMgr->sendIoT(smManager->m_privateKey, smManager->m_publicKey);
 
-
-			 // second thinkSpeakMgr->sendIoT( smManager->m_privateKey, smManager->m_publicKey);
-		      }
+			// second thinkSpeakMgr->sendIoT( smManager->m_privateKey, smManager->m_publicKey);
+		}
 	}
 
 	/*
@@ -277,11 +280,12 @@ void /*RAMFUNC*/ loop(void) {
 	  }
 	}
 */
-	if (mtTimer.is5MNPeriod()) {
-	  if (!WiFi.isConnected()) {
-	    ESP.restart();
-	  }
+	if (mtTimer.is5MNPeriod())
+	{
+		if (!WiFi.isConnected())
+		{
+			ESP.restart();
+		}
 	}
 	mtTimer.clearPeriod();
-
 }
