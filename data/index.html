@@ -8,6 +8,18 @@ body {
 	font-family: Arial;
 }
 
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  border-spacing: 5px;
+  padding: 5px;
+  
+}
+table#t01 {
+ 
+  background-color: #f1f1c1;
+}
+
 /* Style the tab */
 .tab {
 	overflow: hidden;
@@ -70,7 +82,7 @@ body {
 		<p>
 			<a href="/credential">Credentials</a>/<a href="/reset">Wifi Reset</a>/<a
 				href="/restart">Restart</a>/<a
-				href="/myfirmware">Firmware</a>
+				href="/firmware">Firmware</a>
 		</p>
 	</div>
 	<hr
@@ -207,8 +219,7 @@ body {
 				var res = "";
 				var tmp="";
 				var page ;
-				res = buildDisplayPages(myObj.setting.predefpage );
-				res += buildDisplayPages(myObj.setting.page );
+				res = buildDisplayPages(myObj );
 				document.getElementById("lstCfg").innerHTML = res;
 				
 				// Build TAB list
@@ -289,19 +300,48 @@ body {
 			};
 			
 			
-			function buildDisplayPages(lstPages ) {
-				var res = "";
-				var tmp="";
-				var page ;
-				for (i in lstPages) {					
-					page = lstPages[i];					
-					if (page.active==1)tmp="checked "; else tmp=" ";
-					res += '<input type="checkbox" ' + tmp + buildOnChangeSettingCheck( page.id, 100, "displaypage")+'/>' + page.name 
-					+'<input type="time" value=' + page.time + buildOnChangeSetting( page.id, 100, "hour") + '/> <br>';
+			function buildDisplayPages(myObj ) {
+				var lstPages = myObj.setting.page;// getLstPagesName(myObj.setting.page);
+				var lstProg = myObj.setting.prog;
+				var res = '<table id="t01">	<tr>';
+					var i = 0;
+				for (i in lstProg) {					
+					prog = lstProg[i];					
+					res +=  '<td>';
+					res += '<input type="time" value=' + prog.time + buildOnChangeSetting(  101,prog.id, "prgHour") + '/> '
+					res += '<select name="type"' +  buildOnChangeSetting(  101,prog.id, "prgPage") + '/>';
+					res += buildStringDropdownPage(prog.pgId,lstPages);
+					res += '</select>';
+					res += '</td>';
+					if (i%2) {
+						res += '</tr><tr>';
+					}
 				}
+				res += '</tr></table>';
 				return res;
 			}
 			
+			function buildStringDropdownPage(selId,lstPages) {							
+				var res = "";
+				for (i in lstPages) {
+					var selected=" ";
+					if (lstPages[i].id==selId) selected=" selected";
+					res += '<option value='+ lstPages[i].id + selected +' >' + lstPages[i].name + '</option>';
+				};
+				
+			  return res
+			}
+			
+
+			function getLstPagesName(page) {
+				var res = [];
+				for (i in page) {
+					 res[i] = page[i].name;
+				}
+				return res;
+
+			}
+
 			function buildOnChangeSettingCheck(pID, oID,oTXT) {
 				var res = ' onchange="changeSetting('
 					+ pID + ',' + oID + ',\'' + oTXT + '\',this.checked)"';
