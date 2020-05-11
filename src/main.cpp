@@ -58,7 +58,8 @@ void startWiFiserver()
 	wfManager->getServer()->on("/setData", setData);
 	wfManager->getServer()->on("/save", saveConfiguration);
 	wfManager->getServer()->on("/config", configPage);
-
+	wfManager->getServer()->on("/prog", progPage);
+	
 	Serial.println(wfManager->toString(STD_TEXT));
 }
 

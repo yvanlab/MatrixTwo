@@ -13,6 +13,7 @@ table, th, td {
   border-collapse: collapse;
   border-spacing: 5px;
   padding: 5px;
+  vertical-align: center;
   
 }
 table#t01 {
@@ -80,9 +81,12 @@ table#t01 {
 	</div>
 	<div style="text-align: center;">
 		<p>
-			<a href="/credential">Credentials</a>/<a href="/reset">Wifi Reset</a>/<a
-				href="/restart">Restart</a>/<a
-				href="/firmware">Firmware</a>
+			<a href="/credential" target="_blank">Credentials</a>/
+			<a href="/reset" target="_blank">Wifi Reset</a>/<a
+				href="/restart" target="_blank">Restart</a>/<a
+				href="/firmware" target="_blank">Firmware</a>/<a
+				href="/config" target="_blank">Configuration</a>/<a
+				href="/prog" target="_blank">Programme</a>
 		</p>
 	</div>
 	<hr
@@ -92,24 +96,24 @@ table#t01 {
 	</div>
 	<div>
 		<hr />
-		<table style="height: 21px; width: 429.6px; float: left;">
+		<table>
 			<tbody>
 				<tr>
-					<td style="width: 101px;">
-						<h1 id="temp" style="text-align: center;">25c</h1>
+					<td>
+						<h1 id="temp" style="vertical-align:center">25c</h1>
 					</td>
-					<td style="width: 314.6px;">
-						<table style="height: 34px; width: 177px; float: left;">
+					<td>
+						<table>
 							<tbody>
 								<tr>
-									<td style="width: 52px; text-align: center;">min</td>
-									<td style="width: 52px; text-align: center;">max</td>
-									<td style="width: 53px; text-align: center;">tend</td>
+									<th>min</th>
+									<th>max</th>
+									<th>tend</th>
 								</tr>
 								<tr>
-									<td id="tempMin" style="width: 52px; text-align: center;">10c</td>
-									<td id="tempMax" style="width: 52px; text-align: center;">25c</td>
-									<td id="tempTrend" style="width: 53px; text-align: center;">&nbsp;</td>
+									<td id="tempMin">10c</td>
+									<td id="tempMax">25c</td>
+									<td id="tempTrend">&nbsp;</td>
 								</tr>
 							</tbody>
 						</table>
@@ -117,20 +121,9 @@ table#t01 {
 				</tr>
 			</tbody>
 		</table>
-		&nbsp;
-	</div>
-	<br />
-	<br />
-	<div>
-		<h3 style="height: 4px; text-align: left">Prevision</h3>
-		<hr />
 	</div>
 	<div>
-		<p>Tendance blablabla</p>
-	</div>
-	
-	<div>
-		<h3 style="height: 3px;">Pages Configuration</h3>
+		<h3 style="height: 3px;">Programmation</h3>
 		<hr />
 	</div>
 	<span id="lstCfg">cfg</span>
@@ -142,13 +135,10 @@ table#t01 {
 		</div>
 	</div>
 	<hr />
-
-
 	<h2>
-		Tabs
+		Pages
 		<button onclick="saveConfiguration()">Save</button>
 	</h2>
-	<p>Click on the buttons inside the tabbed menu:</p>
 
 	<span id="tabHeader">Files</span>
 	<span id="tabContentLst">Files</span>
@@ -253,12 +243,12 @@ table#t01 {
 					if (page.name!="")tmp = 'value='+ page.name;
 					res +=  'Name <input type="edit" ' + tmp
 								+ buildOnChangeSetting(page.id, 100, "name") + '/>';
-					tmp=" ";
+					/*tmp=" ";
 					if (page.hour!="")tmp = 'value='+ page.hour;
 					res +='<input type="time" ' + tmp + buildOnChangeSetting( page.id, 100, "hour") + '/> <br />';
 					res += 'Transision:<select name="type"' +  buildOnChangeSetting( page.id, 100, "trans") + '/>';
 					res += buildDropdown(page.transition,lstTransition);
-					res += '</select>';
+					res += '</select>';*/
 					
 					for (j in page.obj) {
 						var ob = page.obj[j];
