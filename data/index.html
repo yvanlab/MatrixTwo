@@ -243,12 +243,12 @@ table#t01 {
 					if (page.name!="")tmp = 'value='+ page.name;
 					res +=  'Name <input type="edit" ' + tmp
 								+ buildOnChangeSetting(page.id, 100, "name") + '/>';
-					/*tmp=" ";
-					if (page.hour!="")tmp = 'value='+ page.hour;
-					res +='<input type="time" ' + tmp + buildOnChangeSetting( page.id, 100, "hour") + '/> <br />';
+					tmp=" ";
+					/*if (page.hour!="")tmp = 'value='+ page.hour;
+					res +='<input type="time" ' + tmp + buildOnChangeSetting( page.id, 100, "hour") + '/> <br />';*/
 					res += 'Transision:<select name="type"' +  buildOnChangeSetting( page.id, 100, "trans") + '/>';
 					res += buildDropdown(page.transition,lstTransition);
-					res += '</select>';*/
+					res += '</select>';
 					
 					for (j in page.obj) {
 						var ob = page.obj[j];
@@ -294,11 +294,14 @@ table#t01 {
 				var lstPages = myObj.setting.page;// getLstPagesName(myObj.setting.page);
 				var lstProg = myObj.setting.prog;
 				var res = '<table id="t01">	<tr>';
-					var i = 0;
+				var tmp = '';	
+				var i = 0;
 				for (i in lstProg) {					
 					prog = lstProg[i];					
 					res +=  '<td>';
-					res += '<input type="time" value=' + prog.time + buildOnChangeSetting(  101,prog.id, "prgHour") + '/> '
+					if (prog.hour != '') tmp = 'value=' + prog.hour;
+					else tmp = '';
+					res += '<input type="time" '+ tmp  + buildOnChangeSetting(  101,prog.id, "prgHour") + '/> '
 					res += '<select name="type"' +  buildOnChangeSetting(  101,prog.id, "prgPage") + '/>';
 					res += buildStringDropdownPage(prog.pgId,lstPages);
 					res += '</select>';

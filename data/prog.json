@@ -3,16 +3,16 @@
         "date": "29/04/2020",
         "time": "21:02:20"
     },
-    "hour": [
+    "prog": [
         {
             "hour": "18:00",
-            "id": "2",
-            "name": "Open Bar"
+            "pgId": "2",
+            "pgName": "Open Bar"
         },
         {
             "hour": "10:00",
-            "id": "1",
-            "name": "Heure"
+            "pgId": "1",
+            "pgName": "Heure"
         }
 
 

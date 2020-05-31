@@ -266,6 +266,10 @@ public:
 		return NULL;
 	}*/
 
+	Prog *getProg() {
+		return &customPrg;
+	}
+
 	static const uint8_t nbCustomPages = 11;
 	Page customPage[nbCustomPages];
 	uint8_t displayedPage = 0;

@@ -70,11 +70,11 @@ bool manageProg()
 {
 	String str;
 	uint8_t prgId = (uint8_t)atoi(wfManager->getServer()->arg("obj").c_str());
-	Prog *prg = smManager->getProg(prgId);
-	if (prg == NULL)
+	ProgElt *prgElt = smManager->getProg()->getProgElt(prgId);
+	if (prgElt == NULL)
 	{
 		DEBUGLOGF("Not prog associated to [%d]\n", prgId);
-		return;
+		return false;
 	}
 	else
 	{
@@ -82,14 +82,21 @@ bool manageProg()
 	}
 	if ((str = wfManager->getServer()->arg("prgHour")) != NULL)
 	{
-		prg->setHourMinute(str);
+		prgElt->setHourMinute(str);
 	}
 	else if ((str = wfManager->getServer()->arg("prgPage")) != NULL)
 	{
-		prg->prgPage = atoi(str.c_str());
+		prgElt->pgId = atoi(str.c_str());
+		Page *pp = smManager->getPage(prgElt->pgId);
+		if (pp != NULL) {
+			prgElt->pgName = pp->name;
+		} else {
+			prgElt->pgName = "NotFound";
+		}
+
 	}
 	wfManager->getServer()->send(200, "text/html", "ok");
-	return;
+	return true;
 }
 
 bool managePage()
@@ -110,15 +117,10 @@ bool managePage()
 			DEBUGLOGF("page associated to [%d][%s]\n", idPage,pp->name.c_str());
 		}
 	};
-
 	if ((str = wfManager->getServer()->arg("obj")) != NULL)
-		}
-		else
-		{
-			DEBUGLOGF("page associated to [%d]\n", idPage);
-		}
+	{
+		nbElt = (uint8_t)atoi(str.c_str());
 	}
-
 	if ((str = wfManager->getServer()->arg("activatepage")) != NULL)
 	{
 		pp->active = str == "true";
@@ -210,7 +212,7 @@ bool managePage()
 			changed = true;
 		}
 	}
-	return;
+	return changed;
 }
 
 void setData()
@@ -226,9 +228,9 @@ void setData()
 	}
 	DEBUGLOG("");
 #endif
-	uint16_t idPage = 0;
+/*	uint16_t idPage = 0;
 	uint8_t nbElt = 0;
-	Page *pp = NULL;
+	Page *pp = NULL;*/
 
 	String str;
 	if ((str = wfManager->getServer()->arg("freq")) != NULL)
