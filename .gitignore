@@ -51,3 +51,5 @@
 .pioenvs/do-not-modify-files-here.url
 .pioenvs/nodemcuv2/firmware.elf
 .pioenvs/structure.hash
+.vscode/c_cpp_properties.json
+.vscode/launch.json
