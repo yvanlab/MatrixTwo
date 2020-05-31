@@ -8,6 +8,19 @@ body {
 	font-family: Arial;
 }
 
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  border-spacing: 5px;
+  padding: 5px;
+  vertical-align: center;
+  
+}
+table#t01 {
+ 
+  background-color: #f1f1c1;
+}
+
 /* Style the tab */
 .tab {
 	overflow: hidden;
@@ -68,9 +81,12 @@ body {
 	</div>
 	<div style="text-align: center;">
 		<p>
-			<a href="/credential">Credentials</a>/<a href="/reset">Wifi Reset</a>/<a
-				href="/restart">Restart</a>/<a
-				href="/myfirmware">Firmware</a>
+			<a href="/credential" target="_blank">Credentials</a>/
+			<a href="/reset" target="_blank">Wifi Reset</a>/<a
+				href="/restart" target="_blank">Restart</a>/<a
+				href="/firmware" target="_blank">Firmware</a>/<a
+				href="/config" target="_blank">Configuration</a>/<a
+				href="/prog" target="_blank">Programme</a>
 		</p>
 	</div>
 	<hr
@@ -80,24 +96,24 @@ body {
 	</div>
 	<div>
 		<hr />
-		<table style="height: 21px; width: 429.6px; float: left;">
+		<table>
 			<tbody>
 				<tr>
-					<td style="width: 101px;">
-						<h1 id="temp" style="text-align: center;">25c</h1>
+					<td>
+						<h1 id="temp" style="vertical-align:center">25c</h1>
 					</td>
-					<td style="width: 314.6px;">
-						<table style="height: 34px; width: 177px; float: left;">
+					<td>
+						<table>
 							<tbody>
 								<tr>
-									<td style="width: 52px; text-align: center;">min</td>
-									<td style="width: 52px; text-align: center;">max</td>
-									<td style="width: 53px; text-align: center;">tend</td>
+									<th>min</th>
+									<th>max</th>
+									<th>tend</th>
 								</tr>
 								<tr>
-									<td id="tempMin" style="width: 52px; text-align: center;">10c</td>
-									<td id="tempMax" style="width: 52px; text-align: center;">25c</td>
-									<td id="tempTrend" style="width: 53px; text-align: center;">&nbsp;</td>
+									<td id="tempMin">10c</td>
+									<td id="tempMax">25c</td>
+									<td id="tempTrend">&nbsp;</td>
 								</tr>
 							</tbody>
 						</table>
@@ -105,20 +121,9 @@ body {
 				</tr>
 			</tbody>
 		</table>
-		&nbsp;
-	</div>
-	<br />
-	<br />
-	<div>
-		<h3 style="height: 4px; text-align: left">Prevision</h3>
-		<hr />
 	</div>
 	<div>
-		<p>Tendance blablabla</p>
-	</div>
-	
-	<div>
-		<h3 style="height: 3px;">Pages Configuration</h3>
+		<h3 style="height: 3px;">Programmation</h3>
 		<hr />
 	</div>
 	<span id="lstCfg">cfg</span>
@@ -130,13 +135,10 @@ body {
 		</div>
 	</div>
 	<hr />
-
-
 	<h2>
-		Tabs
+		Pages
 		<button onclick="saveConfiguration()">Save</button>
 	</h2>
-	<p>Click on the buttons inside the tabbed menu:</p>
 
 	<span id="tabHeader">Files</span>
 	<span id="tabContentLst">Files</span>
@@ -207,8 +209,7 @@ body {
 				var res = "";
 				var tmp="";
 				var page ;
-				res = buildDisplayPages(myObj.setting.predefpage );
-				res += buildDisplayPages(myObj.setting.page );
+				res = buildDisplayPages(myObj );
 				document.getElementById("lstCfg").innerHTML = res;
 				
 				// Build TAB list
@@ -242,12 +243,12 @@ body {
 					if (page.name!="")tmp = 'value='+ page.name;
 					res +=  'Name <input type="edit" ' + tmp
 								+ buildOnChangeSetting(page.id, 100, "name") + '/>';
-					tmp=" ";
+					/*tmp=" ";
 					if (page.hour!="")tmp = 'value='+ page.hour;
 					res +='<input type="time" ' + tmp + buildOnChangeSetting( page.id, 100, "hour") + '/> <br />';
 					res += 'Transision:<select name="type"' +  buildOnChangeSetting( page.id, 100, "trans") + '/>';
 					res += buildDropdown(page.transition,lstTransition);
-					res += '</select>';
+					res += '</select>';*/
 					
 					for (j in page.obj) {
 						var ob = page.obj[j];
@@ -289,19 +290,48 @@ body {
 			};
 			
 			
-			function buildDisplayPages(lstPages ) {
-				var res = "";
-				var tmp="";
-				var page ;
-				for (i in lstPages) {					
-					page = lstPages[i];					
-					if (page.active==1)tmp="checked "; else tmp=" ";
-					res += '<input type="checkbox" ' + tmp + buildOnChangeSettingCheck( page.id, 100, "displaypage")+'/>' + page.name 
-					+'<input type="time" value=' + page.time + buildOnChangeSetting( page.id, 100, "hour") + '/> <br>';
+			function buildDisplayPages(myObj ) {
+				var lstPages = myObj.setting.page;// getLstPagesName(myObj.setting.page);
+				var lstProg = myObj.setting.prog;
+				var res = '<table id="t01">	<tr>';
+					var i = 0;
+				for (i in lstProg) {					
+					prog = lstProg[i];					
+					res +=  '<td>';
+					res += '<input type="time" value=' + prog.time + buildOnChangeSetting(  101,prog.id, "prgHour") + '/> '
+					res += '<select name="type"' +  buildOnChangeSetting(  101,prog.id, "prgPage") + '/>';
+					res += buildStringDropdownPage(prog.pgId,lstPages);
+					res += '</select>';
+					res += '</td>';
+					if (i%2) {
+						res += '</tr><tr>';
+					}
 				}
+				res += '</tr></table>';
 				return res;
 			}
 			
+			function buildStringDropdownPage(selId,lstPages) {							
+				var res = "";
+				for (i in lstPages) {
+					var selected=" ";
+					if (lstPages[i].id==selId) selected=" selected";
+					res += '<option value='+ lstPages[i].id + selected +' >' + lstPages[i].name + '</option>';
+				};
+				
+			  return res
+			}
+			
+
+			function getLstPagesName(page) {
+				var res = [];
+				for (i in page) {
+					 res[i] = page[i].name;
+				}
+				return res;
+
+			}
+
 			function buildOnChangeSettingCheck(pID, oID,oTXT) {
 				var res = ' onchange="changeSetting('
 					+ pID + ',' + oID + ',\'' + oTXT + '\',this.checked)"';
