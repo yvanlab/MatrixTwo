@@ -15,13 +15,70 @@
 extern portMUX_TYPE 		wtimerMux;// = portMUX_INITIALIZER_UNLOCKED;
 #endif
 
-#include <SPIFFS.h>
-
-
 
 SettingManager::SettingManager(unsigned char pinLed) : BaseSettingManager(pinLed){
 
 }
+
+
+	String SettingManager::toStringCfg(boolean bJson)
+	{
+		String ss;
+		if (bJson == STD_TEXT)
+			return BaseSettingManager::toString(bJson);
+		ss = "\"displayedPage\":\"" + String(displayedPage) + "\",";
+		ss += "\"displayedMode\":\"" + String(displayedMode) + "\",";
+		ss += "\"displayedFreq\":\"" + String(displayedMode) + "\",";
+		ss += "\"page\":[";
+		for (uint8_t iPage = 0; iPage < nbCustomPages; iPage++)
+		{
+			ss += customPage[iPage].toString(JSON_TEXT);
+			if (iPage != nbCustomPages - 1)
+				ss = ss + ",";
+		}
+		ss = ss + "]";
+		return ss;
+	}
+
+	String SettingManager::toString(boolean bJson)
+	{
+		String ss;
+		if (bJson == STD_TEXT)
+		{
+			ss = BaseSettingManager::toString(bJson);
+		}
+		else
+		{
+			uint8_t iIndex = 0;
+			ss += "\"lstBMP\":[";
+			while (iIndex < 10 && lstBMP[iIndex] != NULL)
+			{
+				ss += "\"" + String(lstBMP[iIndex]).substring(1) + "\"";
+				iIndex++;
+				if (iIndex < 10 && lstBMP[iIndex] != NULL)
+					ss += ",";
+			}
+			ss += "],";
+
+			ss = ss + toStringCfg(bJson);
+			ss += ",";
+      ss = ss + customPrg.toString(bJson);
+		}
+		return ss;
+	}
+
+	Page *SettingManager::getPage(uint16_t id)
+	{
+		for (uint8_t iPage = 0; iPage < nbCustomPages; iPage++)
+		{
+			//DEBUGLOGF("customPage [%d/%d]\n",customPage[iPage].id,id);
+			if (customPage[iPage].id == id)
+			{
+				return &customPage[iPage];
+			}
+		}
+		return NULL;
+	}
 
 
 
@@ -31,7 +88,21 @@ int sort_desc(const void *cmp1, const void *cmp2)
   Page *a = (Page *)cmp1;
   Page *b = (Page *)cmp2;  
   // The comparison
-  return a->hourMinuteConverted - b->hourMinuteConverted;
+  //DEBUGLOGF("Page[%s][%s][%d],[%s][%s][%d]\n",a->name.c_str(),a->hourMinute.c_str(),a->hourMinuteConverted,  
+  //b->name.c_str(),b->hourMinute.c_str(),b->hourMinuteConverted);
+
+  if (a->hourMinuteConverted >  b->hourMinuteConverted) 
+    return 1;
+  if (a->hourMinuteConverted ==  b->hourMinuteConverted)   
+    return 0;
+  if (a->hourMinuteConverted <  b->hourMinuteConverted)     
+    return -1;
+/*
+  if (b->hourMinuteConverted>=0) {
+    return a->hourMinuteConverted - b->hourMinuteConverted;
+  } else {
+    return -1;
+  }*/
 }
 
 
@@ -74,6 +145,7 @@ unsigned char SettingManager::readData(){
 		  for (uint8_t iPage =0; iPage < lstPage.size(); iPage++) {
 			  customPage[iPage].fromJson(lstPage[iPage]);
 		  }
+      sortPages();
     } else {
       DEBUGLOGF("Config file SART READING [%s]",error.c_str());
     }
@@ -82,88 +154,25 @@ unsigned char SettingManager::readData(){
       DEBUGLOG("Config file does not exist");
   }
 
-  qsort(customPage, SettingManager::nbCustomPages, sizeof(customPage[0]), sort_desc);
-  for (uint8_t iPage =0; iPage < SettingManager::nbCustomPages; iPage++) {
-    DEBUGLOGF("[%i] Page[%s] [%s]\n",iPage, customPage[iPage].name.c_str(), customPage[iPage].hourMinute.c_str());
-    customPage[iPage].nbElement = 6;
-  }
+  customPrg.readData();
+
   switchOff();
   return m_iEEprom;
 }
 
-/*
-void SettingManager::writePage(Page *page) {
-	char tmpText[20];
-	page->name.toCharArray(tmpText, 20);
-	writeEEPROM(tmpText);
-	writeEEPROM(page->id);
-	writeEEPROM(page->nbElement);
-
-	for (uint8_t iElt =0; iElt < page->nbElement; iElt++) {
-		writeEEPROM(page->element[iElt].type);
-		writeEEPROM(page->element[iElt].font);
-		writeEEPROM(page->element[iElt].active);
-		writeEEPROM(page->element[iElt].id);
-		writeEEPROM(page->element[iElt].x);
-		writeEEPROM(page->element[iElt].y);
-		//writeEEPROM(page->xDec);
-		writeEEPROM(page->element[iElt].red);
-		writeEEPROM(page->element[iElt].green);
-		writeEEPROM(page->element[iElt].blue);
-
-		page->element[iElt].txt.toCharArray(tmpText, 20);
-		writeEEPROM(tmpText);
-	}
-}*/
-
-/*
-
-void SettingManager::readPage(Page *page) {
-	char tmpText[21];
-	readEEPROM(tmpText,20);
-	page->name = String(tmpText);
-	page->id = readEEPROM();
-	page->nbElement = readEEPROM();
-
-	for (uint8_t iElt =0; iElt < page->nbElement; iElt++) {
-
-		page->element[iElt].type = (Element::OBJECT_TYPE)readEEPROM();
-		page->element[iElt].font = (Element::FONT_TYPE)readEEPROM();
-		page->element[iElt].active = readEEPROM();
-		page->element[iElt].id = readEEPROM();
-		page->element[iElt].x = readEEPROM();
-		page->element[iElt].y = readEEPROM();
-		//writeEEPROM(page->xDec);
-		page->element[iElt].red = readEEPROM();
-		page->element[iElt].green = readEEPROM();
-		page->element[iElt].blue = readEEPROM();
-		readEEPROM(tmpText,20);
-		page->element[iElt].txt= String(tmpText);
-	}
+void SettingManager::sortPages(){
+  qsort(customPage, SettingManager::nbCustomPages, sizeof(customPage[0]), sort_desc);
+  for (uint8_t iPage =0; iPage < SettingManager::nbCustomPages; iPage++) {
+    DEBUGLOGF("[%i] Page[%s][%s][%d]\n",customPage[iPage].id, customPage[iPage].name.c_str(), customPage[iPage].hourMinute.c_str(),customPage[iPage].hourMinuteConverted );
+    customPage[iPage].nbElement = 6;
+  }
 }
-*/
 
 unsigned char SettingManager::writeData(){
   mpPages->stopTimer();
 
   BaseSettingManager::writeData();
   switchOn();
-/*
-  //active
-  writeEEPROM(displayedPage);
-  writeEEPROM(displayedMode);
-  writeEEPROM(displayedFrequence);
-
-  for (uint8_t p=0 ;p<nbCustomPages ;p++) {
-	  writePage(&customPage[p]);
-  }
-
-  DEBUGLOGF("SettingManager::writeData() [%d)]\n",m_iEEprom );
-  EEPROM.commit();
-  //portEXIT_CRITICAL_ISR(&wtimerMux);
-  DEBUGLOGF("SettingManager::writeData() Commit [%d)]\n",m_iEEprom );
-  setStatus( m_iEEprom, "written");
-*/
 
   //Write Spiff configuration
   String ss;
@@ -176,6 +185,8 @@ unsigned char SettingManager::writeData(){
     DEBUGLOGF("Configuration PROBLEM");
   };
   cfgFile.close();
+
+  customPrg.writeData();
 
   mpPages->startTimer();
   switchOff();

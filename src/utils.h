@@ -12,6 +12,7 @@
 
 #endif
 #include "Adafruit_GFX.h"
+#include <baseManager.h>
 
 
 class Window
@@ -35,8 +36,8 @@ public:
 class TransitionPages
 {
     public:
-    enum TRANSTION_MODE {TRANSITION_LEFT=0, TRANSITION_RIGHT=1, TRANSITION_UP=2,TRANSITION_DOWN=3,TRANSITION_FROM_CENTER=5,
-    TRANSITION_ROTATION=6, TRANSITION_STAR=7 };
+    enum TRANSTION_MODE {TRANSITION_LEFT=0, TRANSITION_RIGHT=1, TRANSITION_UP=2,TRANSITION_DOWN=3,
+    TRANSITION_FROM_CENTER=4,TRANSITION_ROTATION=5, TRANSITION_STAR=6, TRANSITION_NONE=7 };
     TransitionPages(Window *win, int16_t maxW, int16_t maxH) {
         _win  = win;
         _maxW = maxW;
@@ -46,7 +47,10 @@ class TransitionPages
     void startTransition(TRANSTION_MODE mode) {
         _isTransitionMode = true;
         _mode = mode;
-        if (_mode == TRANSITION_LEFT) {
+        DEBUGLOGF("start transition [%d]\n", _mode);
+        if (mode == TRANSITION_NONE) {
+            _isTransitionMode = false;
+        } else if (_mode == TRANSITION_LEFT) {
             _win->set(_maxW,0,_maxW,_maxH);
         } else if (_mode == TRANSITION_RIGHT) {
             _win->set(-1*_maxW,0,_maxW,_maxH);           
@@ -56,37 +60,49 @@ class TransitionPages
             _win->set(0,_maxH,_maxW,_maxH);           
         } else if (_mode == TRANSITION_DOWN) {
             _win->set(0,-1*_maxH,_maxW,_maxH);           
+        } else if (_mode == TRANSITION_FROM_CENTER) {
+            _win->set(_maxW/2,_maxH/2,0,0);           
         }
+
     };
     
     void nextStep() {
         if (!_isTransitionMode) return;
 
         if (_mode == TRANSITION_LEFT) {
-            _tmpInc = _win->_x-1;
+            _tmpInc = _win->_x-2;
             _win->setX(_tmpInc);
         } else if (_mode == TRANSITION_RIGHT) {
-            _tmpInc = _win->_x+1;
+            _tmpInc = _win->_x+2;
             _win->setX(_tmpInc);
         }  else if (_mode == TRANSITION_UP) {
-            _tmpInc = _win->_y-1;
+            _tmpInc = _win->_y-2;
             _win->setY(_tmpInc);
         } else if (_mode == TRANSITION_DOWN) {
-            _tmpInc = _win->_y+1;
+            _tmpInc = _win->_y+2;
+            _win->setY(_tmpInc);
+        } else if (_mode == TRANSITION_STAR) {
+            _tmpInc = _win->_y+2;
             _win->setY(_tmpInc);
         } else if (_mode == TRANSITION_ROTATION) {
-            _tmpInc-=10;
+            _tmpInc-=20;
             _win->_x = _maxW/4-(_maxW/4)*cos(radians(_tmpInc));
             _win->_y = (_maxH/4)*sin(radians(_tmpInc));            
-/*            if (_tmpInc==0) {
-                _isTransitionMode = false;
-                _win->_x = 0;
-                _win->_y = 0;
-            } */
+        }else if (_mode == TRANSITION_FROM_CENTER) {
+            _tmpInc = _win->_x - 1;
+            _win->_x = _win->_x - 1;
+            _win->_w = _win->_w + 2;
+            if (_win->_y>0) {
+                _win->_y = _win->_y - 1;
+                _win->_h = _win->_h + 2;
+            }
+            //_win->set(_maxW/2,_maxH/2,0,0);           
         }
 
         if (_tmpInc == 0) {
             _isTransitionMode = false;
+            _win->set(0,0,_maxW,_maxH);           
+            DEBUGLOGF("End transition [%d]\n", _mode);            
         }
     };
 

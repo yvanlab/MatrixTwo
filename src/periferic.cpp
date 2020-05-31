@@ -25,9 +25,9 @@ Periferic::Periferic(unsigned char pinLed) : BaseManager(pinLed){
   if (!WiFi.isConnected()) return error;
   HTTPClient http;  //Declare an object of class HTTPClient
   DEBUGLOG(urlService);  //Specify request destination
-  http.setTimeout(2000);
-  http.setConnectTimeout(2000);
-  client.setTimeout(2000);
+  http.setTimeout(4000);
+  http.setConnectTimeout(4000);
+  client.setTimeout(4000);
   http.begin(client, urlService);  //Specify request destination
   //DEBUGLOG("http.begin");
   int httpCode = http.GET();                                                                  //Send the request
@@ -41,9 +41,9 @@ Periferic::Periferic(unsigned char pinLed) : BaseManager(pinLed){
     //serializeJsonPretty(*doc, Serial);
     //String result = http.getString();   //Get the request response payload
     
-  } else 
-      DEBUGLOGF("http error [%d]", httpCode);
-
+  } else {
+      DEBUGLOGF("http error [%d]\n", httpCode);
+  }
    //client.stop();
   http.end();   //Close connection
   

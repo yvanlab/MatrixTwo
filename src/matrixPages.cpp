@@ -72,6 +72,7 @@ void MatrixPages::begin()
 	DEBUGLOGF("Display update latency in us: %ld\n", delta_timer);
 	m_display.setFlip(true);
 
+	win.set(0, 0, m_display.width(), m_display.height());
 	tranPages = new TransitionPages(&win, m_display.width(), m_display.height());
 	//m_display.setRotate(true);
 	//m_display.setRotation(2);
@@ -101,8 +102,8 @@ void MatrixPages::begin()
 
 	win.set(0, 0, 64, 32);
 
-	setPage(1);
-	displayPage();
+	/*setPage(1);
+	displayPage();*/
 }
 
 void MatrixPages::displayPage()
@@ -117,7 +118,7 @@ void MatrixPages::displayPage()
 		m_display.showBuffer();
 		return;
 	}
-/*	if (pp->id == TEST_PAGE_ID)
+	/*	if (pp->id == TEST_PAGE_ID)
 	{
 		displayTestPage();
 	}
@@ -135,36 +136,56 @@ void MatrixPages::displayPage()
 
 void MatrixPages::setPage(uint16_t num)
 {
-	DEBUGLOGF("Page %d\n", num);
+	DEBUGLOGF("Page %d,%d\n", num, _numPage);
 	if (num == _numPage)
 		return;
-	m_pp = smManager->getPage(_numPage);
-	m_display.clearDisplay();
-	tranPages->startTransition(m_pp->transition);
-	//startTransition = 128;
 	_numPage = num;
+	m_pp = smManager->getPage(num);
+	m_display.clearDisplay();
+	if (m_pp)
+	{
+		tranPages->startTransition(m_pp->transition);
+		DEBUGLOGF("Page %sd\n", m_pp->name.c_str());
+	}
+	else
+	{
+		DEBUGLOGF("Page not found %d\n", num);
+	}
+	//startTransition = 128;
 };
-
 
 void MatrixPages::nextPage()
 {
-	DEBUGLOGF("NextPage %d", _numPage);
-	int16_t hhMn = hour()*60+minute();
-	//Page* timeTable[SettingManager::nbCustomPages];
-	for (uint8_t i = 0 ; i< SettingManager::nbCustomPages; i++) {
-		Page *pp = &smManager->customPage[i];
-		if (hhMn > pp->hourMinuteConverted) {
-			setPage(pp->id);
+	DEBUGLOGF("NextPage %d\n", _numPage);
+	int16_t hhMn = hour() * 60 + minute();
+	Page *pSelectedPage = NULL;
+	Page *pp = NULL;
+	for (uint8_t i = 0; i < SettingManager::nbCustomPages; i++)
+	{
+		pp = &smManager->customPage[i];
+		if (pp->active)
+		{
+			DEBUGLOGF("Next page[%s][%s],[%d][%d]\n", pp->name.c_str(), pp->hourMinute.c_str(), pp->hourMinuteConverted, hhMn);
+			if (pSelectedPage != NULL)
+			{
+				if (pp->hourMinuteConverted < 0 || hhMn < pp->hourMinuteConverted)
+				{
+					break;
+				}
+			}
+			if (hhMn >= pp->hourMinuteConverted)
+			{
+				pSelectedPage = pp;
+			}
 		}
 	}
-
-/*	qsort(timeTable, SettingManager::nbCustomPages, sizeof(uint16_t), sort_desc);		
-
-	//if (startTransition != 0 ) return;
-	uint8_t newpage = (_numPage + 1) % 2;
-	setPage(newpage);*/
+	if (pSelectedPage != NULL)
+	{
+		DEBUGLOGF("Next page[%s][%s]\n", pSelectedPage->name.c_str(), pSelectedPage->hourMinute.c_str());
+		setPage(pSelectedPage->id);
+		smManager->displayedPage = pSelectedPage->id;
+	}
 }
-
 
 String MatrixPages::buildGeneric(String txt)
 {
@@ -215,7 +236,7 @@ String MatrixPages::buildGeneric(String txt)
 	if (txt.indexOf("{cg}") >= 0)
 	{
 		sprintf(tmpString, "%2.1f", phPeriferic->getInstantCurrentGarage());
-		txt.replace("{cg}", tmpString);
+		txt.replace("{ciPageg}", tmpString);
 	}
 	if (txt.indexOf("{tg}") >= 0)
 	{
@@ -239,7 +260,7 @@ String MatrixPages::buildGeneric(String txt)
 		txt.replace("{mt}", weatherString[bmpMesure->getPressionSensor()->getWeatherTrend()]);
 	}
 
-	//{dd-dictons}, 
+	//{dd-dictons},
 	if (txt.indexOf("{dd}") >= 0)
 	{
 		txt.replace("{im}", pDictons->getDictons());
@@ -296,6 +317,12 @@ void MatrixPages::displayScreen(Page *page)
 {
 	char tmpString[20];
 	tranPages->nextStep();
+	if (tranPages->isTransition())
+	{
+		m_display.drawRect(win.getX(0), win.getY(0),
+						   win.getW(), win.getH(),
+						   m_display.color565(255, 255, 255));
+	}
 	for (uint8_t i = 0; i < page->nbElement; i++)
 	{
 		//DEBUGLOGF("x[%d] y[%d], Red[%d], Green[%d], Blue[%d]\n",smManager.screen[i].x, smManager.screen[i].y, smManager.screen[i].red, smManager.screen[i].green, smManager.screen[i].blue);
@@ -384,12 +411,11 @@ void MatrixPages::displayScreen(Page *page)
 			}
 			else if (page->element[i].type == Element::CURRENT)
 			{
-				sprintf(tmpString, "%2.1f", phPeriferic->getInstantCurrentGarage()/1000);
+				sprintf(tmpString, "%2.1f", phPeriferic->getInstantCurrentGarage());
 				print(&page->element[i], buildTxt(page->element[i].txt, tmpString));
 			}
 			else if (page->element[i].type == Element::DICTONS)
 			{
-//				sprintf(tmpString, "%2.1f", phPeriferic->getInstantCurrentGarage()/1000);
 				print(&page->element[i], buildTxt(page->element[i].txt, pDictons->getDictons()));
 			}
 			else if (page->element[i].type == Element::BITMAP)
@@ -508,6 +534,7 @@ void MatrixPages::displayTrend(Element *pElt, float trend)
 		m_display.drawLine(x, y, x + size, y, color);
 		m_display.drawLine(x, y + 1, x + size, y + 1, color);
 		m_display.drawLine(x, y + 2, x + size, y + 2, color);
+		color = m_display.color565(255, 255, 255);
 		m_display.drawPixelRGB565(x + size + 1, y + 1, color);
 		m_display.drawPixelRGB565(x + size - 2, y + 3, color);
 		m_display.drawPixelRGB565(x + size - 2, y - 1, color);
@@ -515,20 +542,20 @@ void MatrixPages::displayTrend(Element *pElt, float trend)
 	else if (trend < 0)
 	{
 		y = y - 2;
-		color = m_display.color565(0, 00, 255);
 		m_display.drawLine(x, y, x + incline, y + incline, color);
 		m_display.drawLine(x - 1, y + 1, x - 1 + incline, y + 1 + incline, color);
 		m_display.drawLine(x - 2, y + 2, x - 2 + incline, y + 2 + incline, color);
+		color = m_display.color565(0, 00, 255);
 		m_display.drawLine(x + incline, y + incline - 1, x + incline, y + incline + 2, color);
 		m_display.drawLine(x - 2 + incline - 1, y + 2 + incline, x + incline, y + incline + 2, color);
 	}
 	else
 	{
-		color = m_display.color565(255, 00, 0);
 		y = y + 2;
 		m_display.drawLine(x, y, x + incline, y - incline, color);
 		m_display.drawLine(x + 1, y + 1, x + 1 + incline, y + 1 - incline, color);
 		m_display.drawLine(x + 2, y + 2, x + 2 + incline, y + 2 - incline, color);
+		color = m_display.color565(255, 00, 0);
 		m_display.drawLine(x - 1 + incline, y - incline, x + 1 + 1 + incline, y + 1 - 1 - incline, color);
 		m_display.drawLine(x + 2 + incline, y + 2 + 1 - incline, x + 1 + 1 + incline, y + 1 - 1 - incline, color);
 	}

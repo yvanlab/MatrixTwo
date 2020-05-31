@@ -68,7 +68,8 @@ void screemManagement(void *pvParameters)
 	DEBUGLOG(xPortGetCoreID());
 	mpPages = new MatrixPages(PIN_LED);
 	mpPages->begin();
-	mpPages->setPage(1);
+	mpPages->setPage(smManager->displayedPage);
+	mpPages->displayPage();
 
 	while (true)
 	{
@@ -127,6 +128,7 @@ void setup(void)
 	DEBUGLOG("BMPManagerV2");
 	DEBUGLOG(bmpMesure->toString(STD_TEXT));
 
+	pDictons->findNewDicton(day());
 	//phPeriferic->retrievePeriphericInfo();
 
 	mtTimer.begin(timerFrequence);
@@ -160,7 +162,7 @@ void setup(void)
 	//Serial.println("Testing device connections...");
 #endif
 
-	DEBUGLOG("Begin");
+	
 }
 uint8_t iDay = 0;
 
@@ -169,13 +171,6 @@ void /*RAMFUNC*/ loop(void)
 	wfManager->handleClient();
 	phPresence->handle();
 
-	//MatrixPages::display_updater();
-	//display.display(30);
-
-	// Ensure the connection to the MQTT server is alive (this will make the first
-	// connection and automatically reconnect when disconnected).  See the MQTT_connect
-	// function definition further below.
-	//if (mtTimer.is25MSPeriod()){
 	if (mtTimer.isCustomPeriod())
 	{
 		if (phPresence->isPresence())
@@ -195,18 +190,29 @@ void /*RAMFUNC*/ loop(void)
 
 	if (mtTimer.is1MNPeriod())
 	{
-		mpPages->stopTimer();
-		pDictons->findNewDicton(iDay % 5);
-		mpPages->startTimer();
-		iDay++;
+		mpPages->nextPage();
 	}
+
 
 	if (Serial.available())
 	{
 		char c = Serial.read();
 		Serial.print(c);
-		if (c == 'p')
+		if (c == 'p') {
 			phPeriferic->retrievePeriphericInfo();
+		}else if (c == 'd') {
+			iDay++;
+			mpPages->stopTimer();
+			pDictons->findNewDicton(iDay);
+			mpPages->startTimer();
+		}else if (c == 's') {
+			smManager->sortPages();
+		}else if (c == 'n') {
+			mpPages->nextPage();
+		}
+
+		
+
 	}
 
 	if (mtTimer.isCustomPeriod())
@@ -230,6 +236,19 @@ void /*RAMFUNC*/ loop(void)
 			// second thinkSpeakMgr->sendIoT( smManager->m_privateKey, smManager->m_publicKey);
 		}
 	}
+
+	if (wfManager->getHourManager()->isNextDay()) {
+		ESP.restart();
+	}
+
+	if (mtTimer.is5MNPeriod())
+	{
+		if (!WiFi.isConnected())
+		{
+			ESP.restart();
+		}
+	}
+
 
 	/*
 	if (mtTimer.is25MSPeriod()) {
@@ -280,12 +299,8 @@ void /*RAMFUNC*/ loop(void)
 	  }
 	}
 */
-	if (mtTimer.is5MNPeriod())
-	{
-		if (!WiFi.isConnected())
-		{
-			ESP.restart();
-		}
-	}
+
+
+
 	mtTimer.clearPeriod();
 }

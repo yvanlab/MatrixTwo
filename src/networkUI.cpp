@@ -104,11 +104,9 @@ void setData()
 		if (pp == NULL) {
 			DEBUGLOGF("Not page associated to [%d]\n", idPage);
 		} else  {
-			DEBUGLOGF("page associated to [%d]\n", idPage);
+			DEBUGLOGF("page associated to [%d][%s]\n", idPage,pp->name.c_str());
 		}
-	}
-
-	;
+	};
 
 	if ((str = wfManager->getServer()->arg("obj")) != NULL)
 	{
@@ -134,11 +132,13 @@ void setData()
 	else if ((str = wfManager->getServer()->arg("hour")) != NULL)
 	{
 		pp->setHourMinute(str);
+		smManager->sortPages();
 		changed = true;
 	}
 	else if ((str = wfManager->getServer()->arg("trans")) != NULL)
 	{
 		pp->transition = (TransitionPages::TRANSTION_MODE) atoi(str.c_str());
+		mpPages->tranPages->startTransition(pp->transition);
 		changed = true;
 	}
 	else

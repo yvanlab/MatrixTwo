@@ -122,6 +122,7 @@ class MatrixPages : public BaseManager
 
     String toString(boolean bJson){return "MatrixPages";}
 
+    TransitionPages *tranPages;
 
   private:
     //boolean manageTransition(byte transitionType);
@@ -130,7 +131,7 @@ class MatrixPages : public BaseManager
     //int16_t startTransition=0;
 
     hw_timer_t * timer;
-    uint16_t _numPage = 0;
+    uint16_t _numPage = 65000;
     BMPFile *bitmapCache[6] = {NULL,NULL,NULL,NULL,NULL,NULL};
 
     gfxFont m_gfxFont;    
@@ -138,7 +139,6 @@ class MatrixPages : public BaseManager
     Page *m_pp;
 
     Window win;
-    TransitionPages *tranPages;
 };
 
 
