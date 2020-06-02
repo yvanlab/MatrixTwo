@@ -40,8 +40,10 @@ public:
 		METEO_TEXT = 11,
 		GENERIC_TEXT = 12,
 		TEMP_EXT = 13,
-		CURRENT = 14,
-		DICTONS = 15
+		TEMP_EXT_MIN = 14,
+		TEMP_EXT_MAX = 15,
+		CURRENT = 16,
+		DICTONS = 17
 	};
 	enum FONT_TYPE
 	{
@@ -113,18 +115,21 @@ public:
 	}
 };
 
+#define MAX_NBR_ELEMENT 8
+
 class Page
 {
 public:
-	uint8_t nbElement = 6;
+	uint8_t nbElement = MAX_NBR_ELEMENT;
 	boolean active = false;
 	uint16_t id;
-	String hourMinute;
-	int16_t hourMinuteConverted;
+	/*String hourMinute;
+	int16_t hourMinuteConverted;*/
 	String name;
 	TransitionPages::TRANSTION_MODE transition = TransitionPages::TRANSITION_LEFT;
-	Element element[6];
-	Page(){};
+	Element element[8];
+	Page(){
+	};
 
 	void set(uint16_t _id, String _name, uint8_t _nbElts)
 	{
@@ -144,14 +149,14 @@ public:
 		ss += "\"name\":\"" + name + "\",";
 		ss += "\"nbElts\":\"" + String(nbElement) + "\",";
 		ss += "\"active\":\"" + String(active) + "\",";
-		ss += "\"hour\":\"" + hourMinute + "\",";
+		//ss += "\"hour\":\"" + hourMinute + "\",";
 		ss += "\"transition\":\"" + String(transition) + "\",";
 
 		ss += "\"obj\":[";
-		for (uint8_t iElt = 0; iElt < nbElement; iElt++)
+		for (uint8_t iElt = 0; iElt < MAX_NBR_ELEMENT; iElt++)
 		{
 			ss += element[iElt].toString(JSON_TEXT);
-			if (iElt != nbElement - 1)
+			if (iElt != MAX_NBR_ELEMENT - 1)
 				ss = ss + ",";
 		}
 		ss = ss + "]";
@@ -165,31 +170,13 @@ public:
 		id = doc[F("id")];
 		//uint8_t nbElt 	= doc[F("nbElts")];
 		active = doc[F("active")].as<uint8_t>() == 1;
-		setHourMinute(doc[F("hour")].as<String>());
+		//setHourMinute(doc[F("hour")].as<String>());
 		transition = (TransitionPages::TRANSTION_MODE)doc[F("transition")].as<uint8_t>();
 		//DEBUGLOGF("Load Page [%s]\n", name.c_str());
 		JsonArray lstObj = doc["obj"];
 		for (uint8_t iElt = 0; iElt < lstObj.size(); iElt++)
 		{
 			element[iElt].fromJson(lstObj[iElt]);
-		}
-	}
-
-	void setHourMinute(String hhMm)
-	{
-		//DEBUGLOGF("setHourMinute [%s][%s]\n",name.c_str(), hhMm.c_str());
-		if (!hhMm.isEmpty() && hhMm.length() == 5)
-		{
-			//22:12
-			uint16_t hh = hhMm.substring(0, 2).toInt();
-			uint16_t mn = hhMm.substring(3, 5).toInt();
-			DEBUGLOGF("setHourMinute [%s][%s],[%d][%d]\n",name.c_str(), hhMm.c_str(), hh,mn);
-			hourMinuteConverted = hh * 60 + mn;
-			hourMinute = hhMm;
-		}
-		else
-		{
-			hourMinuteConverted = 32500;
 		}
 	}
 };
@@ -206,66 +193,11 @@ public:
 
 	String getClassName() { return "SettingManager"; }
 
-	void sortPages();
+	//void sortPages();
 
 	String toStringCfg(boolean bJson);
-	/*{
-		String ss;
-		if (bJson == STD_TEXT)
-			return BaseSettingManager::toString(bJson);
-		ss = "\"displayedPage\":\"" + String(displayedPage) + "\",";
-		ss += "\"displayedMode\":\"" + String(displayedMode) + "\",";
-		ss += "\"displayedFreq\":\"" + String(displayedMode) + "\",";
-		ss += "\"page\":[";
-		for (uint8_t iPage = 0; iPage < nbCustomPages; iPage++)
-		{
-			ss += customPage[iPage].toString(JSON_TEXT);
-			if (iPage != nbCustomPages - 1)
-				ss = ss + ",";
-		}
-		ss = ss + "]";
-		return ss;
-	}*/
-
 	String toString(boolean bJson);
-	/*{
-		String ss;
-		if (bJson == STD_TEXT)
-		{
-			ss = BaseSettingManager::toString(bJson);
-		}
-		else
-		{
-			uint8_t iIndex = 0;
-			ss += "\"lstBMP\":[";
-			while (iIndex < 10 && lstBMP[iIndex] != NULL)
-			{
-				ss += "\"" + String(lstBMP[iIndex]).substring(1) + "\"";
-				iIndex++;
-				if (iIndex < 10 && lstBMP[iIndex] != NULL)
-					ss += ",";
-			}
-			ss += "],";
-
-			ss = ss + toStringCfg(bJson);
-			ss = ss + customPrg.toString(bJson);
-		}
-		return ss;
-	}*/
-
 	Page *getPage(uint16_t id);
-	/*{
-		for (uint8_t iPage = 0; iPage < nbCustomPages; iPage++)
-		{
-			//DEBUGLOGF("customPage [%d/%d]\n",customPage[iPage].id,id);
-			if (customPage[iPage].id == id)
-			{
-				return &customPage[iPage];
-			}
-		}
-		return NULL;
-	}*/
-
 	Prog *getProg() {
 		return &customPrg;
 	}

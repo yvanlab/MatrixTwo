@@ -55,16 +55,6 @@ Prog::Prog()
     }
 };
 
-void Prog::sortPages()
-{
-    /*            qsort(customPage, SettingManager::nbCustomPages, sizeof(customPage[0]), sort_desc);
-            for (uint8_t iPage = 0; iPage < SettingManager::nbCustomPages; iPage++)
-            {
-                DEBUGLOGF("[%i] Page[%s][%s][%d]\n", customPage[iPage].id, customPage[iPage].name.c_str(), customPage[iPage].hourMinute.c_str(), customPage[iPage].hourMinuteConverted);
-                customPage[iPage].nbElement = 6;
-            }*/
-}
-
 void Prog::readData()
 {
     if (SPIFFS.exists(prgFileName))
@@ -80,13 +70,13 @@ void Prog::readData()
                 m_prgElt[i].fromJson(lstProg[i]);
                 m_prgElt[i].id = i;
             }
-            //sortPages();
         }
         else
         {
             DEBUGLOGF("Prg file START READING [%s]", error.c_str());
         }
         file.close();
+        sortPages();
     }
     else
     {
@@ -111,9 +101,50 @@ void Prog::writeData()
     cfgFile.close();
 }
 
-uint16_t Prog::getNext()
+uint16_t Prog::getNext(uint16_t hhMn)
 {
-    return 0;
+    int16_t iSelectedPage = -1;
+    int16_t iFoundPage = -1;
+    for (uint8_t i = 0; i < maxPrgElt; i++)
+    {
+        DEBUGLOGF("Next page[%s][%s],[%d][%d]\n", m_prgElt[i].pgName.c_str(), m_prgElt[i].hourMinute.c_str(), m_prgElt[i].hourMinuteConverted, hhMn);
+        if (iSelectedPage != -1)
+        {
+            if (m_prgElt[i].hourMinuteConverted < 0 || hhMn < m_prgElt[i].hourMinuteConverted)
+            {
+                iFoundPage = iSelectedPage;
+                break;
+            }
+        }
+        if (hhMn >= m_prgElt[i].hourMinuteConverted)
+        {
+            iSelectedPage = m_prgElt[i].pgId;
+        }
+    }
+    return iFoundPage;
+}
+
+int sort_desc(const void *cmp1, const void *cmp2)
+{
+    // Need to cast the void * to int *
+    ProgElt *a = (ProgElt *)cmp1;
+    ProgElt *b = (ProgElt *)cmp2;
+    if (a->hourMinuteConverted > b->hourMinuteConverted)
+        return 1;
+    if (a->hourMinuteConverted == b->hourMinuteConverted)
+        return 0;
+    if (a->hourMinuteConverted < b->hourMinuteConverted)
+        return -1;
+}
+
+void Prog::sortPages()
+{
+    qsort(m_prgElt, maxPrgElt, sizeof(ProgElt), sort_desc);
+    for (uint8_t iPage = 0; iPage < maxPrgElt; iPage++)
+    {
+        DEBUGLOGF("[%i] Page[%i][%s][%s][%d]\n", m_prgElt[iPage].id, m_prgElt[iPage].pgId, m_prgElt[iPage].pgName.c_str(), m_prgElt[iPage].hourMinute.c_str(), m_prgElt[iPage].hourMinuteConverted);
+        //        customPage[iPage].nbElement = 6;
+    }
 }
 
 String Prog::toString(boolean bJson)

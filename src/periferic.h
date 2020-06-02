@@ -25,6 +25,8 @@ class Periferic : public BaseManager
     void retrievePeriphericInfo();
 
     float getExtTemp()                {return m_ExtTemp;}
+    float getExtTempMin()             {return m_ExtTempMin;}
+    float getExtTempMax()             {return m_ExtTempMax;}
     float getInstantCurrentGarage()   {return m_InstantCurrentGarage;}
     float getITemperartureGarage()    {return m_TemperartureGarage;}
 
@@ -38,6 +40,8 @@ class Periferic : public BaseManager
     
     // meteo
     float m_ExtTemp = 0.0;
+    float m_ExtTempMin = 0.0;
+    float m_ExtTempMax = 0.0;
 
   private:
     

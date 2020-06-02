@@ -59,7 +59,11 @@ void startWiFiserver()
 	wfManager->getServer()->on("/save", saveConfiguration);
 	wfManager->getServer()->on("/config", configPage);
 	wfManager->getServer()->on("/prog", progPage);
-	
+
+	#ifdef OTA_FOR_ATOM
+	ArduinoOTA.onStart(OTAOnStart);
+	#endif
+
 	Serial.println(wfManager->toString(STD_TEXT));
 }
 
@@ -129,13 +133,14 @@ void setup(void)
 	DEBUGLOG("BMPManagerV2");
 	DEBUGLOG(bmpMesure->toString(STD_TEXT));
 
-	pDictons->findNewDicton(day());
 	//phPeriferic->retrievePeriphericInfo();
 
 	mtTimer.begin(timerFrequence);
 	mtTimer.setCustomMS(50);
 
 	thinkSpeakMgr = new thingSpeakManager(PIN_LED);
+	
+	pDictons->findNewDicton(day());
 
 	xTaskCreatePinnedToCore(
 		screemManagement, /* Task function. */
@@ -147,6 +152,7 @@ void setup(void)
 		0);				  /* pin task to core 0 */
 
 	delay(2000);
+	phPresence->forceStatus(true);
 
 #ifdef MCPOC_TELNET
 	Debug.begin(MODULE_NAME);
@@ -189,7 +195,7 @@ void /*RAMFUNC*/ loop(void)
 		phPeriferic->retrievePeriphericInfo();
 	}
 
-	if (mtTimer.is1MNPeriod())
+	if (mtTimer.is1MNPeriod() && smManager->displayedMode)
 	{
 		mpPages->nextPage();
 	}
@@ -207,7 +213,7 @@ void /*RAMFUNC*/ loop(void)
 			pDictons->findNewDicton(iDay);
 			mpPages->startTimer();
 		}else if (c == 's') {
-			smManager->sortPages();
+			smManager->getProg()->sortPages();
 		}else if (c == 'n') {
 			mpPages->nextPage();
 		}

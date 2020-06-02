@@ -240,6 +240,7 @@
                 "PRESENCE_INERTIE_DURATION=60000",
                 "MY_TIMER_NUM=0",
                 "MATRIX_TIMER_NUM=1",
+                "OTA_FOR_ATOM=1",
                 "ESP32",
                 "ESP_PLATFORM",
                 "F_CPU=240000000L",

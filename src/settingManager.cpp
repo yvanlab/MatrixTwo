@@ -82,36 +82,13 @@ SettingManager::SettingManager(unsigned char pinLed) : BaseSettingManager(pinLed
 
 
 
-int sort_desc(const void *cmp1, const void *cmp2)
-{
-  // Need to cast the void * to int *
-  Page *a = (Page *)cmp1;
-  Page *b = (Page *)cmp2;  
-  // The comparison
-  //DEBUGLOGF("Page[%s][%s][%d],[%s][%s][%d]\n",a->name.c_str(),a->hourMinute.c_str(),a->hourMinuteConverted,  
-  //b->name.c_str(),b->hourMinute.c_str(),b->hourMinuteConverted);
-
-  if (a->hourMinuteConverted >  b->hourMinuteConverted) 
-    return 1;
-  if (a->hourMinuteConverted ==  b->hourMinuteConverted)   
-    return 0;
-  if (a->hourMinuteConverted <  b->hourMinuteConverted)     
-    return -1;
-/*
-  if (b->hourMinuteConverted>=0) {
-    return a->hourMinuteConverted - b->hourMinuteConverted;
-  } else {
-    return -1;
-  }*/
-}
-
 
 unsigned char SettingManager::readData(){
   BaseSettingManager::readData();
   switchOn();
 
   for (uint8_t i=0; i<SettingManager::nbCustomPages; i++) {
-    customPage[i].set(i+1,"empty"+String(i), 6);
+    customPage[i].set(i+1,"empty"+String(i), MAX_NBR_ELEMENT);
   }
 
 
@@ -145,7 +122,6 @@ unsigned char SettingManager::readData(){
 		  for (uint8_t iPage =0; iPage < lstPage.size(); iPage++) {
 			  customPage[iPage].fromJson(lstPage[iPage]);
 		  }
-      sortPages();
     } else {
       DEBUGLOGF("Config file SART READING [%s]",error.c_str());
     }
@@ -160,13 +136,6 @@ unsigned char SettingManager::readData(){
   return m_iEEprom;
 }
 
-void SettingManager::sortPages(){
-  qsort(customPage, SettingManager::nbCustomPages, sizeof(customPage[0]), sort_desc);
-  for (uint8_t iPage =0; iPage < SettingManager::nbCustomPages; iPage++) {
-    DEBUGLOGF("[%i] Page[%s][%s][%d]\n",customPage[iPage].id, customPage[iPage].name.c_str(), customPage[iPage].hourMinute.c_str(),customPage[iPage].hourMinuteConverted );
-    customPage[iPage].nbElement = 6;
-  }
-}
 
 unsigned char SettingManager::writeData(){
   mpPages->stopTimer();

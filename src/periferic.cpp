@@ -79,6 +79,8 @@ void Periferic::retrievePeriphericInfo() {
   error = collectJson("http://"+String(VMC_METEO_IP_PROD)+"/status",&doc, &filter);
   if (!error) {
     m_ExtTemp = doc[F("EXT")][F("Btemperature")][F("value")];
+    m_ExtTempMin = doc[F("EXT")][F("Btemperature")][F("minValue")];
+    m_ExtTempMax = doc[F("EXT")][F("Btemperature")][F("maxValue")];
   } else {
     m_ExtTemp = 0.0;
     DEBUGLOGF("retrievePeriphericInfo VMC [%s] [%s]\n",VMC_METEO_IP_PROD, error.c_str()); 

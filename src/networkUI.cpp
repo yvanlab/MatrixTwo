@@ -37,6 +37,17 @@ void firmware()
 	digitalWrite(PIN_LED, HIGH);
 }
 
+#ifdef OTA_FOR_ATOM
+void OTAOnStart()
+{
+	digitalWrite(PIN_LED, LOW);
+	mpPages->stopTimer();
+	DEBUGLOG("My OTA");
+	wfManager->OTAOnStart();
+	digitalWrite(PIN_LED, HIGH);
+}
+#endif
+
 void clearEEPROM()
 {
 	digitalWrite(PIN_LED, LOW);
@@ -87,15 +98,20 @@ bool manageProg()
 	else if ((str = wfManager->getServer()->arg("prgPage")) != NULL)
 	{
 		prgElt->pgId = atoi(str.c_str());
-		Page *pp = smManager->getPage(prgElt->pgId);
-		if (pp != NULL) {
-			prgElt->pgName = pp->name;
-		} else {
-			prgElt->pgName = "NotFound";
+		if (prgElt->pgId>-1) {
+			Page *pp = smManager->getPage(prgElt->pgId);
+			if (pp != NULL) {
+				prgElt->pgName = pp->name;
+			} else {
+				prgElt->pgName = "NotFound";
+			}
+		}else {
+			prgElt->pgName = "";
 		}
 
 	}
-	wfManager->getServer()->send(200, "text/html", "ok");
+	smManager->getProg()->sortPages();
+	//wfManager->getServer()->send(200, "text/html", "ok");
 	return true;
 }
 
@@ -121,12 +137,8 @@ bool managePage()
 	{
 		nbElt = (uint8_t)atoi(str.c_str());
 	}
+	
 	if ((str = wfManager->getServer()->arg("activatepage")) != NULL)
-	{
-		pp->active = str == "true";
-		changed = true;
-	}
-	else if ((str = wfManager->getServer()->arg("activatepage")) != NULL)
 	{
 		pp->active = str == "true";
 		changed = true;
@@ -142,12 +154,6 @@ bool managePage()
 		pp->name = str;
 		changed = true;
 	}
-	/*else if ((str = wfManager->getServer()->arg("hour")) != NULL)
-	{
-		pp->setHourMinute(str);
-		smManager->sortPages();
-		changed = true;
-	}*/
 	else if ((str = wfManager->getServer()->arg("trans")) != NULL)
 	{
 		pp->transition = (TransitionPages::TRANSTION_MODE) atoi(str.c_str());
@@ -239,7 +245,7 @@ void setData()
 	}
 	else if ((str = wfManager->getServer()->arg("def")) != NULL)
 	{
-		smManager->displayedMode = (uint8_t)atoi(str.c_str());
+		smManager->displayedMode = str == "true";
 	}
 	else if (wfManager->getServer()->hasArg("prgHour") || wfManager->getServer()->hasArg("prgPage"))
 	{

@@ -10,6 +10,7 @@ bool managePage();
 bool manageProg();
 void dataPage();
 void firmware();
+void OTAOnStart();
 void clearEEPROM ();
 void configPage();
 void progPage();

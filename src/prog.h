@@ -36,7 +36,7 @@ public:
     void sortPages();
     void readData();
     void writeData();
-    uint16_t getNext();
+    uint16_t getNext(uint16_t hhMn);
     String toString(boolean bJson);
     ProgElt *getProgElt(uint8_t id);
 

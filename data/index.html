@@ -222,7 +222,7 @@ table#t01 {
 				res += '</div>';
 				document.getElementById("tabHeader").innerHTML = res;
 				
-				var lstType = ["Text","Heure","Date","Montre", "Temperature","Temperature Min", "Temperature Max", "Tendances", "Bitmap", "Pression","Meteo Icon","Meteo Text", "Text generic","Temperature Exterieure", "Consommation courant", "Dictons","je ne sais pas"];
+				var lstType = ["Text","Heure","Date","Montre", "Temperature","Temperature Min", "Temperature Max", "Tendances", "Bitmap", "Pression","Meteo Icon","Meteo Text", "Text generic","Temperature Ext","Temperature Ext Min","Temperature Ext Max", "Consommation courant", "Dictons","je ne sais pas"];
 				var lstFont = ["Petite","Moyenne","Grande"];
 				var lstTransition = ["Gauche","Droite","Monter","Descendre","Centre", "Rotation", "Etoile", "Aucune"];
 
@@ -316,12 +316,14 @@ table#t01 {
 			
 			function buildStringDropdownPage(selId,lstPages) {							
 				var res = "";
+				res = '<option value=-1>Aucune</option>';
 				for (i in lstPages) {
 					var selected=" ";
 					if (lstPages[i].id==selId) selected=" selected";
 					res += '<option value='+ lstPages[i].id + selected +' >' + lstPages[i].name + '</option>';
 				};
-				
+
+
 			  return res
 			}
 			

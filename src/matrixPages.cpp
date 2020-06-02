@@ -95,10 +95,10 @@ void MatrixPages::begin()
 
 	m_display.setFastUpdate(false);
 
-	m_display.fillRect(0, 0, 64, 32, m_display.color565(0, 0, 0));
+	/*m_display.fillRect(0, 0, 64, 32, m_display.color565(0, 0, 0));
 	m_display.setTextColor(m_display.color565(255, 0, 0));
 	m_display.setCursor(2, 0);
-	m_display.print("Pixel");
+	m_display.print("Pixel");*/
 
 	win.set(0, 0, 64, 32);
 
@@ -118,18 +118,6 @@ void MatrixPages::displayPage()
 		m_display.showBuffer();
 		return;
 	}
-	/*	if (pp->id == TEST_PAGE_ID)
-	{
-		displayTestPage();
-	}
-	else if (pp->id == CFG_PAGE_ID)
-	{
-		displayCfgPage();
-	}
-	else
-	{
-		displayScreen(pp);
-	}*/
 	displayScreen(m_pp);
 	m_display.showBuffer();
 }
@@ -144,6 +132,7 @@ void MatrixPages::setPage(uint16_t num)
 	m_display.clearDisplay();
 	if (m_pp)
 	{
+		smManager->displayedPage = num;
 		tranPages->startTransition(m_pp->transition);
 		DEBUGLOGF("Page %sd\n", m_pp->name.c_str());
 	}
@@ -158,32 +147,14 @@ void MatrixPages::nextPage()
 {
 	DEBUGLOGF("NextPage %d\n", _numPage);
 	int16_t hhMn = hour() * 60 + minute();
-	Page *pSelectedPage = NULL;
-	Page *pp = NULL;
-	for (uint8_t i = 0; i < SettingManager::nbCustomPages; i++)
-	{
-		pp = &smManager->customPage[i];
-		if (pp->active)
-		{
-			DEBUGLOGF("Next page[%s][%s],[%d][%d]\n", pp->name.c_str(), pp->hourMinute.c_str(), pp->hourMinuteConverted, hhMn);
-			if (pSelectedPage != NULL)
-			{
-				if (pp->hourMinuteConverted < 0 || hhMn < pp->hourMinuteConverted)
-				{
-					break;
-				}
-			}
-			if (hhMn >= pp->hourMinuteConverted)
-			{
-				pSelectedPage = pp;
-			}
-		}
+	int16_t iPage = smManager->getProg()->getNext(hhMn);
+	if (iPage < 0) {
+		DEBUGLOGF("Next page not found [%d]\n", hhMn);
 	}
-	if (pSelectedPage != NULL)
+	else
 	{
-		DEBUGLOGF("Next page[%s][%s]\n", pSelectedPage->name.c_str(), pSelectedPage->hourMinute.c_str());
-		setPage(pSelectedPage->id);
-		smManager->displayedPage = pSelectedPage->id;
+		DEBUGLOGF("Next page[%d]\n", iPage);
+		setPage(iPage);
 	}
 }
 
@@ -317,12 +288,12 @@ void MatrixPages::displayScreen(Page *page)
 {
 	char tmpString[20];
 	tranPages->nextStep();
-	if (tranPages->isTransition())
+/*	if (tranPages->isTransition())
 	{
 		m_display.drawRect(win.getX(0), win.getY(0),
 						   win.getW(), win.getH(),
 						   m_display.color565(255, 255, 255));
-	}
+	}*/
 	for (uint8_t i = 0; i < page->nbElement; i++)
 	{
 		//DEBUGLOGF("x[%d] y[%d], Red[%d], Green[%d], Blue[%d]\n",smManager.screen[i].x, smManager.screen[i].y, smManager.screen[i].red, smManager.screen[i].green, smManager.screen[i].blue);
@@ -407,6 +378,16 @@ void MatrixPages::displayScreen(Page *page)
 			else if (page->element[i].type == Element::TEMP_EXT)
 			{
 				sprintf(tmpString, "%2.1f", phPeriferic->getExtTemp());
+				print(&page->element[i], buildTxt(page->element[i].txt, tmpString));
+			}
+			else if (page->element[i].type == Element::TEMP_EXT_MIN)
+			{
+				sprintf(tmpString, "%2.1f", phPeriferic->getExtTempMin());
+				print(&page->element[i], buildTxt(page->element[i].txt, tmpString));
+			}
+			else if (page->element[i].type == Element::TEMP_EXT_MAX)
+			{
+				sprintf(tmpString, "%2.1f", phPeriferic->getExtTempMax());
 				print(&page->element[i], buildTxt(page->element[i].txt, tmpString));
 			}
 			else if (page->element[i].type == Element::CURRENT)
