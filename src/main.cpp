@@ -200,7 +200,7 @@ void /*RAMFUNC*/ loop(void)
 		mpPages->nextPage();
 	}
 
-
+#ifdef MCPOC_TEST
 	if (Serial.available())
 	{
 		char c = Serial.read();
@@ -217,10 +217,8 @@ void /*RAMFUNC*/ loop(void)
 		}else if (c == 'n') {
 			mpPages->nextPage();
 		}
-
-		
-
 	}
+#endif
 
 	if (mtTimer.isCustomPeriod())
 	{
