@@ -12,9 +12,9 @@
    */
    //static const char xyz[] PROGMEM = "pas de prevision";
    static const char string_0[] PROGMEM = "pas de prevision";   // "String 0" etc are strings to store - change to suit.
-   static const char string_1[] PROGMEM = "Beau ou assez beau";
-   static const char string_2[] PROGMEM = "Assez beau ou ondees orageuses";
-   static const char string_3[] PROGMEM = "Pluie ou averses avec un peu de vent";
+   static const char string_1[] PROGMEM = "Beau ou assez beau"; //m_1.bmp
+   static const char string_2[] PROGMEM = "Assez beau ou ondees orageuses"; //m_2.bmp
+   static const char string_3[] PROGMEM = "Pluie ou averses avec un peu de vent"; //m_3.bmp
    static const char string_4[] PROGMEM = "Pluie et vent assez fort";
 
    static const char *weatherString[]  =  {string_0, string_1, string_2, string_3, string_4};
