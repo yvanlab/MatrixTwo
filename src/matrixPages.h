@@ -112,7 +112,7 @@ class MatrixPages : public BaseManager
 
     void displayWatch(Element *pElt);
     void displayTrend(Element *pElt, float trend);
-    void displayBitmap(Element *pElt);
+    void displayBitmap(Element *pElt, String filename);
     void displayTestPage();
     void displayCfgPage();
 
@@ -125,20 +125,16 @@ class MatrixPages : public BaseManager
     TransitionPages *tranPages;
 
   private:
-    //boolean manageTransition(byte transitionType);
-    //int16_t xDecalage = 128;
-    //uint8_t previous_detection = 0;
-    //int16_t startTransition=0;
 
     hw_timer_t * timer;
     uint16_t _numPage = 65000;
-    BMPFile *bitmapCache[6] = {NULL,NULL,NULL,NULL,NULL,NULL};
 
     gfxFont m_gfxFont;    
     Page pp;
     Page *m_pp;
 
     Window win;
+    BmpCache m_bmpCache;
 };
 
 

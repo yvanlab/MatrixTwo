@@ -130,6 +130,7 @@ void MatrixPages::setPage(uint16_t num)
 	_numPage = num;
 	m_pp = smManager->getPage(num);
 	m_display.clearDisplay();
+	m_bmpCache.myDelete();
 	if (m_pp)
 	{
 		smManager->displayedPage = num;
@@ -140,7 +141,6 @@ void MatrixPages::setPage(uint16_t num)
 	{
 		DEBUGLOGF("Page not found %d\n", num);
 	}
-	//startTransition = 128;
 };
 
 void MatrixPages::nextPage()
@@ -364,8 +364,12 @@ void MatrixPages::displayScreen(Page *page)
 			}
 			else if (page->element[i].type == Element::METEO_ICON)
 			{
-				sprintf(tmpString, "Ic%d", bmpMesure->getPressionSensor()->getWeatherTrend());
-				print(&page->element[i], buildTxt(page->element[i].txt, tmpString));
+				String filename;
+				filename = "/m_" + String(bmpMesure->getPressionSensor()->getWeatherTrend()) + ".bmp";
+				displayBitmap(&page->element[i], filename);
+				page->element[i].isChanged = false;
+//				sprintf(tmpString, "Ic%d", bmpMesure->getPressionSensor()->getWeatherTrend());
+//				print(&page->element[i], buildTxt(page->element[i].txt, tmpString));
 			}
 			else if (page->element[i].type == Element::GENERIC_TEXT)
 			{
@@ -401,7 +405,12 @@ void MatrixPages::displayScreen(Page *page)
 			}
 			else if (page->element[i].type == Element::BITMAP)
 			{
-				displayBitmap(&page->element[i]);
+				String filename;
+				if (!page->element[i].txt.isEmpty())
+				{
+					filename = "/" + page->element[i].txt;
+				}
+				displayBitmap(&page->element[i], filename);
 				page->element[i].isChanged = false;
 			}
 		}
@@ -542,21 +551,21 @@ void MatrixPages::displayTrend(Element *pElt, float trend)
 	}
 }
 
-void MatrixPages::displayBitmap(Element *pElt)
+void MatrixPages::displayBitmap(Element *pElt, String filename)
 {
 
-	String filename = "/tst.bmp";
+/*	String filename = "/tst.bmp";
 	if (!pElt->txt.isEmpty())
 	{
 		filename = "/" + pElt->txt;
-	}
+	}*/
 	int16_t x = win.getX(pElt->x);
 	int16_t y = win.getY(pElt->y);
 	//uint16_t color = m_display.color565(pElt->red, pElt->green, pElt->blue);
 	boolean isChanged = pElt->isChanged;
 	uint8_t id = pElt->id;
-
-	if (isChanged && bitmapCache[id] != NULL)
+	BMPFile *bitmapCache = m_bmpCache.get(0,id);
+/*	if (isChanged && bitmapCache[id] != NULL)
 	{
 		delete bitmapCache[id];
 		bitmapCache[id] = NULL;
@@ -564,21 +573,22 @@ void MatrixPages::displayBitmap(Element *pElt)
 	}
 
 	if (bitmapCache[id] == NULL)
-	{
+	{*/
+	if (isChanged || bitmapCache == NULL) {
 		stopTimer();
-		bitmapCache[id] = new BMPFile;
-		if (bitmapCache[id]->loadBitmap(filename) != 0)
+		bitmapCache = new BMPFile;
+		if (bitmapCache->loadBitmap(filename) != 0)
 		{
-			delete bitmapCache[id];
-			bitmapCache[id] = NULL;
+			delete bitmapCache;
 			startTimer();
 			return;
 		}
 		startTimer();
-	}
+		m_bmpCache.store(0,id,bitmapCache);
+	} 
 
-	m_display.drawRGBBitmap(x, y, bitmapCache[id]->getBuffer(),
-							bitmapCache[id]->getWidth(), bitmapCache[id]->getHeight());
+	m_display.drawRGBBitmap(x, y, bitmapCache->getBuffer(),
+							bitmapCache->getWidth(), bitmapCache->getHeight());
 }
 
 void MatrixPages::displayCfgPage()
