@@ -191,13 +191,15 @@ void /*RAMFUNC*/ loop(void)
 		{
 			bmpMesure->mesure();
 			bmpMesure->set();
+			phPeriferic->retrievePeriphericInfo();
 		}
-		phPeriferic->retrievePeriphericInfo();
 	}
 
 	if (mtTimer.is1MNPeriod() && smManager->displayedMode)
 	{
 		mpPages->nextPage();
+	/*	phPresence->set
+		phPresence->forceStatus(true);*/
 	}
 
 #ifdef MCPOC_TEST

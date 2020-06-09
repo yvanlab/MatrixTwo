@@ -83,6 +83,8 @@ class MatrixPages : public BaseManager
     	// DEBUGLOG("stopTimer");
     	timerStop(timer);
     	timerAlarmDisable(timer);
+        m_display.flushDisplay();
+	    //m_display.clearDisplay();
     	delay(10);
     }
     void startTimer() {

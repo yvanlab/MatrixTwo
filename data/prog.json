@@ -1,20 +1,68 @@
 {
     "datetime": {
-        "date": "29/04/2020",
-        "time": "21:02:20"
+      "date": "08/06/2020",
+      "time": "20:32:57"
     },
     "prog": [
-        {
-            "hour": "18:00",
-            "pgId": "2",
-            "pgName": "Open Bar"
-        },
-        {
-            "hour": "10:00",
-            "pgId": "1",
-            "pgName": "Heure"
-        }
-
-
+      {
+        "id": "0",
+        "pgId": "5",
+        "pgName": "Meteo",
+        "hour": "07:00"
+      },
+      {
+        "id": "1",
+        "pgId": "1",
+        "pgName": "Heure",
+        "hour": "10:00"
+      },
+      {
+        "id": "5",
+        "pgId": "3",
+        "pgName": "RepasMidi",
+        "hour": "11:55"
+      },
+      {
+        "id": "2",
+        "pgId": "11",
+        "pgName": "HappyHour",
+        "hour": "19:00"
+      },
+      {
+        "id": "3",
+        "pgId": "2",
+        "pgName": "OpenBar",
+        "hour": "19:30"
+      },
+      {
+        "id": "8",
+        "pgId": "4",
+        "pgName": "RepasSoir",
+        "hour": "20:00"
+      },
+      {
+        "id": "4",
+        "pgId": "7",
+        "pgName": "HeureNuit",
+        "hour": "22:00"
+      },
+      {
+        "id": "9",
+        "pgId": "-1",
+        "pgName": "",
+        "hour": ""
+      },
+      {
+        "id": "6",
+        "pgId": "-1",
+        "pgName": "",
+        "hour": ""
+      },
+      {
+        "id": "7",
+        "pgId": "-1",
+        "pgName": "",
+        "hour": ""
+      }
     ]
-}
+  }
