@@ -20,6 +20,7 @@ String ProgElt::toString(boolean bJson)
     ss += "\"pgId\":\"" + String(pgId) + "\",";
     ss += "\"pgName\":\"" + pgName + "\",";
     ss += "\"hour\":\"" + hourMinute + "\"}";
+    ss += "\"pgDuration\":\"" + String(duration) + "\"}";
     return ss;
 }
 void ProgElt::fromJson(JsonObject doc)
@@ -27,6 +28,8 @@ void ProgElt::fromJson(JsonObject doc)
     pgName = doc[F("pgName")].as<String>();
     pgId = doc[F("pgId")];
     setHourMinute(doc[F("hour")].as<String>());
+    duration = doc[F("pgDuration")];
+
 }
 
 void ProgElt::setHourMinute(String hhMm)
@@ -92,11 +95,11 @@ void Prog::writeData()
     File cfgFile = SPIFFS.open(prgFileName, FILE_WRITE);
     if (cfgFile.print(ss) == ss.length())
     {
-        DEBUGLOGF("prog file saved");
+        DEBUGLOG("prog file saved");
     }
     else
     {
-        DEBUGLOGF("prog PROBLEM");
+        DEBUGLOG("prog PROBLEM");
     };
     cfgFile.close();
 }
