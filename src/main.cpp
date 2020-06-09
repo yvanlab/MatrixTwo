@@ -60,25 +60,31 @@ void startWiFiserver()
 	wfManager->getServer()->on("/config", configPage);
 	wfManager->getServer()->on("/prog", progPage);
 
-	#ifdef OTA_FOR_ATOM
+#ifdef OTA_FOR_ATOM
 	ArduinoOTA.onStart(OTAOnStart);
-	#endif
+#endif
 
 	Serial.println(wfManager->toString(STD_TEXT));
 }
 
 void screemManagement(void *pvParameters)
 {
-	DEBUGLOG("Task1 running on core ");
-	DEBUGLOG(xPortGetCoreID());
-	mpPages = new MatrixPages(PIN_LED);
-	mpPages->begin();
-	mpPages->setPage(smManager->displayedPage);
-	mpPages->displayPage();
+	DEBUGLOG("Task1 running on second core ");
 
 	while (true)
 	{
-		delay(1);
+		if (mtTimer.isCustomPeriod())
+		{
+			if (phPresence->isPresence())
+			{
+				mpPages->displayPage();
+			}
+		}
+		if (mtTimer.is1MNPeriod() && smManager->displayedMode)
+		{
+			mpPages->nextPage();
+		}
+		//		delay(1);
 	};
 }
 
@@ -109,7 +115,6 @@ void setup(void)
 	smManager = new SettingManager(PIN_LED);
 	wfManager = new WifiManager(PIN_LED, smManager);
 	phPresence = new PresenceHelper();
-	phPresence->setCallback(presenceManagement);
 	phPeriferic = new Periferic(PIN_LED);
 	pDictons = new Dictons();
 
@@ -125,6 +130,11 @@ void setup(void)
 	DEBUGLOG(smManager->toString(STD_TEXT));
 	startWiFiserver();
 
+	mpPages = new MatrixPages(PIN_LED);
+	mpPages->begin();
+	mpPages->setPage(smManager->displayedPage);
+	//mpPages->displayPage();
+
 	//pDictons->findNewDicton(day());
 
 	bmpMesure = new BMPManagerV2(PIN_LED);
@@ -136,10 +146,10 @@ void setup(void)
 	//phPeriferic->retrievePeriphericInfo();
 
 	mtTimer.begin(timerFrequence);
-	mtTimer.setCustomMS(50);
+	mtTimer.setCustomMS(25);
 
 	thinkSpeakMgr = new thingSpeakManager(PIN_LED);
-	
+
 	pDictons->findNewDicton(day());
 
 	xTaskCreatePinnedToCore(
@@ -152,6 +162,7 @@ void setup(void)
 		0);				  /* pin task to core 0 */
 
 	delay(2000);
+	phPresence->setCallback(presenceManagement);
 	phPresence->forceStatus(true);
 
 #ifdef MCPOC_TELNET
@@ -168,8 +179,6 @@ void setup(void)
 #ifdef MCPOC_TEST
 	//Serial.println("Testing device connections...");
 #endif
-
-	
 }
 uint8_t iDay = 0;
 
@@ -178,13 +187,19 @@ void /*RAMFUNC*/ loop(void)
 	wfManager->handleClient();
 	phPresence->handle();
 
-	if (mtTimer.isCustomPeriod())
+	/*	if (mtTimer.isCustomPeriod())
 	{
 		if (phPresence->isPresence())
 		{
 			mpPages->displayPage();
 		}
 	}
+	if (mtTimer.is1MNPeriod() && smManager->displayedMode)
+	{
+		mpPages->nextPage();
+	}
+
+	*/
 	if (mtTimer.is5MNPeriod())
 	{
 		if (!phPresence->isPresence())
@@ -207,16 +222,23 @@ void /*RAMFUNC*/ loop(void)
 	{
 		char c = Serial.read();
 		Serial.print(c);
-		if (c == 'p') {
+		if (c == 'p')
+		{
 			phPeriferic->retrievePeriphericInfo();
-		}else if (c == 'd') {
+		}
+		else if (c == 'd')
+		{
 			iDay++;
 			mpPages->stopTimer();
 			pDictons->findNewDicton(iDay);
 			mpPages->startTimer();
-		}else if (c == 's') {
+		}
+		else if (c == 's')
+		{
 			smManager->getProg()->sortPages();
-		}else if (c == 'n') {
+		}
+		else if (c == 'n')
+		{
 			mpPages->nextPage();
 		}
 	}
@@ -244,7 +266,8 @@ void /*RAMFUNC*/ loop(void)
 		}
 	}
 
-	if (wfManager->getHourManager()->isNextDay()) {
+	if (wfManager->getHourManager()->isNextDay())
+	{
 		ESP.restart();
 	}
 
@@ -255,7 +278,6 @@ void /*RAMFUNC*/ loop(void)
 			ESP.restart();
 		}
 	}
-
 
 	/*
 	if (mtTimer.is25MSPeriod()) {
@@ -306,8 +328,6 @@ void /*RAMFUNC*/ loop(void)
 	  }
 	}
 */
-
-
 
 	mtTimer.clearPeriod();
 }

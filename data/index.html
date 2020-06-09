@@ -201,7 +201,7 @@ table#t01 {
 				document.getElementById("tempMin").innerHTML = myObj.bmp.Btemperature.minValue;
 				document.getElementById("tempTrend").innerHTML = myObj.bmp.Btemperature.trend;
 				
-				document.getElementById("defID").innerHTML = myObj.setting.displayedMode;
+				document.getElementById("defID").checked  = myObj.setting.displayedMode;
 				document.getElementById("freqID").innerHTML = myObj.setting.displayedFreq;
 				
 				
@@ -293,7 +293,7 @@ table#t01 {
 			function buildDisplayPages(myObj ) {
 				var lstPages = myObj.setting.page;// getLstPagesName(myObj.setting.page);
 				var lstProg = myObj.setting.prog;
-				var res = '<table id="t01">	<tr>';
+				var res = '<table id="t01".checked >	<tr>';
 				var tmp = '';	
 				var i = 0;
 				for (i in lstProg) {					
@@ -304,6 +304,8 @@ table#t01 {
 					res += '<input type="time" '+ tmp  + buildOnChangeSetting(  101,prog.id, "prgHour") + '/> '
 					res += '<select name="type"' +  buildOnChangeSetting(  101,prog.id, "prgPage") + '/>';
 					res += buildStringDropdownPage(prog.pgId,lstPages);
+					res += 'duree:<input type="number" style = "padding-left:6px;width:60px;" value=' + prog.pgDuration
+						 		+ buildOnChangeSetting( 101,prog.id, "prgDuration") + '/>';
 					res += '</select>';
 					res += '</td>';
 					if (i%2) {

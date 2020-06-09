@@ -80,7 +80,7 @@ class MatrixPages : public BaseManager
     static void IRAM_ATTR display_updater();
 #endif
     void stopTimer() {
-    	// DEBUGLOG("stopTimer");
+    	DEBUGLOG("stopTimer");
     	timerStop(timer);
     	timerAlarmDisable(timer);
         m_display.flushDisplay();
@@ -88,10 +88,10 @@ class MatrixPages : public BaseManager
     	delay(10);
     }
     void startTimer() {
-    	// DEBUGLOG("startTimer");
+    	DEBUGLOG("startTimer");
     	timerStart(timer);
         timerAlarmEnable(timer);
-        delay(10);
+        //delay(10);
         }
 
     void IRAM_ATTR display(){

@@ -24,6 +24,7 @@ public:
     String hourMinute;
     int16_t hourMinuteConverted = 32500;
     String pgName;
+    int16_t duration = 10; //s
     String toString(boolean bJson);
     void fromJson(JsonObject doc);
     void setHourMinute(String hhMm);

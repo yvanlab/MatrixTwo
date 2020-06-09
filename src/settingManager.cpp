@@ -149,14 +149,14 @@ unsigned char SettingManager::writeData(){
   ss += toStringCfg(JSON_TEXT)+"}";
   File cfgFile = SPIFFS.open("/config.json", FILE_WRITE);
   if (cfgFile.print(ss) == ss.length() ) {
-    DEBUGLOGF("Configuration file saved");
+    DEBUGLOG("Configuration file saved");
   } else {
-    DEBUGLOGF("Configuration PROBLEM");
+    DEBUGLOG("Configuration PROBLEM");
   };
   cfgFile.close();
 
   customPrg.writeData();
-
+  
   mpPages->startTimer();
   switchOff();
   return m_iEEprom;

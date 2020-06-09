@@ -65,7 +65,9 @@ void clearEEPROM()
 void dataJson()
 {
 	digitalWrite(PIN_LED, LOW);
+	//mpPages->stopTimer();
 	wfManager->getServer()->send(200, "text/json", getJson());
+	//mpPages->startTimer();
 	digitalWrite(PIN_LED, HIGH);
 }
 
@@ -91,7 +93,11 @@ bool manageProg()
 	{
 		DEBUGLOGF("Prog associated to [%d]\n", prgId);
 	}
-	if ((str = wfManager->getServer()->arg("prgHour")) != NULL)
+	if ((str = wfManager->getServer()->arg("prgDuration")) != NULL)
+	{
+		prgElt->pdDuration = atoi(str.c_str());;
+	} 
+	else if ((str = wfManager->getServer()->arg("prgHour")) != NULL)
 	{
 		prgElt->setHourMinute(str);
 	}
@@ -255,10 +261,10 @@ void setData()
 	{
 		changed = managePage();
 	}
-	if (changed)
+	/*if (changed)
 	{
 		mpPages->displayPage();
-	}
+	}*/
 	phPresence->forceStatus(true);
 	wfManager->getServer()->send(200, "text/html", "ok");
 	//dataPage();
@@ -270,6 +276,7 @@ void dataPage()
 	mpPages->stopTimer();
 
 	DEBUGLOG("dataPage");
+	delay(1000);
 	wfManager->loadFromSpiffs("/index.html");
 	//wfManager->getServer()->send_P ( 200, "text/html", HTML );
 

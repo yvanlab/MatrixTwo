@@ -88,7 +88,7 @@ void MatrixPages::begin()
 	timerAttachInterrupt(timer, &MatrixPages::display_updater, true);
 	//timerAlarmWrite(timer, 2000, true);
 	timerAlarmWrite(timer, 5000, true);
-	timerAlarmEnable(timer);
+	//timerAlarmEnable(timer);
 #endif
 
 	//yield();
@@ -129,7 +129,7 @@ void MatrixPages::setPage(uint16_t num)
 		return;
 	_numPage = num;
 	m_pp = smManager->getPage(num);
-	m_display.clearDisplay();
+	//m_display.clearDisplay();
 	m_bmpCache.myDelete();
 	if (m_pp)
 	{
@@ -368,8 +368,6 @@ void MatrixPages::displayScreen(Page *page)
 				filename = "/m_" + String(bmpMesure->getPressionSensor()->getWeatherTrend()) + ".bmp";
 				displayBitmap(&page->element[i], filename);
 				page->element[i].isChanged = false;
-//				sprintf(tmpString, "Ic%d", bmpMesure->getPressionSensor()->getWeatherTrend());
-//				print(&page->element[i], buildTxt(page->element[i].txt, tmpString));
 			}
 			else if (page->element[i].type == Element::GENERIC_TEXT)
 			{
