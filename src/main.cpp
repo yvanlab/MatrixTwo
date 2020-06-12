@@ -50,8 +50,8 @@ void startWiFiserver()
 	if (wfManager->begin(IPAddress(MODULE_IP), MODULE_NAME, MODULE_MDNS,
 						 MODULE_MDNS_AP) == WL_CONNECTED)
 	{
-		wfManager->getServer()->on("/", dataPage);
-		wfManager->getServer()->onNotFound(dataPage);
+/*		wfManager->getServer()->on("/", dataPage);
+		wfManager->getServer()->onNotFound(dataPage);*/
 	}
 	wfManager->getServer()->on("/status", dataJson);
 	wfManager->getServer()->on("/setting", dataPage);

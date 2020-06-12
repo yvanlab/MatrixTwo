@@ -76,7 +76,7 @@ void saveConfiguration()
 	//mpPages->stopTimer();
 	smManager->writeData();
 	//mpPages->startTimer();
-	dataPage();
+	//dataPage();
 }
 
 bool manageProg()
@@ -95,7 +95,7 @@ bool manageProg()
 	}
 	if ((str = wfManager->getServer()->arg("prgDuration")) != NULL)
 	{
-		prgElt->pdDuration = atoi(str.c_str());;
+		prgElt->pgDuration = atoi(str.c_str());;
 	} 
 	else if ((str = wfManager->getServer()->arg("prgHour")) != NULL)
 	{
@@ -240,9 +240,6 @@ void setData()
 	}
 	DEBUGLOG("");
 #endif
-/*	uint16_t idPage = 0;
-	uint8_t nbElt = 0;
-	Page *pp = NULL;*/
 
 	String str;
 	if ((str = wfManager->getServer()->arg("freq")) != NULL)
@@ -253,7 +250,7 @@ void setData()
 	{
 		smManager->displayedMode = str == "true";
 	}
-	else if (wfManager->getServer()->hasArg("prgHour") || wfManager->getServer()->hasArg("prgPage"))
+	else if (wfManager->getServer()->hasArg("prgHour") || wfManager->getServer()->hasArg("prgPage") || wfManager->getServer()->hasArg("prgDuration") )
 	{
 		changed = manageProg();
 	}

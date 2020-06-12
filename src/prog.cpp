@@ -19,8 +19,8 @@ String ProgElt::toString(boolean bJson)
     ss += "{\"id\":\"" + String(id) + "\",";
     ss += "\"pgId\":\"" + String(pgId) + "\",";
     ss += "\"pgName\":\"" + pgName + "\",";
+    ss += "\"pgDuration\":\"" + String(pgDuration) + "\",";
     ss += "\"hour\":\"" + hourMinute + "\"}";
-    ss += "\"pgDuration\":\"" + String(duration) + "\"}";
     return ss;
 }
 void ProgElt::fromJson(JsonObject doc)
@@ -28,7 +28,7 @@ void ProgElt::fromJson(JsonObject doc)
     pgName = doc[F("pgName")].as<String>();
     pgId = doc[F("pgId")];
     setHourMinute(doc[F("hour")].as<String>());
-    duration = doc[F("pgDuration")];
+    pgDuration = doc[F("pgDuration")];
 
 }
 
