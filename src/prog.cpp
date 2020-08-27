@@ -110,20 +110,23 @@ uint16_t Prog::getNext(uint16_t hhMn)
     int16_t iFoundPage = -1;
     for (uint8_t i = 0; i < maxPrgElt; i++)
     {
-        DEBUGLOGF("Next page[%s][%s],[%d][%d]\n", m_prgElt[i].pgName.c_str(), m_prgElt[i].hourMinute.c_str(), m_prgElt[i].hourMinuteConverted, hhMn);
+        DEBUGLOGF("Next page[%s][%s][%d],[%d][%d]\n", m_prgElt[i].pgName.c_str(), m_prgElt[i].hourMinute.c_str(), m_prgElt[i].pgDuration,  m_prgElt[i].hourMinuteConverted, hhMn);
         if (iSelectedPage != -1)
         {
             if (m_prgElt[i].hourMinuteConverted < 0 || hhMn < m_prgElt[i].hourMinuteConverted)
             {
                 iFoundPage = iSelectedPage;
+                m_currentElt = &m_prgElt[i]; 
                 break;
             }
         }
         if (hhMn >= m_prgElt[i].hourMinuteConverted)
         {
             iSelectedPage = m_prgElt[i].pgId;
+            m_currentElt = &m_prgElt[i];
         }
     }
+     
     return iFoundPage;
 }
 

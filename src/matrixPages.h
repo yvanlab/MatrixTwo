@@ -99,8 +99,8 @@ class MatrixPages : public BaseManager
     }
 
     //void display_updater();
-    void nextPage();
-    void setPage(uint16_t num);
+    bool  nextPage();
+    bool  setPage(uint16_t num);
     //boolean isTransition() {return startTransition!=0;};
 
     void displayPage();

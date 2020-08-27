@@ -122,11 +122,11 @@ void MatrixPages::displayPage()
 	m_display.showBuffer();
 }
 
-void MatrixPages::setPage(uint16_t num)
+bool MatrixPages::setPage(uint16_t num)
 {
 	DEBUGLOGF("Page %d,%d\n", num, _numPage);
 	if (num == _numPage)
-		return;
+		return false;
 	_numPage = num;
 	m_pp = smManager->getPage(num);
 	//m_display.clearDisplay();
@@ -141,20 +141,22 @@ void MatrixPages::setPage(uint16_t num)
 	{
 		DEBUGLOGF("Page not found %d\n", num);
 	}
+	return true;
 };
 
-void MatrixPages::nextPage()
+bool MatrixPages::nextPage()
 {
 	DEBUGLOGF("NextPage %d\n", _numPage);
 	int16_t hhMn = hour() * 60 + minute();
 	int16_t iPage = smManager->getProg()->getNext(hhMn);
 	if (iPage < 0) {
 		DEBUGLOGF("Next page not found [%d]\n", hhMn);
+		return false;
 	}
 	else
 	{
 		DEBUGLOGF("Next page[%d]\n", iPage);
-		setPage(iPage);
+		return setPage(iPage);
 	}
 }
 

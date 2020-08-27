@@ -233,7 +233,7 @@
             "defines": [
                 "PLATFORMIO=40304",
                 "ARDUINO_ESP32_DEV",
-                "LA_MATRIX2_VERSION=1.1",
+                "LA_MATRIX2_VERSION=1.2",
                 "EEPROM_VERSION=1",
                 "MCPOC_TEST=1",
                 "double_buffer=1",
@@ -245,7 +245,6 @@
                 "MY_TIMER_NUM=0",
                 "MATRIX_TIMER_NUM=1",
                 "OTA_FOR_ATOM=1",
-                "MCPOC_TELNET=1",
                 "ESP32",
                 "ESP_PLATFORM",
                 "F_CPU=240000000L",

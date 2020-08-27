@@ -82,7 +82,11 @@ void screemManagement(void *pvParameters)
 		}
 		if (mtTimer.is1MNPeriod() && smManager->displayedMode)
 		{
-			mpPages->nextPage();
+			if (mpPages->nextPage()) {
+				if (smManager->getProg()->getCurrentPrgElt() != NULL) {
+					phPresence->forceStatus(true,smManager->getProg()->getCurrentPrgElt()->pgDuration*60000);
+				}
+			};
 		}
 		//		delay(1);
 	};
@@ -279,55 +283,7 @@ void /*RAMFUNC*/ loop(void)
 		}
 	}
 
-	/*
-	if (mtTimer.is25MSPeriod()) {
-	    DEBUGLOG("25ms");
-	    siInterface.checkPersonDetected();
-	    siInterface.checkPageChangeDetected();
-	    if (siInterface.isCfgDetected()) {
-	      mpPages->setPage(CFG_PAGE);
-	      //DEBUGLOG("cfg");
-	    }else if (siInterface.isPagechangeDetected() ){
-	      DEBUGLOG("next pp");
-	      mpPages->nextPage();
-	      DEBUGLOGF("next pp : %d\n",mpPages->page );
-	    } else if (siInterface.isPersonDetected() ){
-	        matrix.switchScreenStatus(SWITCH_ON_SCREEN);
-	        if (wfManager->getHourManager()->isNextHour()) {
-	          String text;
-	          text = "il est " + String(hour()) + " heure";// et " + String(minute()) + " minute." + FPSTR (weatherString[pPeriferic.getTrendMeteo()]);
-	          //sprintf(text,)
-	          pPeriferic.sendToVoiceBox(text);
-	        }
 
-	    } else {
-	      //DEBUGLOG("nobody detected");
-	      matrix.switchScreenStatus(SWITCH_OFF_SCREEN);
-	      mpPages->setPage(MESSAGE_PAGE);
-	    }
-	  }
-	  if (matrix.isScreenActivated()) {
-	    mpPages->displayPage();
-	    matrix.displayScreen();
-
-	  } else {
-	    if (mtTimer.is1MNPeriod()){
-	      pPeriferic.retrievePeriphericInfo();
-	    }
-	  }
-
-	if (mtTimer.is1MNPeriod()){
-	  boolean nowDetection = siInterface.isPersonDetected();
-
-	  if (((!previousPresence && nowDetection) || (previousPresence && !nowDetection)) || mtTimer.is30MNPeriod()  ) {
-	    sfManager.addVariable(PRESENCE_LABEL, String (nowDetection));
-	    DEBUGLOG(sfManager.toString(STD_TEXT));
-	    int res = sfManager.sendIoT( smManager.m_privateKey, smManager.m_publicKey);
-	    DEBUGLOGF("sendIoT : %d\n",res );
-	    previousPresence = nowDetection;
-	  }
-	}
-*/
 
 	mtTimer.clearPeriod();
 }

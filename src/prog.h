@@ -40,9 +40,14 @@ public:
     uint16_t getNext(uint16_t hhMn);
     String toString(boolean bJson);
     ProgElt *getProgElt(uint8_t id);
+    
+    ProgElt *getCurrentPrgElt() {
+        return m_currentElt;
+    }
 
 private:
     ProgElt m_prgElt[maxPrgElt];
+    ProgElt *m_currentElt = NULL;
 };
 
 #endif
