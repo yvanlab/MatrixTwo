@@ -108,6 +108,7 @@ void MatrixPages::begin()
 
 void MatrixPages::displayPage()
 {
+	//DEBUGLOG("IN");
 	m_display.clearDisplay();
 	if (m_pp == NULL)
 	{
@@ -119,7 +120,9 @@ void MatrixPages::displayPage()
 		return;
 	}
 	displayScreen(m_pp);
+
 	m_display.showBuffer();
+	//DEBUGLOG("OUT");
 }
 
 bool MatrixPages::setPage(uint16_t num)
@@ -241,6 +244,7 @@ String MatrixPages::buildGeneric(String txt)
 
 	//{im-memoire},{id-duree on},{it-internal temperature},
 	//{im-detecteur mouvement}, {iv-version}
+	//{t1 - period proc1}, {t2 - period proc2}, {tf - 1 sec preriod}
 	if (txt.indexOf("{im}") >= 0)
 	{
 		txt.replace("{im}", String(ESP.getFreeHeap() / 1000));
@@ -265,6 +269,31 @@ String MatrixPages::buildGeneric(String txt)
 	{
 		txt.replace("{ipd}", String(phPresence->getRemaining()));
 	}
+	if (txt.indexOf("{t1}") >= 0)
+	{
+		if (mtTimer.is1SPeriod(PROC_ONE)){
+			txt.replace("{t1}", ".");
+		}else {
+			txt.replace("{t1}", " ");
+		}
+	}
+	if (txt.indexOf("{t2}") >= 0)
+	{
+		if (mtTimer.is1SPeriod(PROC_TWO)){
+			txt.replace("{t2}", ".");
+		}else {
+			txt.replace("{t2}", " ");
+		}
+	}
+	if (txt.indexOf("{tf}") >= 0)
+	{
+		if (mtTimer.is1SFrequence()){
+			txt.replace("{tf}", ".");
+		}else {
+			txt.replace("{tf}", " ");
+		}
+	}
+
 	//DEBUGLOGF ("buildGeneric %s\n",txt.c_str() );
 	return txt;
 }

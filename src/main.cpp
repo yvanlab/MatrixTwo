@@ -3,6 +3,8 @@
 TaskHandle_t Task1;
 TaskHandle_t Task2;
 
+
+
 SettingManager *smManager; //(PIN_LED);
 WifiManager *wfManager;	   //(PIN_LED, &smManager);
 MatrixPages *mpPages;	   //(PIN_LED);
@@ -73,22 +75,26 @@ void screemManagement(void *pvParameters)
 
 	while (true)
 	{
-		if (mtTimer.isCustomPeriod())
-		{
+		//     DEBUGLOG("While");
+		//delay (1);
+		yield();
+		if (mtTimer.isCustomPeriod(PROC_TWO))
+		{	
 			if (phPresence->isPresence())
 			{
 				mpPages->displayPage();
 			}
 		}
-		if (mtTimer.is1MNPeriod() && smManager->displayedMode)
+		if (mtTimer.is1MNPeriod(PROC_TWO) && smManager->displayedMode)
 		{
 			if (mpPages->nextPage()) {
 				if (smManager->getProg()->getCurrentPrgElt() != NULL) {
-					phPresence->forceStatus(true,smManager->getProg()->getCurrentPrgElt()->pgDuration*60000);
+					phPresence->forceStatus(true/*,smManager->getProg()->getCurrentPrgElt()->pgDuration*60000*/);
 				}
 			};
 		}
-		//		delay(1);
+		
+		mtTimer.clearPeriod(PROC_TWO);
 	};
 }
 
@@ -204,7 +210,7 @@ void /*RAMFUNC*/ loop(void)
 	}
 
 	*/
-	if (mtTimer.is5MNPeriod())
+	if (mtTimer.is5MNPeriod(PROC_ONE))
 	{
 		if (!phPresence->isPresence())
 		{
@@ -214,12 +220,10 @@ void /*RAMFUNC*/ loop(void)
 		}
 	}
 
-	if (mtTimer.is1MNPeriod() && smManager->displayedMode)
+	/*if (mtTimer.is1MNPeriod(PROC_ONE) && smManager->displayedMode)
 	{
 		mpPages->nextPage();
-	/*	phPresence->set
-		phPresence->forceStatus(true);*/
-	}
+	}*/
 
 #ifdef MCPOC_TEST
 	if (Serial.available())
@@ -248,7 +252,7 @@ void /*RAMFUNC*/ loop(void)
 	}
 #endif
 
-	if (mtTimer.isCustomPeriod())
+	if (mtTimer.isCustomPeriod(PROC_ONE))
 	{
 		//m_display->clearDisplay();
 		//DEBUGLOG("1s");
@@ -256,7 +260,7 @@ void /*RAMFUNC*/ loop(void)
 
 		//DEBUGLOG("BMPManagerV2");DEBUGLOG(bmpMesure->toString(STD_TEXT));
 	}
-	if (mtTimer.is5MNPeriod())
+	if (mtTimer.is5MNPeriod(PROC_ONE))
 	{
 		if (WiFi.isConnected())
 		{
@@ -275,7 +279,7 @@ void /*RAMFUNC*/ loop(void)
 		ESP.restart();
 	}
 
-	if (mtTimer.is5MNPeriod())
+	if (mtTimer.is5MNPeriod(PROC_ONE))
 	{
 		if (!WiFi.isConnected())
 		{
@@ -285,5 +289,5 @@ void /*RAMFUNC*/ loop(void)
 
 
 
-	mtTimer.clearPeriod();
+	mtTimer.clearPeriod(PROC_ONE);
 }

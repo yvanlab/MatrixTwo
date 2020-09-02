@@ -27,7 +27,8 @@
 /*#include "SensorInterface.h"*/
 
 
-
+#define PROC_ONE 0
+#define PROC_TWO 1
 
 
 #define PIN_LED 2
