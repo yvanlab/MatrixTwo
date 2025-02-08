@@ -169,6 +169,7 @@ public:
         else if (_mode == TRANSITION_DOWN)
         {
             _win->set(0, -1 * _maxH, _maxW, _maxH);
+            DEBUGLOGF("startTransition :: x %d,y %d, MxW %d, MxH %d\n", _win->_x,_win->_y,_win->_w, _win->_h);
         }
         else if (_mode == TRANSITION_FROM_CENTER)
         {

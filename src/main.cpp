@@ -1,3 +1,31 @@
+/* ************************ Pin Configuration ************************
+Matrix pins
+ P_A 19
+ P_B 23
+ P_C 18
+ P_D 5
+ P_E 15
+ P_OE 15
+
+Presence pins
+	PIN 4
+
+
+Temperature pins
+	SDA = 21;
+	CL = 22;
+
+
+Modificqtion de PxMATRIX.h (614)
+inline void PxMATRIX::fillMatrixBuffer(int16_t x, int16_t y, uint8_t r, uint8_t g, uint8_t b,bool selected_buffer)
+{
+  if ((x < 0) || (x >= _width) || (y < 1) || (y >= _height))
+                                       ^
+									   !
+*********************** REMOVE GPIO02 to upload programs  *************************************
+*/
+
+
 #include "main.h"
 
 TaskHandle_t Task1;
@@ -67,6 +95,7 @@ void startWiFiserver()
 #endif
 
 	Serial.println(wfManager->toString(STD_TEXT));
+	Serial.println("startWiFiserver :: end");
 }
 
 void screemManagement(void *pvParameters)
@@ -140,12 +169,7 @@ void setup(void)
 	DEBUGLOG(smManager->toString(STD_TEXT));
 	startWiFiserver();
 
-	mpPages = new MatrixPages(PIN_LED);
-	mpPages->begin();
-	mpPages->setPage(smManager->displayedPage);
-	//mpPages->displayPage();
-
-	//pDictons->findNewDicton(day());
+pDictons->findNewDicton(day());
 
 	bmpMesure = new BMPManagerV2(PIN_LED);
 	bmpMesure->mesure();
@@ -153,15 +177,27 @@ void setup(void)
 	DEBUGLOG("BMPManagerV2");
 	DEBUGLOG(bmpMesure->toString(STD_TEXT));
 
-	//phPeriferic->retrievePeriphericInfo();
 
+//delay(2000);
+	DEBUGLOG("MatrixPages");
+	mpPages = new MatrixPages(PIN_LED);
+	DEBUGLOG("MatrixPages :: Begin");
+	mpPages->begin();
+	DEBUGLOG("MatrixPages :: SetPage");
+	mpPages->setPage(smManager->displayedPage);
+	
+	//phPeriferic->retrievePeriphericInfo();
+DEBUGLOG("mtTimer :: Begin");
 	mtTimer.begin(timerFrequence);
 	mtTimer.setCustomMS(25);
-
+DEBUGLOG("thinkSpeakMgr");
 	thinkSpeakMgr = new thingSpeakManager(PIN_LED);
-
+DEBUGLOG("pDictons");
 	pDictons->findNewDicton(day());
+	
+	phPresence->setCallback(presenceManagement);
 
+DEBUGLOG("xTaskCreatePinnedToCore");
 	xTaskCreatePinnedToCore(
 		screemManagement, /* Task function. */
 		"Task1",		  /* name of task. */
@@ -171,9 +207,8 @@ void setup(void)
 		&Task1,			  /* Task handle to keep track of created task */
 		0);				  /* pin task to core 0 */
 
-	delay(2000);
-	phPresence->setCallback(presenceManagement);
-	phPresence->forceStatus(true);
+//delay(1000);
+phPresence->forceStatus(true);
 
 #ifdef MCPOC_TELNET
 	Debug.begin(MODULE_NAME);
@@ -262,16 +297,14 @@ void /*RAMFUNC*/ loop(void)
 	}
 	if (mtTimer.is5MNPeriod(PROC_ONE))
 	{
-		if (WiFi.isConnected())
+		/*if (WiFi.isConnected())
 		{
 			thinkSpeakMgr->addVariable(TEMP_PIECE_LABEL, String(bmpMesure->getTemperatureSensor()->getValue()));
 			thinkSpeakMgr->addVariable(PRESSION_LABEL, String(bmpMesure->getPressionSensor()->getValue()));
 			thinkSpeakMgr->addVariable(PRESENCE_LABEL, String(phPresence->isPresence()));
 			thinkSpeakMgr->addVariable(TEMP_PROC_LABEL, String(temperatureRead()));
-			thinkSpeakMgr->sendIoT(smManager->m_privateKey, smManager->m_publicKey);
-
-			// second thinkSpeakMgr->sendIoT( smManager->m_privateKey, smManager->m_publicKey);
-		}
+			thinkSpeakMgr->sendIoT(smManager->m_privateKey, smManager->m_publicKey);	
+		}*/
 	}
 
 	if (wfManager->getHourManager()->isNextDay())

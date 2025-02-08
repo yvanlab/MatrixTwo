@@ -17,21 +17,21 @@
 #include "sensorBase.h"
 
 #include <Wire.h>
-#include <Sodaq_BMP085.h>
+#include <Adafruit_BMP085.h>
 
 class BMPBase : public SensorBase
 {
 
   public:
-    Sodaq_BMP085 * m_BMP;
+    Adafruit_BMP085* m_BMP;
 
     BMPBase() : SensorBase() {;};
-    BMPBase(uint8_t pinLed,Sodaq_BMP085 *bmp):SensorBase(pinLed){
+    BMPBase(uint8_t pinLed,Adafruit_BMP085 *bmp):SensorBase(pinLed){
       //m_pinDHT = pinLed;
       m_BMP = bmp;
     };
 
-    void setup(uint8_t pinLed,Sodaq_BMP085 *bmp) {
+    void setup(uint8_t pinLed,Adafruit_BMP085 *bmp) {
       m_BMP = bmp;
       SensorBase::setup(pinLed);
     }

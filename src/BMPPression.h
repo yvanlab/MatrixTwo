@@ -19,7 +19,7 @@
 //#include <DHT.h>
 //#include <sensorBase.h>
 //#include <Wire.h>
-#include <Sodaq_BMP085.h>
+#include <Adafruit_BMP085.h>
 #define BPM_TEMPS_BEAU     1 //:   > 1020               :  Beau ou assez beau. Journées chaudes, nuits fraîches.
 #define BPM_TEMPS_ORAGEUX  2 //: De 1013 à 1020 hPa	  :  Assez beau ou ondées orageuses. Journées chaudes, nuits un peu fraîches.
 #define BPM_TEMPS_PLUIE    3 //: De 1006 à 1013 hPa   :	 Pluie ou averses avec un peu de vent. Temps doux.
@@ -34,7 +34,7 @@ class BMPPression : public BMPBase
   public:
 
     BMPPression() : BMPBase() {;};
-    BMPPression(uint8_t pinLed, Sodaq_BMP085 *bmp):BMPBase(pinLed,bmp){
+    BMPPression(uint8_t pinLed, Adafruit_BMP085 *bmp):BMPBase(pinLed,bmp){
     ;
     };
 

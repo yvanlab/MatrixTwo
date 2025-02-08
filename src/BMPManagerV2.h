@@ -17,6 +17,7 @@
 #include "BMPTemperature.h"
 //#include "baseManager.h"
 
+//#define MCPOC_MOCK 1
 
 
 
@@ -27,7 +28,7 @@ class BMPManagerV2 : public SensorBase
 
     BMPPression     m_Pression;
     BMPTemperature  m_Temperature;
-    Sodaq_BMP085    m_bmp;
+    Adafruit_BMP085 m_bmp;
 
     BMPManagerV2(uint8_t pinLed) : SensorBase(pinLed) {
 
@@ -35,7 +36,7 @@ class BMPManagerV2 : public SensorBase
       m_Temperature.setup(pinLed,&m_bmp);
 	  #if !defined(MCPOC_MOCK)
       m_bmp.begin();
-      #endif
+     #endif
 
     };
 

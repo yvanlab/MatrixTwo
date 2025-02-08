@@ -16,7 +16,7 @@
 
 #include "BMPBase.h"
 //#include <sensorBase.h>
-#include <Sodaq_BMP085.h>
+#include <Adafruit_BMP085.h>
 
 class BMPTemperature : public BMPBase
 {
@@ -24,7 +24,7 @@ class BMPTemperature : public BMPBase
   public:
 
     BMPTemperature() : BMPBase() {;};
-    BMPTemperature(uint8_t pinLed, Sodaq_BMP085 *bmp):BMPBase(pinLed,bmp){
+    BMPTemperature(uint8_t pinLed, Adafruit_BMP085 *bmp):BMPBase(pinLed,bmp){
     ;
     };
 

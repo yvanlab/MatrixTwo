@@ -17,7 +17,7 @@
 
 
 BMPManager::BMPManager(unsigned char SDA, unsigned char SCL,unsigned char pinLed)
-  :Sodaq_BMP085() , BaseManager(pinLed) {
+  :Adafruit_BMP085() , BaseManager(pinLed) {
     setStatus( true,"OK");
 }
 
@@ -50,7 +50,7 @@ float BMPManager::mesureTemperature() {
   temp = random(40);
   setStatus( true,"Mocking");
   #else
-  temp = Sodaq_BMP085::readTemperature();
+  temp = Adafruit_BMP085::readTemperature();
   setStatus( true,"OK");
   #endif
   m_Temperature.mesure(temp);
@@ -72,7 +72,7 @@ int32_t BMPManager::mesurePressure(){
   pressure = random(100000);
   setStatus( true,"Mocking");
   #else
-  pressure = Sodaq_BMP085::readPressure();
+  pressure = Adafruit_BMP085::readPressure();
   setStatus( true,"OK");
   #endif
   m_Pression.mesure(pressure);

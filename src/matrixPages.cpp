@@ -70,12 +70,13 @@ void MatrixPages::begin()
 	m_display.display(0);
 	delta_timer = micros() - start_timer;
 	DEBUGLOGF("Display update latency in us: %ld\n", delta_timer);
-	m_display.setFlip(true);
+	//m_display.setFlip(true);
 
 	win.set(0, 0, m_display.width(), m_display.height());
 	tranPages = new TransitionPages(&win, m_display.width(), m_display.height());
 	//m_display.setRotate(true);
-	//m_display.setRotation(2);
+	//m_display.setRotation(3);
+	m_display.setFlip(true);
 
 #ifdef ESP8266
 	display_ticker.attach(0.002, display_updater);
@@ -108,7 +109,7 @@ void MatrixPages::begin()
 
 void MatrixPages::displayPage()
 {
-	//DEBUGLOG("IN");
+	//DEBUGLOG("MatrixPages::displayPage :: IN");
 	m_display.clearDisplay();
 	if (m_pp == NULL)
 	{
@@ -122,7 +123,7 @@ void MatrixPages::displayPage()
 	displayScreen(m_pp);
 
 	m_display.showBuffer();
-	//DEBUGLOG("OUT");
+	//DEBUGLOG("MatrixPages::displayPage :: OUT");
 }
 
 bool MatrixPages::setPage(uint16_t num)
@@ -138,7 +139,7 @@ bool MatrixPages::setPage(uint16_t num)
 	{
 		smManager->displayedPage = num;
 		tranPages->startTransition(m_pp->transition);
-		DEBUGLOGF("Page %sd\n", m_pp->name.c_str());
+		DEBUGLOGF("Page %s\n", m_pp->name.c_str());
 	}
 	else
 	{
@@ -317,18 +318,27 @@ String MatrixPages::buildTxt(String txt, String var)
 
 void MatrixPages::displayScreen(Page *page)
 {
+	//DEBUGLOGF("MatrixPages::displayScreen :: IN - freemem %d\n", ESP.getFreeHeap());
 	char tmpString[20];
 	tranPages->nextStep();
-/*	if (tranPages->isTransition())
+	/*if (tranPages->isTransition())
 	{
 		m_display.drawRect(win.getX(0), win.getY(0),
 						   win.getW(), win.getH(),
 						   m_display.color565(255, 255, 255));
-	}*/
+	}
+	*/
+/*
+	if (1) {
+			//DEBUGLOG("MatrixPages::displayScreen ::DEBUG");
+				m_display.drawCircle(10, 10, 4, m_display.color565(255, 255, 255));
+		}
+	else */
+	//DEBUGLOGF("nbElement  [%d]\n", page->nbElement);
 	for (uint8_t i = 0; i < page->nbElement; i++)
 	{
-		//DEBUGLOGF("x[%d] y[%d], Red[%d], Green[%d], Blue[%d]\n",smManager.screen[i].x, smManager.screen[i].y, smManager.screen[i].red, smManager.screen[i].green, smManager.screen[i].blue);
-		//DEBUGLOGF("type [%d], txt[%s]\n",smManager.screen[i].type, smManager.screen[i].txt.c_str());
+		//DEBUGLOGF("Active[%d] x[%d] y[%d], Red[%d], Green[%d], Blue[%d]\n",page->element[i].active, page->element[i].x, page->element[i].y, page->element[i].red, page->element[i].green, page->element[i].blue);
+		//DEBUGLOGF("type [%d], txt[%s]\n",page->element[i].type, page->element[i].txt.c_str());
 		if (page->element[i].active)
 		{
 			switch (page->element[i].font)
@@ -444,7 +454,7 @@ void MatrixPages::displayScreen(Page *page)
 			}
 		}
 	}
-	//DEBUGLOGF("freemem %d\n", ESP.getFreeHeap());
+	//DEBUGLOGF("MatrixPages::displayScreen :: OUT freemem %d\n", ESP.getFreeHeap());
 }
 
 void MatrixPages::print(Element *pElt, String txt)
@@ -477,7 +487,7 @@ void MatrixPages::print(Element *pElt, String txt)
 			}
 			else
 			{
-				//DEBUGLOG(" - No Display\n");
+				//DEBUGLOGF(" - No Display [%c]\n",c);
 				break;
 			}
 		}
@@ -538,6 +548,7 @@ void MatrixPages::displayWatch(Element *pElt)
 	m_display.drawLine(x, y, x + mnTige * sin(mn), y - mnTige * cos(mn), m_display.color565(0, 255, 0));
 	m_display.drawLine(x, y, x + hhTige * sin(hh), y - hhTige * cos(hh), m_display.color565(255, 0, 0));
 	m_display.drawLine(x, y, x + ssTige * sin(ss), y - ssTige * cos(ss), m_display.color565(255, 255, 255));
+	
 }
 
 void MatrixPages::displayTrend(Element *pElt, float trend)

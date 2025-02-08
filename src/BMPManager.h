@@ -13,7 +13,7 @@
 
 #endif
 #include <Wire.h>
-#include <Sodaq_BMP085.h>
+#include <Adafruit_BMP085.h>
 #include "baseManager.h"
 
 #define BPM_TEMPS_BEAU     1 //:   > 1020               :  Beau ou assez beau. Journées chaudes, nuits fraîches.
@@ -22,7 +22,7 @@
 #define BPM_TEMPS_TEMPETE  4 //:  < 1006 hPa	          :  Pluie et vent assez fort. Températures douces.
 
 
-class BMPManager : public Sodaq_BMP085, public BaseManager
+class BMPManager : public Adafruit_BMP085, public BaseManager
 {
 
   public:

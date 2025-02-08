@@ -40,7 +40,7 @@
 #define P_C 18
 #define P_D 5
 #define P_E 15
-#define P_OE 2
+#define P_OE 15 //2
 
 //portMUX_TYPE wtimerMux = portMUX_INITIALIZER_UNLOCKED;
 //static int taskCore = 0;
